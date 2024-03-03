@@ -34,15 +34,15 @@ typedef struct comp_col_box {
 	float offsetY;
 } comp_col_box_t;
 
-//typedef struct comp_draw_sprite {
-//	float w;
-//	float h;
-//	SDL_Texture* texture;
-//	float offsetX;
-//	float offsetY;
-//	bool visible;
-//	SDL_Color color;
-//} comp_draw_sprite_t;
+typedef struct comp_draw_sprite {
+	float w;
+	float h;
+	Texture2D texture;
+	float offsetX;
+	float offsetY;
+	bool visible;
+	Color color;
+} comp_draw_sprite_t;
 
 typedef struct comp_draw_box {
 	float width;
@@ -91,7 +91,7 @@ typedef struct components {
 	comp_velocity_t velocity[MAX_ENTITIES];
 	comp_area_box_t area_box[MAX_ENTITIES];
 	comp_col_box_t col_box[MAX_ENTITIES];
-	//comp_draw_sprite_t draw_sprite[MAX_ENTITIES];
+	comp_draw_sprite_t draw_sprite[MAX_ENTITIES];
 	comp_draw_box_t draw_box[MAX_ENTITIES];
 	comp_draw_circle_t draw_circle[MAX_ENTITIES];
 	comp_draw_text_t draw_text[MAX_ENTITIES];

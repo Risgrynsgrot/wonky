@@ -1,13 +1,14 @@
 #include "gameclient.h"
 #include "components.h"
 #include "movesystem.h"
+#include "rendersystem.h"
 #include <raylib.h>
 #include <stdlib.h>
 #include <time.h>
 
 int client_init(client_t* client) {
-	client->quit	  = false;
-	client->tickrate  = 1.f / 64.f;
+	client->quit	 = false;
+	client->tickrate = 1.f / 64.f;
 	entity_fill_empty(client);
 
 	//if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -16,7 +17,7 @@ int client_init(client_t* client) {
 	//}
 
 	//render_setup();
-	
+
 	client_raylib_init();
 
 	client->components = malloc(sizeof(components_t));
@@ -24,6 +25,7 @@ int client_init(client_t* client) {
 	entity_t entity = entity_new(client);
 	component_add(client->components, entity, COMP_DRAW_SPRITE);
 	component_add(client->components, entity, COMP_POSITION);
+	render_load_sprite(client, "test.png", entity);
 	return 0;
 }
 
@@ -50,7 +52,7 @@ void client_start_loop(client_t* client) {
 			//input_reset(&client->input);
 			// move this to game, so server can use it too
 		}
-		client_render();
+		client_render(client);
 		client->quit |= WindowShouldClose();
 	}
 }
@@ -77,8 +79,10 @@ void client_update(client_t* client, float dt) {
 	move_players(client, dt);
 }
 
-void client_render(void) {
+void client_render(client_t* client) {
 	BeginDrawing();
+    ClearBackground(RAYWHITE);
+	render_sprites(client);
 	EndDrawing();
 	//SDL_SetRenderDrawColor(client->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	//SDL_RenderClear(client->renderer);

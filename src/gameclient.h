@@ -16,7 +16,7 @@ void client_start_loop(client_t* client);
 void client_raylib_init(void);
 //void client_handle_input(client_t* client);
 void client_update(client_t* client, float dt);
-void client_render(void);
+void client_render(client_t* client);
 int client_deinit(client_t* client);
 
 //float client_get_deltatime(struct timespec before, struct timespec after);
