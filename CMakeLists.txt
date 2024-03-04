@@ -28,6 +28,8 @@ include(${CPM_DOWNLOAD_LOCATION})
 # See https://github.com/TheLartians/CPM.cmake for details and examples
 
 CPMAddPackage("gh:raysan5/raylib#5.0")
+CPMAddPackage("gh:json-c/json-c#json-c-0.17-20230812")
+#CPMAddPackage("gh:baylej/tmx#tmx_1.2.0")
 
 CPMAddPackage(
   NAME enet
@@ -58,6 +60,8 @@ endif()
 target_enable_clang_tidy(${PROJECT_NAME})
 
 # link to your dependencies' targets here
+target_link_libraries(${PROJECT_NAME} json-c)
+#target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} enet)
 
