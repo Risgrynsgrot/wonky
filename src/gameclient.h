@@ -1,5 +1,6 @@
 #pragma once
 #include "components.h"
+#include "inputsystem.h"
 
 typedef struct client {
 	float tickrate;
@@ -9,12 +10,13 @@ typedef struct client {
     int empty_ids[MAX_ENTITIES];
     int empty_id_count;
     bool quit;
+	input_map_t input_map[8];
 } client_t;
 
 int client_init(client_t* client);
 void client_start_loop(client_t* client);
 void client_raylib_init(void);
-//void client_handle_input(client_t* client);
+void client_handle_input(client_t* client);
 void client_update(client_t* client, float dt);
 void client_render(client_t* client);
 int client_deinit(client_t* client);

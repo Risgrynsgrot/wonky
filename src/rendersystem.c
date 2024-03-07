@@ -15,8 +15,8 @@ void render_sprites(client_t* client) {
 		sprites[i].texture.width = sprites[i].w;
 		sprites[i].texture.height = sprites[i].h;
 		DrawTexture(sprites[i].texture,
-					positions[i].x,
-					positions[i].y,
+					positions[i].value.x,
+					positions[i].value.y,
 					sprites[i].color);
 	}
 }
