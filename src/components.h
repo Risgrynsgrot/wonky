@@ -79,6 +79,16 @@ typedef struct comp_draw_text {
 	bool visible;
 } comp_draw_text_t;
 
+typedef struct comp_ui_button {
+	entity_t text;
+	float offsetX;
+	float offsetY;
+	Color color;
+	int priority;
+	bool visible;
+	bool pressed;
+} comp_ui_button_t;
+
 typedef enum component_type {
 	COMP_POSITION	 = 1 << 0,
 	COMP_ROTATION	 = 1 << 1,

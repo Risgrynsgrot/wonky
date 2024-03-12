@@ -4,7 +4,6 @@
 #include "rendersystem.h"
 #include <raylib.h>
 #include <stdlib.h>
-#include <time.h>
 
 int client_init(client_t* client) {
 	client->quit	 = false;
