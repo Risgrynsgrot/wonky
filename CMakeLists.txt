@@ -39,9 +39,9 @@ include(${CPM_DOWNLOAD_LOCATION})
 #  DOWNLOAD_ONLY True
 #)
 
-file(GLOB raylib_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
-add_library(raylib STATIC ${enet_sources})
-target_include_directories(raylib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/enet/include/)
+file(GLOB enet_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
+add_library(enet STATIC ${enet_sources})
+target_include_directories(enet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/include/)
 
 #file(GLOB raylib_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib/src/*.c)
 #add_library(raylib STATIC ${enet_sources})
