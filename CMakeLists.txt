@@ -27,23 +27,26 @@ include(${CPM_DOWNLOAD_LOCATION})
 # ---- Add dependencies via CPM ----
 # See https://github.com/TheLartians/CPM.cmake for details and examples
 
-CPMAddPackage("gh:raysan5/raylib#5.0")
-CPMAddPackage("gh:json-c/json-c#json-c-0.17-20230812")
+#CPMAddPackage("gh:raysan5/raylib#5.0")
+#CPMAddPackage("gh:json-c/json-c#json-c-0.17-20230812")
 #CPMAddPackage("gh:baylej/tmx#tmx_1.2.0")
 
-CPMAddPackage(
-  NAME enet
-  VERSION 1.3.17
-  GIT_TAG 4f8e9bdc4ce6d1f61a6274b0e557065a38190952
-  GITHUB_REPOSITORY lsalzman/enet
-  DOWNLOAD_ONLY True
-)
+#CPMAddPackage(
+#  NAME enet
+#  VERSION 1.3.17
+#  GIT_TAG 4f8e9bdc4ce6d1f61a6274b0e557065a38190952
+#  GITHUB_REPOSITORY lsalzman/enet
+#  DOWNLOAD_ONLY True
+#)
 
-if(enet_ADDED)
-  file(GLOB enet_sources ${enet_SOURCE_DIR}/*.c)
-  add_library(enet STATIC ${enet_sources})
-  target_include_directories(enet PUBLIC ${enet_SOURCE_DIR}/include/)
-endif()
+file(GLOB raylib_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
+add_library(raylib STATIC ${enet_sources})
+target_include_directories(raylib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/enet/include/)
+
+#file(GLOB raylib_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib/src/*.c)
+#add_library(raylib STATIC ${enet_sources})
+#target_include_directories(raylib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/raylib/src/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
 
 # ---- Create executable ----
 # add your source files here
@@ -60,7 +63,7 @@ endif()
 target_enable_clang_tidy(${PROJECT_NAME})
 
 # link to your dependencies' targets here
-target_link_libraries(${PROJECT_NAME} json-c)
+#target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} enet)
@@ -89,5 +92,5 @@ target_link_libraries(${PROJECT_NAME} enet)
 
 #set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use)
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL2")
+#target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+#target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL2")
