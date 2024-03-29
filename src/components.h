@@ -67,7 +67,6 @@ typedef struct comp_draw_circle {
 	Color color;
 } comp_draw_circle_t;
 
-#define MAX_TEXT_LENGTH 256 //probably a bit small
 
 typedef struct comp_draw_text {
 	char text[MAX_TEXT_LENGTH];
