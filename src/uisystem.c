@@ -32,3 +32,21 @@ void ui_trigger_event(ui_event_handler_t* event_handler, const int id) {
 		return;
 	}
 }
+
+ui_text_id ui_add_text(ui_text_pool_t* text_pool, ui_text_t* text) {
+	int id				 = text_pool->text_count;
+	text_pool->texts[id] = *text;
+	text_pool->text_count++;
+	return id;
+}
+
+void ui_draw_texts(ui_text_pool_t* text_pool) {
+	for(int i = 0; i < text_pool->text_count; i++) {
+		const ui_text_t* text = &text_pool->texts[i];
+		if(!text->visible) {
+			continue;
+		}
+		DrawTextEx(
+			text->font, text->text, text->position, text->size, 0, text->color);
+	}
+}

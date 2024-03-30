@@ -2,8 +2,6 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-void ui_draw_buttons(void);
-
 typedef enum ui_event_trigger {
 	UI_EVENT_INSTANT,
 	UI_EVENT_NEXT_FRAME
@@ -33,19 +31,33 @@ void ui_trigger_event(ui_event_handler_t* event_handler, const int id);
 
 #define MAX_TEXT_LENGTH 256 //probably a bit small
 
+typedef int ui_text_id;
+typedef int ui_button_id;
+
 typedef struct ui_text {
 	char text[MAX_TEXT_LENGTH];
+	Vector2 position;
 	int size;
-	float offsetX;
-	float offsetY;
 	Color color;
 	int priority;
 	bool visible;
+	Font font;
+	ui_text_id id;
 } ui_text_t;
 
+#define MAX_TEXTS 100
+
+typedef struct ui_text_pool {
+	ui_text_t texts[MAX_TEXTS];
+	int text_count;
+} ui_text_pool_t;
+
+ui_text_id ui_add_text(ui_text_pool_t* text_pool, ui_text_t* text);
+void ui_draw_texts(ui_text_pool_t* text_pool);
+
 typedef struct ui_button {
-	ui_text_t* text;
-	int onClickEventId;
+	ui_text_id text;
+	event_id onClickEventId;
 	float offsetX;
 	float offsetY;
 	Color color;
@@ -53,3 +65,10 @@ typedef struct ui_button {
 	bool visible;
 	bool pressed;
 } ui_button_t;
+
+#define MAX_BUTTONS 10
+
+typedef struct ui_button_list {
+	ui_button_t buttons[MAX_BUTTONS];
+	int button_count;
+} ui_button_list_t;

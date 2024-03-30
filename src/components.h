@@ -68,25 +68,25 @@ typedef struct comp_draw_circle {
 } comp_draw_circle_t;
 
 
-typedef struct comp_draw_text {
-	char text[MAX_TEXT_LENGTH];
-	int size;
-	float offsetX;
-	float offsetY;
-	Color color;
-	int priority;
-	bool visible;
-} comp_draw_text_t;
-
-typedef struct comp_ui_button {
-	entity_t text;
-	float offsetX;
-	float offsetY;
-	Color color;
-	int priority;
-	bool visible;
-	bool pressed;
-} comp_ui_button_t;
+//typedef struct comp_draw_text {
+//	char text[MAX_TEXT_LENGTH];
+//	int size;
+//	float offsetX;
+//	float offsetY;
+//	Color color;
+//	int priority;
+//	bool visible;
+//} comp_draw_text_t;
+//
+//typedef struct comp_ui_button {
+//	entity_t text;
+//	float offsetX;
+//	float offsetY;
+//	Color color;
+//	int priority;
+//	bool visible;
+//	bool pressed;
+//} comp_ui_button_t;
 
 typedef enum component_type {
 	COMP_POSITION	 = 1 << 0,
@@ -98,7 +98,7 @@ typedef enum component_type {
 	COMP_DRAW_SPRITE = 1 << 6,
 	COMP_DRAW_BOX	 = 1 << 7,
 	COMP_DRAW_CIRCLE = 1 << 8,
-	COMP_DRAW_TEXT	 = 1 << 9,
+	//COMP_DRAW_TEXT	 = 1 << 9,
 } component_type_t;
 
 typedef struct components {
@@ -111,7 +111,7 @@ typedef struct components {
 	comp_draw_sprite_t draw_sprite[MAX_ENTITIES];
 	comp_draw_box_t draw_box[MAX_ENTITIES];
 	comp_draw_circle_t draw_circle[MAX_ENTITIES];
-	comp_draw_text_t draw_text[MAX_ENTITIES];
+	//comp_draw_text_t draw_text[MAX_ENTITIES];
 	component_type_t c_mask[MAX_ENTITIES];
 } components_t;
 
