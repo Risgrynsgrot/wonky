@@ -24,6 +24,11 @@ if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
 endif()
 include(${CPM_DOWNLOAD_LOCATION})
 
+if (EMSCRIPTEN)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1")
+    set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
+endif ()
+
 # ---- Add dependencies via CPM ----
 # See https://github.com/TheLartians/CPM.cmake for details and examples
 
@@ -39,9 +44,9 @@ include(${CPM_DOWNLOAD_LOCATION})
 #  DOWNLOAD_ONLY True
 #)
 
-file(GLOB enet_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
-add_library(enet STATIC ${enet_sources})
-target_include_directories(enet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/include/)
+#file(GLOB enet_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
+#add_library(enet STATIC ${enet_sources})
+#target_include_directories(enet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/include/)
 
 #file(GLOB raylib_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib/src/*.c)
 #add_library(raylib STATIC ${enet_sources})
@@ -66,7 +71,7 @@ target_enable_clang_tidy(${PROJECT_NAME})
 #target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
-target_link_libraries(${PROJECT_NAME} enet)
+#target_link_libraries(${PROJECT_NAME} enet)
 
 # --- Create Tests ---
 #file(GLOB_RECURSE testsources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")

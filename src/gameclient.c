@@ -5,6 +5,10 @@
 #include <raylib.h>
 #include <stdlib.h>
 
+#if defined(PLATFORM_WEB)
+#	include <emscripten/emscripten.h>
+#endif
+
 int client_init(client_t* client) {
 	client->quit	 = false;
 	client->tickrate = 1.f / 64.f;
@@ -29,7 +33,7 @@ int client_init(client_t* client) {
 	component_add(client->components, entity, COMP_VELOCITY);
 	component_add(client->components, entity, COMP_INPUT);
 	comp_input_t* input = &client->components->input[entity.id];
-	input->input_id = 0;
+	input->input_id		= 0;
 	render_load_sprite(client, "test.png", entity);
 	return 0;
 }
@@ -39,27 +43,46 @@ void client_raylib_init(void) {
 }
 
 void client_start_loop(client_t* client) {
-	float lag = 0.f;
+#if defined(PLATFORM_WEB)
+	emscripten_set_main_loop_arg(client_start_emscripten_loop, client, 0, 1);
+	return;
+#endif
+	client_start_native_loop(client);
+}
 
+void client_start_native_loop(client_t* client) {
 	while(!client->quit) {
-		float deltaTime = GetFrameTime();
-		lag += deltaTime;
-		client_handle_input(client);
-		// This needs to handle the difference between fps and
-		// tickrate for justpressed events
-		// maybe do input handling in normal update, then reset justpressed
-		// after fixed update
-
-		while(lag >= client->tickrate) {
-			lag -= client->tickrate;
-			// if(client->isclient) {
-			client_update(client, client->tickrate);
-			//input_reset(&client->input);
-			// move this to game, so server can use it too
-		}
-		client_render(client);
+		client_main_loop(client);
 		client->quit |= WindowShouldClose();
 	}
+	client_deinit(client);
+}
+
+#if defined(PLATFORM_WEB)
+void client_start_emscripten_loop(void* user_data) {
+	client_t* client = (client_t*)user_data;
+	client_main_loop(client);
+}
+#endif
+
+void client_main_loop(client_t* client) {
+	float lag		= 0.f;
+	float deltaTime = GetFrameTime();
+	lag += deltaTime;
+	client_handle_input(client);
+	// This needs to handle the difference between fps and
+	// tickrate for justpressed events
+	// maybe do input handling in normal update, then reset justpressed
+	// after fixed update
+
+	while(lag >= client->tickrate) {
+		lag -= client->tickrate;
+		// if(client->isclient) {
+		client_update(client, client->tickrate);
+		//input_reset(&client->input);
+		// move this to game, so server can use it too
+	}
+	client_render(client);
 }
 
 void client_handle_input(client_t* client) {

@@ -15,6 +15,9 @@ typedef struct client {
 
 int client_init(client_t* client);
 void client_start_loop(client_t* client);
+void client_start_native_loop(client_t* client);
+void client_start_emscripten_loop(void* user_data);
+void client_main_loop(client_t* client);
 void client_raylib_init(void);
 void client_handle_input(client_t* client);
 void client_update(client_t* client, float dt);
