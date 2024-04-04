@@ -53,6 +53,10 @@ endif ()
 #target_include_directories(raylib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/raylib/src/)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
 
+#file(GLOB luajit_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/*.c)
+#add_library(luajit STATIC ${luajit_sources})
+#target_include_directories(luajit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/)
+
 # ---- Create executable ----
 # add your source files here
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
@@ -71,6 +75,7 @@ target_enable_clang_tidy(${PROJECT_NAME})
 #target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
+#target_link_libraries(${PROJECT_NAME} luajit)
 #target_link_libraries(${PROJECT_NAME} enet)
 
 # --- Create Tests ---
