@@ -1,8 +1,6 @@
 # wonky-c
 
-##  Plans
-
-### UI
+## UI
 * system with support for lists of buttons. that's the main thing for now
 * potential support for lua, more dynamic and easier to iterate.
 
