@@ -1,10 +1,12 @@
 # wonky-c
 
 ##  Plans
-* UI
-** system with support for lists of buttons. that's the main thing for now
-** potential support for lua, more dynamic and easier to iterate.
 
+### UI
+* system with support for lists of buttons. that's the main thing for now
+* potential support for lua, more dynamic and easier to iterate.
+
+## Systems
 * Lua support, think it could be cool for modding support and easy iteration, hot reloading?
 * Reworking into better ecs system
 * the game itself lol
