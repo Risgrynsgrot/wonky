@@ -5,6 +5,11 @@
 #include <raylib.h>
 #include <stdlib.h>
 
+#define PICO_ECS_MAX_SYSTEMS 16
+#define PICO_ECS_MAX_COMPONENTS 64
+#define PICO_ECS_IMPLEMENTATION
+#include "pico_ecs.h"
+
 #if defined(PLATFORM_WEB)
 #	include <emscripten/emscripten.h>
 #endif
@@ -12,29 +17,24 @@
 int client_init(client_t* client) {
 	client->quit	 = false;
 	client->tickrate = 1.f / 64.f;
-	entity_fill_empty(client);
-
-	//if(SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-	//	fprintf(stderr, "SDL_Init error: %s\n", SDL_GetError());
-	//	return 1;
-	//}
 
 	//render_setup();
 
 	client_raylib_init();
 
-	client->components = malloc(sizeof(components_t));
-
 	client->input_map[0] = input_init();
 
-	entity_t entity = entity_new(client);
-	component_add(client->components, entity, COMP_DRAW_SPRITE);
-	component_add(client->components, entity, COMP_POSITION);
-	component_add(client->components, entity, COMP_VELOCITY);
-	component_add(client->components, entity, COMP_INPUT);
-	comp_input_t* input = &client->components->input[entity.id];
+	client->ecs = ecs_new(100, NULL);
+
+	ecs_id_t entity = ecs_create(client->ecs);
+	ecs_add(client->ecs, entity, id_comp_position, NULL);
+	ecs_add(client->ecs, entity, id_comp_velocity, NULL);
+	ecs_add(client->ecs, entity, id_comp_draw_sprite, NULL);
+	ecs_add(client->ecs, entity, id_comp_input, NULL);
+
+	comp_input_t* input = ecs_get(client->ecs, entity, id_comp_input);
 	input->input_id		= 0;
-	render_load_sprite(client, "test.png", entity);
+	render_load_sprite(client->ecs, "test.png", entity);
 	return 0;
 }
 
@@ -108,7 +108,7 @@ void client_render(client_t* client) {
 int client_deinit(client_t* client) {
 	//SDL_DestroyWindow(client->window);
 	//SDL_Quit();
-	free(client->components);
+	ecs_free(client->ecs);
 	CloseWindow();
 	return EXIT_SUCCESS;
 }

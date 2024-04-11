@@ -1,5 +1,7 @@
 #pragma once
 #include "raylib.h"
+#include "pico_ecs.h"
+#include "systems.h"
 
 typedef struct client client_t;
 
@@ -13,5 +15,5 @@ typedef struct input_map {
 } input_map_t;
 
 input_map_t input_init(void);
-void input_handle(client_t* client);
-void input_move(client_t* client);
+ECS_DECL_SYSTEM(input_handle);
+ECS_DECL_SYSTEM(input_move);

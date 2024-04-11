@@ -1,15 +1,12 @@
 #pragma once
-#include "components.h"
-#include "ecs.h"
 #include "inputsystem.h"
+#include "pico_ecs.h"
 
 typedef struct client {
 	float tickrate;
 	//input_t input;
     //graphics_t graphics;
-    components_t* components;
-    int empty_ids[MAX_ENTITIES];
-    int empty_id_count;
+	ecs_t* ecs;
     bool quit;
 	input_map_t input_map[8];
 } client_t;

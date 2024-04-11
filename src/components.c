@@ -1,8 +1,13 @@
 #include "components.h"
 
-void component_add(components_t* components, entity_t entity, component_type_t component) {
-	components->c_mask[entity.id] |= component;
-}
-void component_remove(components_t* components, entity_t entity, component_type_t component) {
-	components->c_mask[entity.id] &= ~component;
+void register_components(ecs_t* ecs) {
+	ECS_REGISTER_COMPONENT(ecs, comp_position);
+	ECS_REGISTER_COMPONENT(ecs, comp_rotation);
+	ECS_REGISTER_COMPONENT(ecs, comp_velocity);
+	ECS_REGISTER_COMPONENT(ecs, comp_input);
+	ECS_REGISTER_COMPONENT(ecs, comp_area_box);
+	ECS_REGISTER_COMPONENT(ecs, comp_col_box);
+	ECS_REGISTER_COMPONENT(ecs, comp_draw_sprite);
+	ECS_REGISTER_COMPONENT(ecs, comp_draw_box);
+	ECS_REGISTER_COMPONENT(ecs, comp_draw_circle);
 }

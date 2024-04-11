@@ -1,4 +1,5 @@
 #include "inputsystem.h"
+#include "components.h"
 #include "gameclient.h"
 
 input_map_t input_init(void) {
@@ -12,37 +13,46 @@ input_map_t input_init(void) {
 	return result;
 }
 
-void input_handle(client_t* client) {
-	input_map_t* keymap = client->input_map;
+ecs_ret_t input_handle(ecs_t* ecs,
+					   ecs_id_t* entities,
+					   int entity_count,
+					   ecs_dt_t dt,
+					   void* udata) {
+	(void)dt;
+	input_map_t* keymap = udata;
 
-	for(int i = 0; i < MAX_ENTITIES; i++) {
-		component_type_t* mask = client->components->c_mask;
-		comp_input_t* inputs   = client->components->input;
+	for(int i = 0; i < entity_count; i++) {
+		ecs_id_t id			= entities[i];
+		comp_input_t* input = ecs_get(ecs, id, id_comp_input);
 
-		if((mask[i] & (COMP_INPUT)) == 0) {
-			continue;
-		}
 		Vector2 direction;
-		int input_id = inputs[i].input_id;
-		direction.x = IsKeyDown(keymap[input_id].right) - IsKeyDown(keymap[input_id].left);
-		direction.y = IsKeyDown(keymap[input_id].down) - IsKeyDown(keymap[input_id].up);
-		inputs[i].direction = direction;
-		inputs[i].interact = IsKeyPressed(keymap[input_id].interact);
-		inputs[i].open_inventory = IsKeyPressed(keymap[input_id].open_inventory);
+		int input_id = input->input_id;
+		direction.x	 = IsKeyDown(keymap[input_id].right) -
+					  IsKeyDown(keymap[input_id].left);
+		direction.y =
+			IsKeyDown(keymap[input_id].down) - IsKeyDown(keymap[input_id].up);
+		input->direction	  = direction;
+		input->interact		  = IsKeyPressed(keymap[input_id].interact);
+		input->open_inventory = IsKeyPressed(keymap[input_id].open_inventory);
 	}
+	return 0;
 }
 
-void input_move(client_t* client) {
+ecs_ret_t input_move(ecs_t* ecs,
+					 ecs_id_t* entities,
+					 int entity_count,
+					 ecs_dt_t dt,
+					 void* udata) {
 
-	for(int i = 0; i < MAX_ENTITIES; i++) {
-		component_type_t* mask = client->components->c_mask;
-		comp_input_t* inputs   = client->components->input;
-		comp_velocity_t* velocities   = client->components->velocity;
+	(void)dt;
+	(void)udata;
 
-		if((mask[i] & (COMP_INPUT | COMP_VELOCITY)) == 0) {
-			continue;
-		}
+	for(int i = 0; i < entity_count; i++) {
+		ecs_id_t id = entities[i];
+		comp_input_t* input		= ecs_get(ecs, id, id_comp_input);
+		comp_velocity_t* velocity		= ecs_get(ecs, id, id_comp_velocity);
 
-		velocities[i].value = inputs[i].direction;
+		velocity->value = input->direction;
 	}
+	return 0;
 }
