@@ -1,12 +1,17 @@
 #include "rendersystem.h"
 #include "components.h"
 #include "raylib.h"
+#include <stdio.h>
 
-void register_render_systems(ecs_t* ecs) {
+void ecs_register_render_systems(ecs_t* ecs) {
 	sys_render_sprites =
 		ecs_register_system(ecs, render_sprites, NULL, NULL, NULL);
+	ecs_require_component(ecs, sys_render_sprites, id_comp_position);
+	ecs_require_component(ecs, sys_render_sprites, id_comp_draw_sprite);
+	printf("sys_render_sprites: %d", sys_render_sprites);
 }
 
+ecs_id_t sys_render_sprites;
 ecs_ret_t render_sprites(ecs_t* ecs,
 						 ecs_id_t* entities,
 						 int entity_count,
@@ -20,6 +25,7 @@ ecs_ret_t render_sprites(ecs_t* ecs,
 		comp_draw_sprite_t* sprite = ecs_get(ecs, id, id_comp_draw_sprite);
 		comp_position_t* position  = ecs_get(ecs, id, id_comp_position);
 
+		//printf("texture pos: %f, %f\n", position->value.x, position->value.y);
 		sprite->texture.width  = sprite->w;
 		sprite->texture.height = sprite->h;
 		DrawTexture(sprite->texture,

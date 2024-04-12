@@ -75,7 +75,7 @@ ECS_COMPONENT_T(comp_draw_circle) {
 	Color color;
 } comp_draw_circle_t;
 
-void register_components(ecs_t* ecs);
+void ecs_components_register(ecs_t* ecs);
 
 //typedef struct comp_draw_text {
 //	char text[MAX_TEXT_LENGTH];

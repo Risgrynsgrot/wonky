@@ -15,5 +15,6 @@ typedef struct input_map {
 } input_map_t;
 
 input_map_t input_init(void);
+void ecs_register_input_systems(ecs_t* ecs, input_map_t* keymap);
 ECS_DECL_SYSTEM(input_handle);
 ECS_DECL_SYSTEM(input_move);

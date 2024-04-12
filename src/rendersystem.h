@@ -6,7 +6,7 @@ typedef struct client client_t;
 typedef struct entity entity_t;
 
 
-void register_render_systems(ecs_t* ecs);
+void ecs_register_render_systems(ecs_t* ecs);
 ECS_DECL_SYSTEM(render_sprites);
 
 void render_load_sprite(ecs_t* ecs, const char* path, ecs_id_t entity);

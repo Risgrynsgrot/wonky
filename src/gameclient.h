@@ -4,6 +4,7 @@
 
 typedef struct client {
 	float tickrate;
+	float lag;
 	//input_t input;
     //graphics_t graphics;
 	ecs_t* ecs;
