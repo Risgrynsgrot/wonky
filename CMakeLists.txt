@@ -55,7 +55,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
 
 #file(GLOB luajit_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/*.c)
 #add_library(luajit STATIC ${luajit_sources})
-#target_include_directories(luajit PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/)
+add_library(luajit STATIC IMPORTED)
+target_include_directories(luajit INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/)
+set_target_properties(luajit PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/libluajit.a)
 
 # ---- Create executable ----
 # add your source files here
@@ -75,7 +77,7 @@ target_enable_clang_tidy(${PROJECT_NAME})
 #target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
-#target_link_libraries(${PROJECT_NAME} luajit)
+target_link_libraries(${PROJECT_NAME} luajit)
 #target_link_libraries(${PROJECT_NAME} enet)
 
 # --- Create Tests ---

@@ -1,5 +1,6 @@
 #include "gameclient.h"
 #include "components.h"
+#include "luajit.h"
 #include "movesystem.h"
 #include "rendersystem.h"
 #include <raylib.h>
@@ -18,7 +19,7 @@
 int client_init(client_t* client) {
 	client->quit	 = false;
 	client->tickrate = 1.f / 64.f;
-	client->lag = 0.f;
+	client->lag		 = 0.f;
 
 	//render_setup();
 
