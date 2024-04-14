@@ -41,7 +41,7 @@ int client_init(client_t* client) {
 
 	comp_input_t* input = ecs_get(client->ecs, entity, id_comp_input);
 	input->input_id		= 0;
-	render_load_sprite(client->ecs, "test.png", entity);
+	render_load_sprite(client->ecs, "assets/test.png", entity);
 	return 0;
 }
 

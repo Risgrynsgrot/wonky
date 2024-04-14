@@ -1,0 +1,24 @@
+{ "object":
+    {
+     "gid":1,
+     "height":32,
+     "id":2,
+     "name":"",
+     "properties":[
+            {
+             "name":"script",
+             "type":"string",
+             "value":"luatest.lua"
+            }],
+     "rotation":0,
+     "type":"",
+     "visible":true,
+     "width":32
+    },
+ "tileset":
+    {
+     "firstgid":1,
+     "source":"test.tsj"
+    },
+ "type":"template"
+}

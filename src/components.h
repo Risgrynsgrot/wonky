@@ -1,5 +1,6 @@
 #pragma once
 #include "pico_ecs.h"
+#include <lua.h>
 #include <raylib.h>
 #include <stdbool.h>
 
@@ -14,6 +15,7 @@
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
 } comp_position_t;
+comp_position_t lua_get_position(lua_State* L);
 
 ECS_COMPONENT_T(comp_rotation) {
 	float angle;

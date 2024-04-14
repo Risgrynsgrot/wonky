@@ -1,0 +1,22 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+    },
+    "last.imagePath": "/home/risgrynsgrot/projects/wonky-c/assets",
+    "last.objectTemplatePath": "/home/risgrynsgrot/projects/wonky-c/assets",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "json",
+    "openFiles": [
+    ],
+    "project": "wonky.tiled-project",
+    "property.type": "file",
+    "recentFiles": [
+    ],
+    "tileset.lastUsedFormat": "json"
+}
