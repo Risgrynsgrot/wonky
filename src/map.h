@@ -144,3 +144,5 @@ typedef struct ldtk_map {
 	const char* world_layout;
 	//worlds
 } ldtk_map_t;
+
+bool map_load_ldtk(const char* path, ldtk_map_t* map);
