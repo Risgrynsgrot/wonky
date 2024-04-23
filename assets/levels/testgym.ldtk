@@ -11,7 +11,7 @@
 	"iid": "3cbf4ff0-d7b0-11ee-a346-8125a7a5beda",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 8,
+	"nextUid": 9,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "GridVania",
@@ -222,6 +222,43 @@
 					"allowedRefsEntityUid": null,
 					"allowedRefTags": [],
 					"tilesetUid": null
+				},
+				{
+					"identifier": "imagePath",
+					"doc": null,
+					"__type": "FilePath",
+					"uid": 8,
+					"type": "F_Path",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"exportToToc": false,
+					"searchable": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
 				}
 			]
 		}
@@ -307,12 +344,37 @@
 							"height": 16,
 							"defUid": 5,
 							"px": [432,144],
-							"fieldInstances": [{ "__identifier": "Name", "__type": "String", "__value": "Yesman", "__tile": null, "defUid": 7, "realEditorValues": [{
-								"id": "V_String",
-								"params": ["Yesman"]
-							}] }],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": "Yesman", "__tile": null, "defUid": 7, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Yesman"]
+								}] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": "testgym.ldtk", "__tile": null, "defUid": 8, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["testgym.ldtk"]
+								}] }
+							],
 							"__worldX": 432,
 							"__worldY": -112
+						},
+						{
+							"__identifier": "Ya",
+							"__grid": [45,11],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"iid": "a6292d00-d7b0-11ee-af51-b78148670b55",
+							"width": 16,
+							"height": 16,
+							"defUid": 5,
+							"px": [720,176],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] }
+							],
+							"__worldX": 720,
+							"__worldY": -80
 						}
 					]
 				},

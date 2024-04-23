@@ -12,6 +12,8 @@ endif ()
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/json-c)
+
 add_library(luajit STATIC IMPORTED)
 target_include_directories(luajit INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/)
 set_target_properties(luajit PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/libluajit.a)
@@ -29,7 +31,7 @@ else()
 endif()
 
 # link to your dependencies' targets here
-#target_link_libraries(${PROJECT_NAME} json-c)
+target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} luajit)
