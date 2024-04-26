@@ -44,6 +44,9 @@ Tamagotchi like pet system?
 
 Weather system
 
+If I have some missions, potentially have a time warp thing to play missions
+again.
+
 ## Style
 I like the idea of a bit of a surreal theme, to allow for weird stuff.
 
