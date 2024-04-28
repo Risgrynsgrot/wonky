@@ -11,7 +11,7 @@
 	"iid": "3cbf4ff0-d7b0-11ee-a346-8125a7a5beda",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 9,
+	"nextUid": 11,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "GridVania",
@@ -259,6 +259,43 @@
 					"allowedRefsEntityUid": null,
 					"allowedRefTags": [],
 					"tilesetUid": null
+				},
+				{
+					"identifier": "gamer",
+					"doc": null,
+					"__type": "Bool",
+					"uid": 9,
+					"type": "F_Bool",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"exportToToc": false,
+					"searchable": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
 				}
 			]
 		}
@@ -334,7 +371,7 @@
 					"entityInstances": [
 						{
 							"__identifier": "Ya",
-							"__grid": [27,9],
+							"__grid": [23,13],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": null,
@@ -343,7 +380,7 @@
 							"width": 16,
 							"height": 16,
 							"defUid": 5,
-							"px": [432,144],
+							"px": [368,208],
 							"fieldInstances": [
 								{ "__identifier": "Name", "__type": "String", "__value": "Yesman", "__tile": null, "defUid": 7, "realEditorValues": [{
 									"id": "V_String",
@@ -352,10 +389,11 @@
 								{ "__identifier": "imagePath", "__type": "FilePath", "__value": "testgym.ldtk", "__tile": null, "defUid": 8, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["testgym.ldtk"]
-								}] }
+								}] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] }
 							],
-							"__worldX": 432,
-							"__worldY": -112
+							"__worldX": 368,
+							"__worldY": -48
 						},
 						{
 							"__identifier": "Ya",
@@ -371,10 +409,114 @@
 							"px": [720,176],
 							"fieldInstances": [
 								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
-								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] }
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] }
 							],
 							"__worldX": 720,
 							"__worldY": -80
+						},
+						{
+							"__identifier": "Ya",
+							"__grid": [24,28],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"iid": "e1bc4e20-fec0-11ee-8bff-edc152d7cce1",
+							"width": 16,
+							"height": 16,
+							"defUid": 5,
+							"px": [384,448],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] }
+							],
+							"__worldX": 384,
+							"__worldY": 192
+						},
+						{
+							"__identifier": "Ya",
+							"__grid": [43,18],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"iid": "ea121820-fec0-11ee-8bff-1b9fdcb8cd3f",
+							"width": 16,
+							"height": 16,
+							"defUid": 5,
+							"px": [688,288],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] }
+							],
+							"__worldX": 688,
+							"__worldY": 32
+						},
+						{
+							"__identifier": "Ya",
+							"__grid": [52,28],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"iid": "f4716dc0-fec0-11ee-8bff-41cc2b20a7fe",
+							"width": 16,
+							"height": 16,
+							"defUid": 5,
+							"px": [832,448],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [{
+									"id": "V_Bool",
+									"params": [ false ]
+								}] }
+							],
+							"__worldX": 832,
+							"__worldY": 192
+						},
+						{
+							"__identifier": "Ya",
+							"__grid": [15,4],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"iid": "d847f6f0-fec0-11ee-8bff-a1f2dfba0abd",
+							"width": 16,
+							"height": 16,
+							"defUid": 5,
+							"px": [240,64],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] }
+							],
+							"__worldX": 240,
+							"__worldY": -192
+						},
+						{
+							"__identifier": "Ya",
+							"__grid": [8,12],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"iid": "d9665f40-fec0-11ee-8bff-b58c5b1e2076",
+							"width": 16,
+							"height": 16,
+							"defUid": 5,
+							"px": [128,192],
+							"fieldInstances": [
+								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
+								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
+								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] }
+							],
+							"__worldX": 128,
+							"__worldY": -64
 						}
 					]
 				},
