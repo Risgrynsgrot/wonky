@@ -48,7 +48,7 @@ typedef struct ldtk_tile {
 	int t;
 } ldtk_tile_t;
 
-typedef struct ldtk_field_instance_value {
+typedef struct ldtk_field_value {
 	union {
 		int value_int;
 		float value_float;
@@ -59,36 +59,36 @@ typedef struct ldtk_field_instance_value {
 		ldtk_entity_ref_t value_entity_ref;
 	};
 
-} ldtk_field_instance_value_t;
+} ldtk_field_value_t;
 
-typedef struct ldtk_field_instance {
+typedef struct ldtk_field {
 	const char* identifier;
 	ldtk_ts_rect_t tile;
 	const char* type;
-	ldtk_field_instance_value_t value;
+	ldtk_field_value_t value;
 	int32_t def_uid;
-} ldtk_field_instance_t;
+} ldtk_field_t;
 
-typedef struct ldtk_entity_instance {
+typedef struct ldtk_entity {
 	Vector2 grid;
 	const char* identifier;
 	Vector2 pivot;
 	const char* smart_color;
 	const char** tags;
 	int32_t tag_count;
-	ldtk_tile_t tile;
+	ldtk_ts_rect_t tile;
 	int32_t world_x;
 	int32_t world_y;
 	int32_t def_uid;
-	ldtk_field_instance_t* field_instances;
+	ldtk_field_t* field_instances;
 	int32_t field_instance_count;
 	int32_t width;
 	int32_t height;
 	const char* iid;
 	Vector2 px;
-} ldtk_entity_instance_t;
+} ldtk_entity_t;
 
-typedef struct ldtk_layer_instance {
+typedef struct ldtk_layer {
 	int32_t c_hei;
 	int32_t c_wid;
 	int32_t grid_size;
@@ -101,8 +101,8 @@ typedef struct ldtk_layer_instance {
 	const char* type;
 	ldtk_tile_t* auto_layer_tiles;
 	int32_t auto_layer_tile_count;
-	ldtk_entity_instance_t* entity_instances;
-	int32_t entity_instance_count;
+	ldtk_entity_t* entities;
+	int32_t entity_count;
 	ldtk_tile_t* grid_tiles;
 	int32_t grid_tile_count;
 	const char* iid;
@@ -114,17 +114,17 @@ typedef struct ldtk_layer_instance {
 	int32_t px_offset_x;
 	int32_t px_offset_y;
 	bool visible;
-} ldtk_layer_instance_t;
+} ldtk_layer_t;
 
 typedef struct ldtk_level {
 	const char* bg_rel_path;
 	const char* external_rel_path;
-	ldtk_field_instance_t* field_instances;
-	int32_t field_instance_count;
+	ldtk_field_t* fields;
+	int32_t field_count;
 	const char* identifier;
 	const char* iid;
-	ldtk_layer_instance_t* layer_instances;
-	int32_t layer_instance_count;
+	ldtk_layer_t* layers;
+	int32_t layer_count;
 	int32_t px_hei;
 	int32_t px_wid;
 	int32_t uid;
