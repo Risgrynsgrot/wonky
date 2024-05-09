@@ -1,6 +1,7 @@
 #include "gameclient.h"
 #include "components.h"
 #include "luajit.h"
+#include "map.h"
 #include "movesystem.h"
 #include "rendersystem.h"
 #include <raylib.h>
@@ -27,7 +28,10 @@ int client_init(client_t* client) {
 
 	client->input_map[0] = input_init();
 
-	client->ecs = ecs_new(100, NULL);
+	ldtk_map_t map;
+	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+
+						 client->ecs = ecs_new(100, NULL);
 	ecs_components_register(client->ecs);
 	ecs_register_render_systems(client->ecs);
 	ecs_register_input_systems(client->ecs, client->input_map);
