@@ -1,4 +1,5 @@
 #include "map.h"
+#include "json_object.h"
 #include <json-c/json.h>
 #include <stdio.h>
 #include <string.h>
@@ -81,7 +82,7 @@ bool map_load_ldtk_layers(json_object* layers, ldtk_level_t* level) {
 
 		json_object* entities =
 			json_object_object_get(layer_json, "entityInstances");
-		JSON_ARR_LEN(layer_json, entities, layer->entity_count);
+		layer->entity_count = json_object_array_length(entities);
 		map_load_ldtk_entities(entities, layer);
 	}
 
@@ -132,12 +133,12 @@ bool map_load_ldtk_levels(json_object* levels, ldtk_map_t* map) {
 
 		json_object* fields =
 			json_object_object_get(level_json, "fieldInstances");
-		JSON_ARR_LEN(level_json, fields, level->field_count);
+		level->field_count = json_object_array_length(fields);
 		map_load_ldtk_fields(fields, level);
 
 		json_object* layers =
 			json_object_object_get(level_json, "layerInstances");
-		JSON_ARR_LEN(level_json, layers, level->layer_count);
+		level->layer_count = json_object_array_length(layers);
 		map_load_ldtk_layers(layers, level);
 	}
 	return true;
@@ -162,7 +163,7 @@ bool map_load_ldtk(const char* path, ldtk_map_t* map) {
 	JSON_GET(boolean, root, externalLevels, map->external_levels);
 
 	json_object* levels = json_object_object_get(root, "levels");
-	JSON_ARR_LEN(root, levels, map->level_count);
+	map->level_count = json_object_array_length(levels);
 	map_load_ldtk_levels(levels, map);
 
 	json_object_put(root);

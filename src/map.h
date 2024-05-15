@@ -5,21 +5,36 @@
 
 #define JSON_GET(TYPE, ROOT, JSON_NAME, RESULT) \
 do { \
-	json_object* JSON_NAME##_json = json_object_object_get(ROOT, #JSON_NAME);\
+	printf("l: %d, f: %s, loading:%s\n", __LINE__, __FILE__, #JSON_NAME);\
+	json_object* JSON_NAME##_json;\
+	bool result = json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);\
+	printf("got value: %i\n", result);\
+	if(!result) {\
+		printf("%s doesn't exist, skipping\n", #JSON_NAME);\
+		break;\
+	}\
+	if (json_object_get_type(JSON_NAME##_json) == json_type_null){ \
+		printf("%s is null, skipping\n", #JSON_NAME);\
+		break;\
+	}\
 	RESULT = json_object_get_##TYPE(JSON_NAME##_json);\
 	printf("loaded %s.\n", #JSON_NAME);\
 } while(0)
 
-#define JSON_ARR_LEN(ROOT, JSON_NAME, RESULT) \
-do { \
-	json_object* JSON_NAME##_json = json_object_object_get(ROOT, #JSON_NAME);\
-	RESULT = json_object_array_length(JSON_NAME##_json);\
-} while(0)
-
-
 #define JSON_GET_STR(ROOT, JSON_NAME, RESULT) \
 do { \
-	json_object* JSON_NAME##_json = json_object_object_get(ROOT, #JSON_NAME);\
+	printf("l: %d, f: %s, loadString:%s\n", __LINE__, __FILE__, #JSON_NAME);\
+	json_object* JSON_NAME##_json;\
+	bool result = json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);\
+	printf("got value: %i\n", result);\
+	if(!result){\
+		printf("%s is null, skipping\n", #JSON_NAME);\
+		break;\
+	}\
+	if (json_object_get_type(JSON_NAME##_json) == json_type_null){ \
+		printf("%s is null, skipping\n", #JSON_NAME);\
+		break;\
+	}\
 	const char* temp = json_object_get_string(JSON_NAME##_json);\
 	strcpy(RESULT, temp);\
 	printf("loaded %s: %s\n", #JSON_NAME, RESULT);\
