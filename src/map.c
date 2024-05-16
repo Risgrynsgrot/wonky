@@ -1,4 +1,5 @@
 #include "map.h"
+#include "pico_ecs.h"
 #include "json_object.h"
 #include <json-c/json.h>
 #include <stdio.h>
@@ -167,5 +168,15 @@ bool map_load_ldtk(const char* path, ldtk_map_t* map) {
 	map_load_ldtk_levels(levels, map);
 
 	json_object_put(root);
+	return true;
+}
+
+bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs) {
+
+	for(int i = 0; i < layer->entity_count; i++) {
+		ldtk_entity_t* entity = &layer->entities[i];
+		entity->
+	}
+
 	return true;
 }

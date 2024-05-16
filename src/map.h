@@ -105,8 +105,8 @@ typedef struct ldtk_entity {
 	int32_t world_x;
 	int32_t world_y;
 	int32_t def_uid;
-	ldtk_field_t* field_instances;
-	int32_t field_instance_count;
+	ldtk_field_t* fields;
+	int32_t field_count;
 	int32_t width;
 	int32_t height;
 	char iid[512];
@@ -183,3 +183,6 @@ typedef struct ldtk_map {
 } ldtk_map_t;
 
 bool map_load_ldtk(const char* path, ldtk_map_t* map);
+
+typedef struct ecs_s ecs_t;
+bool map_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs);
