@@ -52,3 +52,6 @@ I like the idea of a bit of a surreal theme, to allow for weird stuff.
 
 Modern things like elevators, buttons, machines. But also magic things like
 portals and such.
+
+### FONTS
+https://www.dafont.com/dico.font?l[]=10&l[]=1
