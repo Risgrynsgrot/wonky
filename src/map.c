@@ -1,6 +1,8 @@
 #include "map.h"
-#include "pico_ecs.h"
 #include "json_object.h"
+#include "pico_ecs.h"
+#include "rendersystem.h"
+#include <assert.h>
 #include <json-c/json.h>
 #include <stdio.h>
 #include <string.h>
@@ -43,6 +45,8 @@ bool map_load_ldtk_entities(json_object* entities, ldtk_layer_t* layer) {
 		JSON_GET_STR(entity_json, iid, entity->iid);
 		JSON_GET(int, entity_json, width, entity->width);
 		JSON_GET(int, entity_json, height, entity->height);
+		JSON_GET(int, entity_json, __worldX, entity->world_x);
+		JSON_GET(int, entity_json, __worldY, entity->world_y);
 		JSON_GET(int, entity_json, defUid, entity->def_uid);
 		map_load_ldtk_vector(entity_json, "px", &entity->px);
 		//FIELD INSTANCES
@@ -129,7 +133,9 @@ bool map_load_ldtk_levels(json_object* levels, ldtk_map_t* map) {
 		JSON_GET(int, level_json, worldDepth, level->world_depth);
 		JSON_GET(int, level_json, pxWid, level->px_wid);
 		JSON_GET(int, level_json, pxHei, level->px_hei);
-		JSON_GET_STR(level_json, bgRelPath, level->bg_rel_path); //THIS CRASHES BECAUSE IT'S OPTIONAL
+		JSON_GET_STR(level_json,
+					 bgRelPath,
+					 level->bg_rel_path); //THIS CRASHES BECAUSE IT'S OPTIONAL
 		JSON_GET_STR(level_json, externalRelPath, level->external_rel_path);
 
 		json_object* fields =
@@ -164,18 +170,40 @@ bool map_load_ldtk(const char* path, ldtk_map_t* map) {
 	JSON_GET(boolean, root, externalLevels, map->external_levels);
 
 	json_object* levels = json_object_object_get(root, "levels");
-	map->level_count = json_object_array_length(levels);
+	map->level_count	= json_object_array_length(levels);
 	map_load_ldtk_levels(levels, map);
 
 	json_object_put(root);
 	return true;
 }
 
+ldtk_layer_t* level_get_layer(ldtk_level_t* level, const char* identifier) {
+	for(int i = 0; i < level->layer_count; i++) {
+		if(strcmp(level->layers[i].identifier, identifier) == 0) {
+			return &level->layers[i];
+		}
+	}
+	assert(false && "couldn't get layer!");
+	return NULL;
+}
+
 bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs) {
 
 	for(int i = 0; i < layer->entity_count; i++) {
-		ldtk_entity_t* entity = &layer->entities[i];
-		entity->
+		ldtk_entity_t* lvl_entity = &layer->entities[i];
+		printf("spawning entity: %s\n", lvl_entity->identifier);
+		ecs_id_t entity = ecs_create(ecs);
+		comp_position_t* position =
+			ecs_add(ecs, entity, id_comp_position, NULL);
+		position->value.x = lvl_entity->world_x;
+		position->value.y = lvl_entity->world_y;
+		printf("entity position: %d, %d\n",
+			   lvl_entity->world_x,
+			   lvl_entity->world_y);
+
+		
+		ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
+		render_load_sprite(ecs, "assets/test.png", entity);
 	}
 
 	return true;

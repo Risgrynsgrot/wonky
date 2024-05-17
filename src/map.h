@@ -1,5 +1,5 @@
 #pragma once
-#include <raymath.h>
+#include "components.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -183,6 +183,7 @@ typedef struct ldtk_map {
 } ldtk_map_t;
 
 bool map_load_ldtk(const char* path, ldtk_map_t* map);
+ldtk_layer_t* level_get_layer(ldtk_level_t* level, const char* identifier);
 
 typedef struct ecs_s ecs_t;
-bool map_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs);
+bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs);

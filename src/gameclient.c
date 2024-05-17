@@ -28,14 +28,18 @@ int client_init(client_t* client) {
 
 	client->input_map[0] = input_init();
 
-	ldtk_map_t map;
-	map_load_ldtk("assets/levels/testgym.ldtk", &map);
-
-						 client->ecs = ecs_new(100, NULL);
+	client->ecs = ecs_new(100, NULL);
 	ecs_components_register(client->ecs);
 	ecs_register_render_systems(client->ecs);
 	ecs_register_input_systems(client->ecs, client->input_map);
 	ecs_register_move_systems(client->ecs);
+
+	ldtk_map_t map;
+	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0], "entities");
+	if(entity_layer != NULL) {
+		level_spawn_entities(entity_layer, client->ecs);
+	}
 
 	ecs_id_t entity = ecs_create(client->ecs);
 	ecs_add(client->ecs, entity, id_comp_position, NULL);
@@ -50,7 +54,7 @@ int client_init(client_t* client) {
 }
 
 void client_raylib_init(void) {
-	InitWindow(800, 600, "Wonky!");
+	InitWindow(1280, 720, "Wonky!");
 }
 
 void client_start_loop(client_t* client) {
@@ -90,7 +94,6 @@ void client_main_loop(client_t* client) {
 	while(client->lag >= client->tickrate) {
 		client->lag -= client->tickrate;
 		// if(client->isclient) {
-		printf("Update!\n");
 		client_update(client, client->tickrate);
 		//input_reset(&client->input);
 		// move this to game, so server can use it too
