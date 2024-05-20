@@ -11,6 +11,12 @@
 * the game itself lol
 * Level loading via LdTk or Tiled
 
+### SQLITE for entity setup
+One table per component
+One table for components per entitytype
+Maybe use this for dialog as well
+
+### LUA
 * Lua for all entity setup, example:
 ```lua
 function onCreate(e)
