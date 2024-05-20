@@ -2,7 +2,16 @@
 #include "pico_ecs.h"
 #include <lua.h>
 #include <raylib.h>
+#include <raymath.h>
 #include <stdbool.h>
+
+typedef struct ecs_component_string {
+	char name[64];
+	ecs_id_t id;
+} ecs_component_string_t;
+
+#define COMPONENT_COUNT 64 //This should be a constant in pico ecs, can't get it to work now though
+extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define ECS_COMPONENT_T(T) \
 	extern ecs_id_t id_##T;\
@@ -10,7 +19,8 @@
 
 #define ECS_REGISTER_COMPONENT(ECS, T) \
 	id_##T = \
-		ecs_register_component(ECS, sizeof(T##_t), NULL, NULL);
+		ecs_register_component(ECS, sizeof(T##_t), NULL, NULL); \
+	ecs_component_register_string((ecs_component_string_t){.name = #T, .id = id_##T});
 
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
@@ -77,6 +87,8 @@ ECS_COMPONENT_T(comp_draw_circle) {
 	Color color;
 } comp_draw_circle_t;
 
+void ecs_component_register_string(ecs_component_string_t value);
+void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
 void ecs_components_register(ecs_t* ecs);
 
 //typedef struct comp_draw_text {
