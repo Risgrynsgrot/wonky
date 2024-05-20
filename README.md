@@ -16,6 +16,26 @@ One table per component
 One table for components per entitytype
 Maybe use this for dialog as well
 
+PseudoCode
+
+    id = SELECT id FROM entityTypes WHERE name = "old_man"
+    SELECT path FROM compDrawSprite WHERE entityId = id
+    
+
+### JSON for entity setup
+
+    {
+        "type": "old_man"
+        "components": [
+            "drawSprite": {
+                "path": "assets/sprites/old_man.png"
+            }
+            "dialog": {
+                "path": "assets/dialog/oldman.csv"
+            }
+        ]
+    }
+
 ### LUA
 * Lua for all entity setup, example:
 ```lua

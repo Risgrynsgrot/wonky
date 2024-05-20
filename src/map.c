@@ -203,7 +203,7 @@ bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs) {
 
 		
 		ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
-		render_load_sprite(ecs, "assets/test.png", entity);
+		render_load_sprite(ecs, "assets/lildude.png", entity);
 	}
 
 	return true;
