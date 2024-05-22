@@ -1,12 +1,16 @@
 #include "gameclient.h"
 #include "components.h"
-#include "luajit.h"
 #include "map.h"
 #include "movesystem.h"
 #include "rendersystem.h"
+#include "scriptloader.h"
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+//TEMP
+#include "lualib.h"
+#include "lauxlib.h"
 
 #define PICO_ECS_MAX_SYSTEMS 16
 #define PICO_ECS_MAX_COMPONENTS 64
@@ -50,6 +54,16 @@ int client_init(client_t* client) {
 	comp_input_t* input = ecs_get(client->ecs, entity, id_comp_input);
 	input->input_id		= 0;
 	render_load_sprite(client->ecs, "assets/test.png", entity);
+
+	lua_State* L = script_lua_init();
+	const char* code = "print('hello from lua!')";
+	if(luaL_loadstring(L, code) == LUA_OK) {
+		if(lua_pcall(L, 0, 0, 0) == LUA_OK) {
+			lua_pop(L, lua_gettop(L));
+		}
+	}
+	script_lua_close(L);
+
 	return 0;
 }
 

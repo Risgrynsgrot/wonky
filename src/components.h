@@ -89,6 +89,7 @@ ECS_COMPONENT_T(comp_draw_circle) {
 
 void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
+ecs_id_t ecs_string_to_componentid(const char* value);
 void ecs_components_register(ecs_t* ecs);
 
 //typedef struct comp_draw_text {
