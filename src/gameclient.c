@@ -56,12 +56,9 @@ int client_init(client_t* client) {
 	render_load_sprite(client->ecs, "assets/test.png", entity);
 
 	lua_State* L = script_lua_init();
-	const char* code = "print('hello from lua!')";
-	if(luaL_loadstring(L, code) == LUA_OK) {
-		if(lua_pcall(L, 0, 0, 0) == LUA_OK) {
-			lua_pop(L, lua_gettop(L));
-		}
-	}
+
+	script_load(L, "assets/scripts/luatest.lua");
+
 	script_lua_close(L);
 
 	return 0;
