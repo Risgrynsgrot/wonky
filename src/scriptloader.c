@@ -54,6 +54,49 @@ const char* script_get_string(lua_State* L, const char* value) {
 		lua_pop(L, 1);
 		return result;
 	}
-	printf("LUA TRIED TO GET String %s BUT FAILED, RETURNING EMPTY STRING\n", value);
+	printf("LUA TRIED TO GET STRING %s BUT FAILED, RETURNING EMPTY STRING\n", value);
+	return "";
+}
+
+void* script_get_userdata(lua_State* L, const char* value) {
+	lua_getglobal(L, value);
+
+	if(lua_isuserdata(L, -1)) {
+		void* result = lua_touserdata(L, -1);
+		lua_pop(L, 1);
+		return result;
+	}
+	printf("LUA TRIED TO GET USERDATA %s BUT FAILED, RETURNING EMPTY STRING\n", value);
+	return NULL;
+}
+
+double lua_table_get_number(lua_State* L, const char* value) {
+	lua_getfield(L, -1, value);
+	if(lua_isnumber(L, -1)) {
+		double result = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		return result;
+	}
+	printf("LUA TRIED TO GET NUMBER %s BUT FAILED, RETURNING 0\n", value);
+	return 0;
+}
+int lua_table_get_int(lua_State* L, const char* value) {
+	lua_getfield(L, -1, value);
+	if(lua_isnumber(L, -1)) {
+		int result = lua_tointeger(L, -1);
+		lua_pop(L, 1);
+		return result;
+	}
+	printf("LUA TRIED TO GET INTEGER %s BUT FAILED, RETURNING 0\n", value);
+	return 0;
+}
+const char* lua_table_get_string(lua_State* L, const char* value) {
+	lua_getfield(L, -1, value);
+	if(lua_isstring(L, -1)) {
+		const char* result = lua_tostring(L, -1);
+		lua_pop(L, 1);
+		return result;
+	}
+	printf("LUA TRIED TO GET STRING %s BUT FAILED, RETURNING EMPTY STRING\n", value);
 	return "";
 }

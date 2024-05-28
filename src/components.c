@@ -4,6 +4,7 @@
 #include <lua.h>
 #include <stdio.h>
 #include <string.h>
+#include "scriptloader.h"
 
 ecs_id_t id_comp_position;
 ecs_id_t id_comp_rotation;
@@ -53,33 +54,43 @@ ecs_id_t ecs_string_to_componentid(const char* value) {
 	return 0;
 }
 
-int ecs_lua_add_position(lua_State* L) {
-	ecs_t* ecs				  = lua_touserdata(L, -2);
-	ecs_id_t entity			  = lua_tointeger(L, -3);
-	printf("entityID: %d\n", entity);
+int ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
+	ecs_t* ecs = script_get_userdata(L, "ecs");
+
 	comp_position_t* position = ecs_add(ecs, entity, id_comp_position, NULL);
 
-	lua_getfield(L, -1, "value");
-	lua_getfield(L, -1, "x");
-	position->value.x = lua_tonumber(L, -1);
-	lua_getfield(L, -2, "y");
-	position->value.y = lua_tonumber(L, -1);
+	lua_table_get(L, "value");
+	position->value.x = lua_table_get_number(L, "x");
+	position->value.y = lua_table_get_number(L, "y");
+	lua_pop(L, 1);
+	return 1;
+}
 
-	printf("Added position component from lua!: %f, %f",
-		   position->value.x,
-		   position->value.y);
+int ecs_lua_add_velocity(lua_State* L, ecs_id_t entity) {
+	ecs_t* ecs = script_get_userdata(L, "ecs");
+
+	comp_velocity_t* velocity = ecs_add(ecs, entity, id_comp_velocity, NULL);
+	lua_table_get(L, "value");
+	velocity->value.x = lua_table_get_number(L, "x");
+	velocity->value.y = lua_table_get_number(L, "y");
+	lua_pop(L, 1);
 	return 1;
 }
 
 int ecs_lua_add_component(lua_State* L) {
+	printf("waba?\n");
+	ecs_id_t entity	= lua_tointeger(L, -2);
 	if(lua_istable(L, -1)) {
 		lua_getfield(L, -1, "type");
 		if(lua_isstring(L, -1)) {
 			const char* component = lua_tostring(L, -1);
-			lua_pop(L, 2);
+			lua_pop(L, 1);
 			printf("component: %s\n", component);
 			if(ecs_string_to_componentid(component) == id_comp_position) {
-				return ecs_lua_add_position(L);
+				return ecs_lua_add_position(L, entity);
+			}
+			if(ecs_string_to_componentid(component) == id_comp_velocity) {
+				return ecs_lua_add_velocity(L, entity);
 			}
 		}
 		else {
@@ -93,6 +104,7 @@ int ecs_lua_add_component(lua_State* L) {
 }
 
 void ecs_components_register(ecs_t* ecs) {
+	
 	ecs_component_string_count = 0;
 	ECS_REGISTER_COMPONENT(ecs, comp_position);
 	ECS_REGISTER_COMPONENT(ecs, comp_rotation);
@@ -113,7 +125,7 @@ static const struct luaL_Reg ecs_methods[] = {
 void ecs_lua_register_module(lua_State* L) {
 	//int pos = lua_gettop(L);
 
-	luaL_register(L, "Ecs", ecs_methods);
+	luaL_register(L, "ECS", ecs_methods);
 	printf("registered methods\n");
 	//luaL_setfuncs(L, ecs_methods, 0);
 }

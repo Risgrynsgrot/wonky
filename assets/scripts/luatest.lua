@@ -6,13 +6,13 @@ function Luatest.testfunc(e)
 	position.y = position.y + 10
 end
 
-function Luatest.onCreate(ecs, e)
+function Luatest.onCreate(e)
 	print("HEJ")
 	local position = {
 		type = "comp_position",
 		value = {
-			x = 10,
-			y = 10
+			x = 800,
+			y = 800
 		}
 	}
 
@@ -21,7 +21,8 @@ function Luatest.onCreate(ecs, e)
 	--	burntime = 2.0
 	--}
 
-	Ecs.AddComponent(ecs, e, position)
+	print("entityID in lua: " .. tostring(e))
+	ECS.AddComponent(e, position)
 	print("HEJ2")
 	--ecs:add_component(e, flammable)
 end

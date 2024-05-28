@@ -54,6 +54,8 @@ int client_init(client_t* client) {
 	render_load_sprite(client->ecs, "assets/test.png", entity);
 
 	lua_State* L = script_lua_init();
+	lua_pushlightuserdata(L, client->ecs);
+	lua_setglobal(L, "ecs");
 	ecs_lua_register_module(L);
 
 	script_load(L, "assets/scripts/luatest.lua");
@@ -61,10 +63,9 @@ int client_init(client_t* client) {
 	lua_getglobal(L, "Luatest");
 	if(lua_istable(L, -1)) {
 		lua_getfield(L, -1, "onCreate");
-		lua_pushlightuserdata(L, client->ecs);
 		lua_pushinteger(L, entity);
 		printf("entityID: %d\n", entity);
-		if (lua_pcall(L, 2, 0, 0) != LUA_OK) {
+		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
 	}
