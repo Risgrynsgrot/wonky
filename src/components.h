@@ -20,7 +20,8 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 #define ECS_REGISTER_COMPONENT(ECS, T) \
 	id_##T = \
 		ecs_register_component(ECS, sizeof(T##_t), NULL, NULL); \
-	ecs_component_register_string((ecs_component_string_t){.name = #T, .id = id_##T});
+	ecs_component_register_string((ecs_component_string_t){.name = #T, .id = id_##T}); \
+	ecs_component_string_count++;
 
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
@@ -91,6 +92,7 @@ void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
 ecs_id_t ecs_string_to_componentid(const char* value);
 void ecs_components_register(ecs_t* ecs);
+void ecs_lua_register_module(lua_State* L);
 
 //typedef struct comp_draw_text {
 //	char text[MAX_TEXT_LENGTH];

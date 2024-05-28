@@ -7,10 +7,8 @@
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-//TEMP
-#include "lualib.h"
-#include "lauxlib.h"
+#include "lua.h"
+#include <lauxlib.h>
 
 #define PICO_ECS_MAX_SYSTEMS 16
 #define PICO_ECS_MAX_COMPONENTS 64
@@ -46,7 +44,7 @@ int client_init(client_t* client) {
 	}
 
 	ecs_id_t entity = ecs_create(client->ecs);
-	ecs_add(client->ecs, entity, id_comp_position, NULL);
+	//ecs_add(client->ecs, entity, id_comp_position, NULL);
 	ecs_add(client->ecs, entity, id_comp_velocity, NULL);
 	ecs_add(client->ecs, entity, id_comp_draw_sprite, NULL);
 	ecs_add(client->ecs, entity, id_comp_input, NULL);
@@ -56,8 +54,23 @@ int client_init(client_t* client) {
 	render_load_sprite(client->ecs, "assets/test.png", entity);
 
 	lua_State* L = script_lua_init();
+	ecs_lua_register_module(L);
 
 	script_load(L, "assets/scripts/luatest.lua");
+
+	lua_getglobal(L, "Luatest");
+	if(lua_istable(L, -1)) {
+		lua_getfield(L, -1, "onCreate");
+		lua_pushlightuserdata(L, client->ecs);
+		lua_pushinteger(L, entity);
+		printf("entityID: %d\n", entity);
+		if (lua_pcall(L, 2, 0, 0) != LUA_OK) {
+			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+		}
+	}
+	else {
+		printf("uuuh\n");
+	}
 
 	script_lua_close(L);
 

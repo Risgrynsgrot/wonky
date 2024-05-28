@@ -1,12 +1,13 @@
-local luatest = {}
+Luatest = {}
 
-function luatest.testfunc(e)
+function Luatest.testfunc(e)
 	local position = e:get_component("comp_position")
 	position.x = position.x + 10
 	position.y = position.y + 10
 end
 
-function luatest.onCreate(ecs, e)
+function Luatest.onCreate(ecs, e)
+	print("HEJ")
 	local position = {
 		type = "comp_position",
 		value = {
@@ -20,7 +21,8 @@ function luatest.onCreate(ecs, e)
 	--	burntime = 2.0
 	--}
 
-	ecs:add_component(e, position)
+	Ecs.AddComponent(ecs, e, position)
+	print("HEJ2")
 	--ecs:add_component(e, flammable)
 end
 -- TO RUN THIS YOU NEED TO REGISTER USER DATA FOR ecs
