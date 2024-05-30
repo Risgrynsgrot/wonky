@@ -8,10 +8,14 @@ void ecs_register_render_systems(ecs_t* ecs) {
 		ecs_register_system(ecs, render_sprites, NULL, NULL, NULL);
 	ecs_require_component(ecs, sys_render_sprites, id_comp_position);
 	ecs_require_component(ecs, sys_render_sprites, id_comp_draw_sprite);
-	printf("sys_render_sprites: %d", sys_render_sprites);
+
+	sys_render_boxes = ecs_register_system(ecs, render_boxes, NULL, NULL, NULL);
+	ecs_require_component(ecs, sys_render_boxes, id_comp_position);
+	ecs_require_component(ecs, sys_render_boxes, id_comp_draw_box);
 }
 
 ecs_id_t sys_render_sprites;
+
 ecs_ret_t render_sprites(ecs_t* ecs,
 						 ecs_id_t* entities,
 						 int entity_count,
@@ -26,8 +30,8 @@ ecs_ret_t render_sprites(ecs_t* ecs,
 		comp_position_t* position  = ecs_get(ecs, id, id_comp_position);
 
 		//printf("texture pos: %f, %f\n", position->value.x, position->value.y);
-		sprite->texture.width  = sprite->w;
-		sprite->texture.height = sprite->h;
+		sprite->texture.width  = sprite->width;
+		sprite->texture.height = sprite->height;
 		DrawTexture(sprite->texture,
 					position->value.x,
 					position->value.y,
@@ -36,11 +40,33 @@ ecs_ret_t render_sprites(ecs_t* ecs,
 	return 0;
 }
 
+ecs_id_t sys_render_boxes;
+
+ecs_ret_t render_boxes(ecs_t* ecs,
+					   ecs_id_t* entities,
+					   int entity_count,
+					   ecs_dt_t dt,
+					   void* udata) {
+	(void)dt;
+	(void)udata;
+
+	for(int i = 0; i < entity_count; i++) {
+		ecs_id_t id				  = entities[i];
+		comp_draw_box_t* box	  = ecs_get(ecs, id, id_comp_draw_box);
+		comp_position_t* position = ecs_get(ecs, id, id_comp_position);
+
+		DrawRectangleV(position->value,
+					   (Vector2){.x = box->width, .y = box->height},
+					   box->color);
+	}
+	return 0;
+}
+
 void render_load_sprite(ecs_t* ecs, const char* path, ecs_id_t entity) {
 	comp_draw_sprite_t* sprite = ecs_get(ecs, entity, id_comp_draw_sprite);
 
 	sprite->texture = LoadTexture(path);
-	sprite->w		= sprite->texture.width;
-	sprite->h		= sprite->texture.height;
+	sprite->width	= sprite->texture.width;
+	sprite->height	= sprite->texture.height;
 	sprite->color	= WHITE;
 }

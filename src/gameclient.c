@@ -44,14 +44,6 @@ int client_init(client_t* client) {
 	}
 
 	ecs_id_t entity = ecs_create(client->ecs);
-	//ecs_add(client->ecs, entity, id_comp_position, NULL);
-	ecs_add(client->ecs, entity, id_comp_velocity, NULL);
-	ecs_add(client->ecs, entity, id_comp_draw_sprite, NULL);
-	ecs_add(client->ecs, entity, id_comp_input, NULL);
-
-	comp_input_t* input = ecs_get(client->ecs, entity, id_comp_input);
-	input->input_id		= 0;
-	render_load_sprite(client->ecs, "assets/test.png", entity);
 
 	lua_State* L = script_lua_init();
 	lua_pushlightuserdata(L, client->ecs);
@@ -139,6 +131,7 @@ void client_render(client_t* client) {
 	BeginDrawing();
 	ClearBackground(RAYWHITE);
 	ecs_update_system(client->ecs, sys_render_sprites, 0.f);
+	ecs_update_system(client->ecs, sys_render_boxes, 0.f);
 	EndDrawing();
 	//SDL_SetRenderDrawColor(client->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	//SDL_RenderClear(client->renderer);

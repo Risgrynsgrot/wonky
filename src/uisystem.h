@@ -58,8 +58,8 @@ void ui_draw_texts(ui_text_pool_t* text_pool);
 typedef struct ui_button {
 	ui_text_id text;
 	event_id onClickEventId;
-	float offsetX;
-	float offsetY;
+	float offset_x;
+	float offset_y;
 	Color color;
 	int priority;
 	bool visible;
