@@ -31,3 +31,15 @@ Color table_get_color(lua_State* L, const char* value);
 			return 0; \
 		}\
 	} while(0)
+
+int lua_get_movement_x(lua_State* L) {
+	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+	ecs_id_t entity = lua_tointeger(L, -2);
+	comp_movement_t* movement = ecs_get(ecs, entity, id_comp_movement, NULL);
+	lua_pushnumber(L, movement->x); //add pushvector
+	return 1;
+}
+
+#define DEF_LUA_FIELD_GETSET(T, LT, FIELD) \
+	int lua_get_##T_##FIELD(lua_State* L) {\
+}
