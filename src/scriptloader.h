@@ -24,22 +24,37 @@ Vector2 table_get_vector2(lua_State* L, const char* value);
 typedef struct Color Color;
 Color table_get_color(lua_State* L, const char* value);
 
-#define lua_table_get(L, value) \
-	do { \
-		lua_getfield(L, -1, value); \
-		if(!lua_istable(L, -1)) { \
-			return 0; \
-		}\
+#define lua_table_get(L, value)                                                \
+	do {                                                                       \
+		lua_getfield(L, -1, value);                                            \
+		if(!lua_istable(L, -1)) {                                              \
+			return 0;                                                          \
+		}                                                                      \
 	} while(0)
 
-int lua_get_movement_x(lua_State* L) {
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-	ecs_id_t entity = lua_tointeger(L, -2);
-	comp_movement_t* movement = ecs_get(ecs, entity, id_comp_movement, NULL);
-	lua_pushnumber(L, movement->x); //add pushvector
-	return 1;
-}
+//int lua_get_movement_x(lua_State* L) {
+//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+//	ecs_id_t entity			  = lua_tointeger(L, -1);
+//	comp_movement_t* movement = ecs_get(ecs, entity, id_comp_movement, NULL);
+//	lua_pushnumber(L, movement->x); //add pushvector
+//	return 1;
+//}
 
-#define DEF_LUA_FIELD_GETSET(T, LT, FIELD) \
-	int lua_get_##T_##FIELD(lua_State* L) {\
-}
+//Somehow the components need a reference to it's entity
+//they also need their id so it's easy to switch on the type
+//also needs to do things with the metatable to get field like behavior
+#define DEF_LUA_FIELD_GETSET(T, LT, FIELD)                                     \
+	int lua_get_##T_##FIELD(lua_State* L) {                                    \
+		ecs_t* ecs		= script_get_userdata(L, "ecs");                       \
+		ecs_id_t entity = lua_tointeger(L, -1);                                \
+		T* value		= ecs_get(ecs, entity, id_##T, NULL);                  \
+		lua_push##LT(L, value->##FIELD);                                       \
+		return 1;                                                              \
+	}                                                                          \
+	int lua_set_##T_##FIELD(lua_State* L) {                                    \
+		ecs_t* ecs		= script_get_userdata(L, "ecs");                       \
+		ecs_id_t entity = lua_to##LT(L, -1);                                   \
+		T* value		= ecs_get(ecs, entity, id_##T, NULL);                  \
+		lua_push##LT(L, value->##FIELD);                                       \
+		return 1;                                                              \
+	}
