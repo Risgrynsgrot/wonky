@@ -58,3 +58,4 @@ Color table_get_color(lua_State* L, const char* value);
 		lua_push##LT(L, value->##FIELD);                                       \
 		return 1;                                                              \
 	}
+
