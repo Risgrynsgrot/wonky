@@ -35,15 +35,14 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	_F(draw_box, DRAW_BOX, 7, __VA_ARGS__)                                     \
 	_F(draw_circle, DRAW_CIRCLE, 8, __VA_ARGS__)
 
-#define DECL_ENUM_COMPONENTS(uc, lc, i, ...) COMPONENT_##uc = i,
+#define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
-#define DECL_COMPONENT_FIELD(T, NAME) \
-	T NAME;
+#define DECL_COMPONENT_FIELD(T, NAME) T NAME;
 
-#define DECL_COMPONENT_STRUCT(T, ITER) \
-typedef struct comp_##T {\
-	ITER(DECL_COMPONENT_FIELD, void)\
-} comp_##T##_t;
+#define DECL_COMPONENT_STRUCT(T, ITER)                                         \
+	typedef struct comp_##T {                                                  \
+		ITER(DECL_COMPONENT_FIELD, void)                                       \
+	} comp_##T##_t;
 
 typedef enum component_types {
 	ECS_COMPONENTS_TYPE_ITER(DECL_ENUM_COMPONENTS, void)
@@ -51,7 +50,9 @@ typedef enum component_types {
 
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
-} comp_position_t;
+}
+
+comp_position_t;
 
 #define DEF_COMP_POSITION(_F, ...) _F(Vector2, value)
 
