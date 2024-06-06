@@ -135,9 +135,9 @@ if(is_reading) {\
 	}\
 }
 
-DEF_TABLE_SERIALIZE(int, integer)
-DEF_TABLE_SERIALIZE(bool, boolean)
-DEF_TABLE_SERIALIZE_PTR(void*, userdata)
+//DEF_TABLE_SERIALIZE(int, integer)
+//DEF_TABLE_SERIALIZE(bool, boolean)
+//DEF_TABLE_SERIALIZE_PTR(void*, userdata)
 
 
 const char* table_serialize_string(lua_State* L, const char* value) {

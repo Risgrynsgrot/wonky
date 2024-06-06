@@ -50,131 +50,131 @@ ecs_id_t ecs_string_to_componentid(const char* value) {
 	return 0;
 }
 
-int ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-	comp_position_t* position = ecs_add(ecs, entity, id_comp_position, NULL);
-	lua_table_get(L, "value");
-	position->value.x = table_get_number(L, "x");
-	position->value.y = table_get_number(L, "y");
-	lua_pop(L, 1);
-	return 1;
-}
-
-int ecs_lua_add_rotation(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-	comp_rotation_t* rotation = ecs_add(ecs, entity, id_comp_velocity, NULL);
-	rotation->angle			  = table_get_number(L, "angle");
-	lua_pop(L, 1);
-	return 1;
-}
-
-int ecs_lua_add_velocity(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-	comp_velocity_t* velocity = ecs_add(ecs, entity, id_comp_velocity, NULL);
-	lua_table_get(L, "value");
-	velocity->value.x = table_get_number(L, "x");
-	velocity->value.y = table_get_number(L, "y");
-	lua_pop(L, 1);
-	return 1;
-}
-
-int ecs_lua_add_input(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs			= script_get_userdata(L, "ecs");
-	comp_input_t* input = ecs_add(ecs, entity, id_comp_input, NULL);
-	input->input_id		= table_get_int(L, "input_id");
-	lua_table_get(L, "direction");
-	input->direction.x = table_get_number(L, "x");
-	input->direction.y = table_get_number(L, "y");
-	lua_pop(L, 1);
-	input->interact		  = table_get_bool(L, "interact");
-	input->open_inventory = table_get_bool(L, "open_inventory");
-	return 1;
-}
-
-int ecs_lua_add_area_box(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-	comp_area_box_t* area_box = ecs_add(ecs, entity, id_comp_area_box, NULL);
-	area_box->width			  = table_get_number(L, "width");
-	area_box->height		  = table_get_number(L, "height");
-	area_box->offset_x		  = table_get_number(L, "offset_x");
-	area_box->offset_y		  = table_get_number(L, "offset_y");
-	area_box->overlapCount	  = 0;
-	return 1;
-}
-
-int ecs_lua_add_col_box(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs				= script_get_userdata(L, "ecs");
-	comp_col_box_t* col_box = ecs_add(ecs, entity, id_comp_col_box, NULL);
-	col_box->width			= table_get_number(L, "width");
-	col_box->height			= table_get_number(L, "height");
-	col_box->offset_x		= table_get_number(L, "offset_x");
-	col_box->offset_y		= table_get_number(L, "offset_y");
-	return 1;
-}
-
-int ecs_lua_add_draw_sprite(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs = script_get_userdata(L, "ecs");
-	ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
-	const char* path = table_get_string(L, "path");
-	render_load_sprite(ecs, path, entity);
-	return 1;
-}
-
-int ecs_lua_add_draw_box(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-	comp_draw_box_t* draw_box = ecs_add(ecs, entity, id_comp_draw_box, NULL);
-	draw_box->width			  = table_get_number(L, "width");
-	draw_box->height		  = table_get_number(L, "height");
-	draw_box->offset_x		  = table_get_number(L, "offset_x");
-	draw_box->offset_y		  = table_get_number(L, "offset_y");
-	draw_box->color			  = table_get_color(L, "color");
-	draw_box->visible		  = table_get_bool(L, "visible");
-	return 1;
-}
-
-int ecs_lua_add_draw_circle(lua_State* L, ecs_id_t entity) {
-	ecs_t* ecs = script_get_userdata(L, "ecs");
-	comp_draw_circle_t* draw_circle =
-		ecs_add(ecs, entity, id_comp_draw_circle, NULL);
-	draw_circle->radius	  = table_get_number(L, "radius");
-	draw_circle->offset_x = table_get_number(L, "offset_x");
-	draw_circle->offset_y = table_get_number(L, "offset_y");
-	draw_circle->color	  = table_get_color(L, "color");
-	draw_circle->visible  = table_get_bool(L, "visible");
-	return 1;
-}
-
-#define LUA_TRY_ADD_COMP(T)                                                    \
-	if(ecs_string_to_componentid(component) == id_comp_##T) {                  \
-		return ecs_lua_add_##T(L, entity);                                     \
-	}
-
-int ecs_lua_add_component(lua_State* L) {
-	printf("waba?\n");
-	ecs_id_t entity = lua_tointeger(L, -2);
-	if(lua_istable(L, -1)) { //the table with the component info
-		lua_getfield(L, -1, "type");
-		if(lua_isstring(L, -1)) {
-			const char* component = lua_tostring(L, -1);
-			lua_pop(L, 1);
-			printf("component: %s\n", component);
-			LUA_TRY_ADD_COMP(position);
-			LUA_TRY_ADD_COMP(rotation);
-			LUA_TRY_ADD_COMP(velocity);
-			LUA_TRY_ADD_COMP(input);
-			LUA_TRY_ADD_COMP(area_box);
-			LUA_TRY_ADD_COMP(col_box);
-			LUA_TRY_ADD_COMP(draw_sprite);
-			LUA_TRY_ADD_COMP(draw_box);
-			LUA_TRY_ADD_COMP(draw_circle);
-		} else {
-			printf("not a string\n");
-		}
-	} else {
-		printf("not a table\n");
-	}
-	return 0;
-}
+//int ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+//	comp_position_t* position = ecs_add(ecs, entity, id_comp_position, NULL);
+//	lua_table_get(L, "value");
+//	position->value.x = table_get_number(L, "x");
+//	position->value.y = table_get_number(L, "y");
+//	lua_pop(L, 1);
+//	return 1;
+//}
+//
+//int ecs_lua_add_rotation(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+//	comp_rotation_t* rotation = ecs_add(ecs, entity, id_comp_velocity, NULL);
+//	rotation->angle			  = table_get_number(L, "angle");
+//	lua_pop(L, 1);
+//	return 1;
+//}
+//
+//int ecs_lua_add_velocity(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+//	comp_velocity_t* velocity = ecs_add(ecs, entity, id_comp_velocity, NULL);
+//	lua_table_get(L, "value");
+//	velocity->value.x = table_get_number(L, "x");
+//	velocity->value.y = table_get_number(L, "y");
+//	lua_pop(L, 1);
+//	return 1;
+//}
+//
+//int ecs_lua_add_input(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs			= script_get_userdata(L, "ecs");
+//	comp_input_t* input = ecs_add(ecs, entity, id_comp_input, NULL);
+//	input->input_id		= table_get_int(L, "input_id");
+//	lua_table_get(L, "direction");
+//	input->direction.x = table_get_number(L, "x");
+//	input->direction.y = table_get_number(L, "y");
+//	lua_pop(L, 1);
+//	input->interact		  = table_get_bool(L, "interact");
+//	input->open_inventory = table_get_bool(L, "open_inventory");
+//	return 1;
+//}
+//
+//int ecs_lua_add_area_box(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+//	comp_area_box_t* area_box = ecs_add(ecs, entity, id_comp_area_box, NULL);
+//	area_box->width			  = table_get_number(L, "width");
+//	area_box->height		  = table_get_number(L, "height");
+//	area_box->offset_x		  = table_get_number(L, "offset_x");
+//	area_box->offset_y		  = table_get_number(L, "offset_y");
+//	area_box->overlapCount	  = 0;
+//	return 1;
+//}
+//
+//int ecs_lua_add_col_box(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs				= script_get_userdata(L, "ecs");
+//	comp_col_box_t* col_box = ecs_add(ecs, entity, id_comp_col_box, NULL);
+//	col_box->width			= table_get_number(L, "width");
+//	col_box->height			= table_get_number(L, "height");
+//	col_box->offset_x		= table_get_number(L, "offset_x");
+//	col_box->offset_y		= table_get_number(L, "offset_y");
+//	return 1;
+//}
+//
+//int ecs_lua_add_draw_sprite(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs = script_get_userdata(L, "ecs");
+//	ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
+//	const char* path = table_get_string(L, "path");
+//	render_load_sprite(ecs, path, entity);
+//	return 1;
+//}
+//
+//int ecs_lua_add_draw_box(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+//	comp_draw_box_t* draw_box = ecs_add(ecs, entity, id_comp_draw_box, NULL);
+//	draw_box->width			  = table_get_number(L, "width");
+//	draw_box->height		  = table_get_number(L, "height");
+//	draw_box->offset_x		  = table_get_number(L, "offset_x");
+//	draw_box->offset_y		  = table_get_number(L, "offset_y");
+//	draw_box->color			  = table_get_color(L, "color");
+//	draw_box->visible		  = table_get_bool(L, "visible");
+//	return 1;
+//}
+//
+//int ecs_lua_add_draw_circle(lua_State* L, ecs_id_t entity) {
+//	ecs_t* ecs = script_get_userdata(L, "ecs");
+//	comp_draw_circle_t* draw_circle =
+//		ecs_add(ecs, entity, id_comp_draw_circle, NULL);
+//	draw_circle->radius	  = table_get_number(L, "radius");
+//	draw_circle->offset_x = table_get_number(L, "offset_x");
+//	draw_circle->offset_y = table_get_number(L, "offset_y");
+//	draw_circle->color	  = table_get_color(L, "color");
+//	draw_circle->visible  = table_get_bool(L, "visible");
+//	return 1;
+//}
+//
+//#define LUA_TRY_ADD_COMP(T)                                                    \
+//	if(ecs_string_to_componentid(component) == id_comp_##T) {                  \
+//		return ecs_lua_add_##T(L, entity);                                     \
+//	}
+//
+//int ecs_lua_add_component(lua_State* L) {
+//	printf("waba?\n");
+//	ecs_id_t entity = lua_tointeger(L, -2);
+//	if(lua_istable(L, -1)) { //the table with the component info
+//		lua_getfield(L, -1, "type");
+//		if(lua_isstring(L, -1)) {
+//			const char* component = lua_tostring(L, -1);
+//			lua_pop(L, 1);
+//			printf("component: %s\n", component);
+//			LUA_TRY_ADD_COMP(position);
+//			LUA_TRY_ADD_COMP(rotation);
+//			LUA_TRY_ADD_COMP(velocity);
+//			LUA_TRY_ADD_COMP(input);
+//			LUA_TRY_ADD_COMP(area_box);
+//			LUA_TRY_ADD_COMP(col_box);
+//			LUA_TRY_ADD_COMP(draw_sprite);
+//			LUA_TRY_ADD_COMP(draw_box);
+//			LUA_TRY_ADD_COMP(draw_circle);
+//		} else {
+//			printf("not a string\n");
+//		}
+//	} else {
+//		printf("not a table\n");
+//	}
+//	return 0;
+//}
 
 void ecs_components_register(ecs_t* ecs) {
 
@@ -190,15 +190,15 @@ void ecs_components_register(ecs_t* ecs) {
 	ECS_REGISTER_COMPONENT(ecs, comp_draw_circle);
 }
 
-static const struct luaL_Reg ecs_methods[] = {
-	{"AddComponent", ecs_lua_add_component},
-	 {		  NULL,					NULL}
-};
+//static const struct luaL_Reg ecs_methods[] = {
+	//{"AddComponent", ecs_lua_add_component},
+	 //{		  NULL,					NULL}
+//};
 
-void ecs_lua_register_module(lua_State* L) {
+//void ecs_lua_register_module(lua_State* L) {
 	//int pos = lua_gettop(L);
 
-	luaL_register(L, "ECS", ecs_methods);
-	printf("registered methods\n");
+	//luaL_register(L, "ECS", ecs_methods);
+	//printf("registered methods\n");
 	//luaL_setfuncs(L, ecs_methods, 0);
-}
+//}

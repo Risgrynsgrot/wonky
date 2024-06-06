@@ -35,15 +35,14 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	_F(draw_box, DRAW_BOX, 7, __VA_ARGS__)                                     \
 	_F(draw_circle, DRAW_CIRCLE, 8, __VA_ARGS__)
 
-#define DECL_ENUM_COMPONENTS(uc, lc, i, ...) COMPONENT_##uc = i,
+#define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
-#define DECL_COMPONENT_FIELD(T, NAME) \
-	T NAME;
+#define DECL_COMPONENT_FIELD(T, NAME) T NAME;
 
-#define DECL_COMPONENT_STRUCT(T, ITER) \
-typedef struct comp_##T {\
-	ITER(DECL_COMPONENT_FIELD, void)\
-} comp_##T##_t;
+#define DECL_COMPONENT_STRUCT(T, ITER)                                         \
+	typedef struct comp_##T {                                                  \
+		ITER(DECL_COMPONENT_FIELD, void)                                       \
+	} comp_##T##_t;
 
 typedef enum component_types {
 	ECS_COMPONENTS_TYPE_ITER(DECL_ENUM_COMPONENTS, void)
@@ -51,11 +50,20 @@ typedef enum component_types {
 
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
-} comp_position_t;
+}
+
+comp_position_t;
 
 #define DEF_COMP_POSITION(_F, ...) _F(Vector2, value)
 
-DECL_COMPONENT_STRUCT(position, DEF_COMP_POSITION)
+#define DEF_COMP_INPUT(_F, ...)                                                \
+	_F(int, input_id)                                                          \
+	_F(Vector2, direction)                                                     \
+	_F(bool, interact)                                                         \
+	_F(bool, open_inventory)
+
+//DECL_COMPONENT_STRUCT(position, DEF_COMP_POSITION)
+//DECL_COMPONENT_STRUCT(input, DEF_COMP_INPUT)
 
 comp_position_t lua_get_position(lua_State* L);
 
@@ -139,7 +147,7 @@ void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
 ecs_id_t ecs_string_to_componentid(const char* value);
 void ecs_components_register(ecs_t* ecs);
-void ecs_lua_register_module(lua_State* L);
+//void ecs_lua_register_module(lua_State* L);
 
 //typedef struct comp_draw_text {
 //	char text[MAX_TEXT_LENGTH];

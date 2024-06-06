@@ -12,19 +12,19 @@ const char* script_get_string(lua_State* L, const char* value);
 bool script_get_bool(lua_State* L, const char* value);
 void* script_get_userdata(lua_State* L, const char* value);
 
-double table_get_number(lua_State* L, const char* value);
-int table_get_int(lua_State* L, const char* value);
-const char* table_get_string(lua_State* L, const char* value);
-bool table_get_bool(lua_State* L, const char* value);
-void* table_get_userdata(lua_State* L, const char* value);
+double table_serialize_number(lua_State* L, const char* value);
+int table_serialize_int(lua_State* L, const char* value);
+const char* table_serialize_string(lua_State* L, const char* value);
+bool table_serialize_bool(lua_State* L, const char* value);
+void* table_serialize_userdata(lua_State* L, const char* value);
 
 typedef struct Vector2 Vector2;
-Vector2 table_get_vector2(lua_State* L, const char* value);
+Vector2 table_serialize_vector2(lua_State* L, const char* value);
 
 typedef struct Color Color;
-Color table_get_color(lua_State* L, const char* value);
+Color table_serialize_color(lua_State* L, const char* value);
 
-#define lua_table_get(L, value)                                                \
+#define lua_table_serialize(L, value)                                                \
 	do {                                                                       \
 		lua_getfield(L, -1, value);                                            \
 		if(!lua_istable(L, -1)) {                                              \
