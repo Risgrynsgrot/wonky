@@ -11,7 +11,7 @@
 	"iid": "3cbf4ff0-d7b0-11ee-a346-8125a7a5beda",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 14,
+	"nextUid": 15,
 	"identifierStyle": "Lowercase",
 	"toc": [],
 	"worldLayout": "Free",
@@ -333,6 +333,43 @@
 					"allowedRefsEntityUid": null,
 					"allowedRefTags": [],
 					"tilesetUid": null
+				},
+				{
+					"identifier": "Entity_ref",
+					"doc": null,
+					"__type": "EntityRef",
+					"uid": 14,
+					"type": "F_EntityRef",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RefLinkBetweenCenters",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "CurvedArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"exportToToc": false,
+					"searchable": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
 				}
 			]
 		}
@@ -449,7 +486,8 @@
 								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
 								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
 								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] },
-								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] }
+								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] },
+								{ "__identifier": "Entity_ref", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 14, "realEditorValues": [] }
 							],
 							"__worldX": 64,
 							"__worldY": 48
@@ -470,7 +508,8 @@
 								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
 								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
 								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] },
-								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] }
+								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] },
+								{ "__identifier": "Entity_ref", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 14, "realEditorValues": [] }
 							],
 							"__worldX": 144,
 							"__worldY": 48
@@ -491,7 +530,8 @@
 								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
 								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
 								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] },
-								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] }
+								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] },
+								{ "__identifier": "Entity_ref", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 14, "realEditorValues": [] }
 							],
 							"__worldX": 64,
 							"__worldY": 128
@@ -512,7 +552,8 @@
 								{ "__identifier": "Name", "__type": "String", "__value": null, "__tile": null, "defUid": 7, "realEditorValues": [] },
 								{ "__identifier": "imagePath", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 8, "realEditorValues": [] },
 								{ "__identifier": "gamer", "__type": "Bool", "__value": false, "__tile": null, "defUid": 9, "realEditorValues": [] },
-								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] }
+								{ "__identifier": "component", "__type": "Array<LocalEnum.component>", "__value": [], "__tile": null, "defUid": 13, "realEditorValues": [] },
+								{ "__identifier": "Entity_ref", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 14, "realEditorValues": [null] }
 							],
 							"__worldX": 144,
 							"__worldY": 128

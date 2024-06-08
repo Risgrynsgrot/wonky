@@ -67,6 +67,8 @@ pub fn build(b: *std.Build) !void {
     ////lib.addCSourceFiles(.{ .files = luaJIT_sources.items });
 
     lua_binder.addIncludePath(.{ .path = "deps/luajit/src" });
+    lua_binder.addIncludePath(.{ .path = "src/" });
+    lua_binder.addIncludePath(.{ .path = "deps/raylib/src" });
     lua_binder.linkLibC();
     lua_binder.linkLibCpp();
     //lua_binder.addObjectFile(.{ .path = "deps/luajit/src/libluajit.a" });
@@ -98,6 +100,7 @@ pub fn build(b: *std.Build) !void {
 
     const main_sources = try globFolder(allocator, b, "src/", ".c");
     exe.addCSourceFiles(.{ .files = main_sources.items });
+    exe.addIncludePath(.{ .path = "src/" });
 
     exe.linkLibrary(lua_binder);
 

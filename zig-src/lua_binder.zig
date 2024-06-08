@@ -4,12 +4,25 @@ const lua = @cImport({
     @cInclude("lauxlib.h");
     @cInclude("lualib.h");
 });
+const components = @cImport({
+    @cInclude("components.h");
+});
+
+pub fn serializeStruct(L: ?*lua.struct_lua_State, comptime T: anytype) void {
+    _ = L;
+    inline for (std.meta.fields(T)) |field| {
+        std.debug.print("Type: {any}, field: {s}\n", .{ field.type, field.name });
+    }
+}
 
 pub fn scriptLoad(L: ?*lua.struct_lua_State, path: [:0]const u8) void {
     if (L) |l| {
         const status = lua.luaL_dofile(l, path);
         if (status) {
-            std.debug.print("Couldn't load file: {s}\n", .{lua.lua_tolstring(l, -1, 0)});
+            std.debug.print(
+                "Couldn't load file: {s}\n",
+                .{lua.lua_tolstring(l, -1, 0)},
+            );
         }
     }
 }
@@ -33,4 +46,6 @@ export fn test_func() void {
     }
 
     lua.lua_close(L);
+
+    serializeStruct(L, components.comp_input_t);
 }
