@@ -8,10 +8,25 @@ const components = @cImport({
     @cInclude("components.h");
 });
 
+pub fn table_get(
+    L: ?*lua.struct_lua_State,
+    comptime T: anytype,
+    value: []const u8,
+) T {
+
+}
+
 pub fn serializeStruct(L: ?*lua.struct_lua_State, comptime T: anytype) void {
-    _ = L;
+    if (!lua.lua_istable(L, -1)) {
+        std.debug.print("Argument was not table", .{});
+        return;
+    }
+
     inline for (std.meta.fields(T)) |field| {
-        std.debug.print("Type: {any}, field: {s}\n", .{ field.type, field.name });
+        std.debug.print(
+            "Type: {any}, field: {s}\n",
+            .{ field.type, field.name },
+        );
     }
 }
 
