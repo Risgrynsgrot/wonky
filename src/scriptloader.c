@@ -35,6 +35,7 @@ double script_get_number(lua_State* L, const char* value) {
 	return result;
 }
 
+
 int script_get_int(lua_State* L, const char* value) {
 	lua_getglobal(L, value);
 
@@ -103,44 +104,26 @@ double table_get_number(lua_State* L, const char* value) {
 	return result;
 }
 
-int lua_isinteger(lua_State* L, int idx) {
-	return lua_isnumber(L, idx);
+float table_get_float(lua_State* L, const char* value) {
+	return table_get_number(L, value);
+}
+double table_get_double(lua_State* L, const char* value) {
+	return table_get_number(L, value);
 }
 
-#define DEF_TABLE_SERIALIZE_PTR(T, LUA_T) \
-void table_serialize_##LUA_T(lua_State* L, T result, const char* field, bool is_reading) {\
-if(is_reading) {\
-	lua_getfield(L, -1, field);\
-	if(!lua_is##LUA_T(L, -1)) {\
-		printf("LUA TRIED TO GET value %s BUT FAILED, RETURNING 0\n", field);\
-		lua_pop(L, 1);\
-	}\
-	result = lua_to##LUA_T(L, -1);\
-	lua_pop(L, 1);\
-	return;\
-	}\
+int table_get_int(lua_State* L, const char* value) {
+	lua_getfield(L, -1, value);
+	if(!lua_isnumber(L, -1)) {
+		printf("LUA TRIED TO GET INTEGER %s BUT FAILED, RETURNING 0\n", value);
+		lua_pop(L, 1);
+		return 0;
+	}
+	int result = lua_tointeger(L, -1);
+	lua_pop(L, 1);
+	return result;
 }
 
-#define DEF_TABLE_SERIALIZE(T, LUA_T) \
-void table_serialize_##LUA_T(lua_State* L, T* result, const char* field, bool is_reading) {\
-if(is_reading) {\
-	lua_getfield(L, -1, field);\
-	if(!lua_is##LUA_T(L, -1)) {\
-		printf("LUA TRIED TO GET value %s BUT FAILED, RETURNING 0\n", field);\
-		lua_pop(L, 1);\
-	}\
-	*result = lua_to##LUA_T(L, -1);\
-	lua_pop(L, 1);\
-	return;\
-	}\
-}
-
-//DEF_TABLE_SERIALIZE(int, integer)
-//DEF_TABLE_SERIALIZE(bool, boolean)
-//DEF_TABLE_SERIALIZE_PTR(void*, userdata)
-
-
-const char* table_serialize_string(lua_State* L, const char* value) {
+const char* table_get_string(lua_State* L, const char* value) {
 	lua_getfield(L, -1, value);
 	if(!lua_isstring(L, -1)) {
 		printf(
@@ -150,6 +133,18 @@ const char* table_serialize_string(lua_State* L, const char* value) {
 		return "";
 	}
 	const char* result = lua_tostring(L, -1);
+	lua_pop(L, 1);
+	return result;
+}
+
+bool table_get_bool(lua_State* L, const char* value) {
+	lua_getfield(L, -1, value);
+	if(!lua_isboolean(L, -1)) {
+		printf("LUA TRIED TO GET BOOL %s BUT FAILED, RETURNING 0\n", value);
+		lua_pop(L, 1);
+		return 0;
+	}
+	bool result = lua_toboolean(L, -1);
 	lua_pop(L, 1);
 	return result;
 }
