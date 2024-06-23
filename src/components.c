@@ -144,7 +144,7 @@ ecs_id_t ecs_string_to_componentid(const char* value) {
 //	return 1;
 //}
 //
-//#define LUA_TRY_ADD_COMP(T)                                                    \
+//#define LUA_TRY_ADD_COMP(T) \
 //	if(ecs_string_to_componentid(component) == id_comp_##T) {                  \
 //		return ecs_lua_add_##T(L, entity);                                     \
 //	}
@@ -191,14 +191,50 @@ void ecs_components_register(ecs_t* ecs) {
 }
 
 //static const struct luaL_Reg ecs_methods[] = {
-	//{"AddComponent", ecs_lua_add_component},
-	 //{		  NULL,					NULL}
+//{"AddComponent", ecs_lua_add_component},
+//{		  NULL,					NULL}
 //};
 
 //void ecs_lua_register_module(lua_State* L) {
-	//int pos = lua_gettop(L);
+//int pos = lua_gettop(L);
 
-	//luaL_register(L, "ECS", ecs_methods);
-	//printf("registered methods\n");
-	//luaL_setfuncs(L, ecs_methods, 0);
+//luaL_register(L, "ECS", ecs_methods);
+//printf("registered methods\n");
+//luaL_setfuncs(L, ecs_methods, 0);
 //}
+
+typedef enum ser_mode { E_NETWORK, E_LUA } ser_mode_e;
+
+#define DEF_SER_T(T, NAME)                                                     \
+	void ser_##NAME##_internal(T* value,                                       \
+							   const char* lua_name,                           \
+							   bool is_reading,                                \
+							   ser_mode_e ser_mode) {                          \
+		switch(ser_mode) {                                                     \
+		case E_NETWORK:                                                        \
+			ser_##NAME##_network(value, is_reading);                           \
+			break;                                                             \
+		case E_LUA:                                                            \
+			ser_##NAME##_lua(value, lua_name, is_reading);                     \
+			break;                                                             \
+		}                                                                      \
+	}
+
+void ser_vec2_lua(Vector2* value, const char* lua_name, bool is_reading) {
+	if(is_reading) {
+		value = table_get_vector2(lua_name); //THIS NEEDS LUA STATE
+	}
+}
+
+void ser_vec2_network(Vector2* value, bool is_reading) {
+}
+
+DEF_SER_T(Vector2, vec2)
+#define ser_vec2(VALUE, LUA_NAME)                                              \
+	ser_vec2_internal(VALUE, LUA_NAME, is_reading, ser_mode)
+
+void ser_position(comp_position_t* position,
+				  bool is_reading,
+				  ser_mode_e ser_mode) {
+	ser_vec2(&position->value, "value");
+}

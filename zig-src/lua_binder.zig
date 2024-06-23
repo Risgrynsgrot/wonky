@@ -8,13 +8,13 @@ const components = @cImport({
     @cInclude("components.h");
 });
 
-pub fn table_get(
-    L: ?*lua.struct_lua_State,
-    comptime T: anytype,
-    value: []const u8,
-) T {
-
-}
+//pub fn table_get(
+//    L: ?*lua.struct_lua_State,
+//    comptime T: anytype,
+//    value: []const u8,
+//) T {
+//
+//}
 
 pub fn serializeStruct(L: ?*lua.struct_lua_State, comptime T: anytype) void {
     if (!lua.lua_istable(L, -1)) {
