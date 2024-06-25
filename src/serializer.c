@@ -10,30 +10,45 @@ DEF_SER_T(float, float)
 DEF_SER_T(double, double)
 DEF_SER_T(bool, bool)
 
-void ser_string_network(char* value, ser_network_t* ser) {
+bool read_string_network(serializer_t* ser, char* value, const char* name) {
 	(void)ser;
 	(void)value;
+	(void)name;
+	return true;
 }
 
-void ser_string_lua(char* value, const char* lua_name, ser_lua_t* ser) {
-	if(ser->is_reading) {
-		const char* result = table_get_string(ser->L, lua_name);
-		strcpy(value, result);
-	}
+bool read_string_lua(serializer_t* ser, char* value, const char* name) {
+	const char* result = table_get_string(ser->ser.lua.L, name);
+	strcpy(value, result);
+	return true;
 }
 
-void ser_string(char* value, const char* lua_name, serializer_t* serializer) {
-	union ser_u* ser = &serializer->ser;
-	switch(serializer->mode) {
-	case E_NETWORK:
-		ser_string_network(value, &ser->network);
-		break;
-	case E_LUA:
-		ser_string_lua(value, lua_name, &ser->lua);
-		break;
-	}
+void ser_position(serializer_t* ser, comp_position_t* position) {
+	ser->ser_vec2(ser, &position->value, "value");
 }
 
-void ser_position(comp_position_t* position, serializer_t* ser) {
-	ser_vector2(&position->value, "value", ser);
+serializer_t new_reader_lua(ser_lua_t ser_lua) {
+	serializer_t result = {
+		.ser.lua	= ser_lua,
+		.ser_vec2	= read_vector2_lua,
+		.ser_int	= read_int_lua,
+		.ser_float	= read_float_lua,
+		.ser_double = read_double_lua,
+		.ser_bool	= read_bool_lua,
+		.ser_string = read_string_lua,
+	};
+	return result;
+}
+
+serializer_t new_reader_network(ser_network_t ser_network) {
+	serializer_t result = {
+		.ser.network = ser_network,
+		.ser_vec2	 = read_vector2_network,
+		.ser_int	 = read_int_network,
+		.ser_float	 = read_float_network,
+		.ser_double	 = read_double_network,
+		.ser_bool	 = read_bool_network,
+		.ser_string	 = read_string_network,
+	};
+	return result;
 }

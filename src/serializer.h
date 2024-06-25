@@ -1,8 +1,8 @@
 #pragma once
-#include <stdbool.h>
 #include <lua.h>
+#include <stdbool.h>
 
-typedef enum ser_mode { E_NETWORK, E_LUA } ser_mode_e;
+typedef struct Vector2 Vector2;
 
 typedef struct network_buffer {
 	char buffer[256];
@@ -10,12 +10,10 @@ typedef struct network_buffer {
 
 typedef struct ser_network {
 	network_buffer_t net_buf;
-	bool is_reading;
 } ser_network_t;
 
 typedef struct ser_lua {
 	lua_State* L;
-	bool is_reading;
 } ser_lua_t;
 
 typedef struct serializer {
@@ -24,45 +22,39 @@ typedef struct serializer {
 		ser_network_t network;
 	} ser;
 
-	ser_mode_e mode;
+	bool (*ser_int)(struct serializer* ser, int* value, const char* name);
+	bool (*ser_float)(struct serializer* ser, float* value, const char* name);
+	bool (*ser_double)(struct serializer* ser, double* value, const char* name);
+	bool (*ser_vec2)(struct serializer* ser, Vector2* value, const char* name);
+	bool (*ser_bool)(struct serializer* ser, bool* value, const char* name);
+	bool (*ser_string)(struct serializer* ser, char* value, const char* name);
 } serializer_t;
 
 #define DECL_SER_T(T, NAME)                                                    \
-	void ser_##NAME##_network(T* value, ser_network_t* ser);                   \
-	void ser_##NAME##_lua(T* value, const char* lua_name, ser_lua_t* ser);                       \
-	void ser_##NAME(T* value, const char* lua_name, serializer_t* serializer)
+	bool read_##NAME##_network(serializer_t* ser, T* value, const char* name); \
+	bool read_##NAME##_lua(serializer_t* ser, T* value, const char* name);
 
 #define DEF_SER_T(T, NAME)                                                     \
-	void ser_##NAME##_network(T* value, ser_network_t* ser) {                  \
+	bool read_##NAME##_network(                                                \
+		serializer_t* ser, T* value, const char* name) {                       \
 		(void)ser;                                                             \
 		(void)value;                                                           \
+		(void)name;                                                            \
+		return true;                                                           \
 	}                                                                          \
-	void ser_##NAME##_lua(T* value, const char* lua_name, ser_lua_t* ser) {    \
-		if(ser->is_reading) {                                                  \
-			*value = table_get_##NAME(ser->L, lua_name);                       \
-		}                                                                      \
-	}                                                                          \
-	void ser_##NAME(                                                           \
-		T* value, const char* lua_name, serializer_t* serializer) {            \
-		union ser_u* ser = &serializer->ser;                                   \
-		switch(serializer->mode) {                                             \
-		case E_NETWORK:                                                        \
-			ser_##NAME##_network(value, &ser->network);                        \
-			break;                                                             \
-		case E_LUA:                                                            \
-			ser_##NAME##_lua(value, lua_name, &ser->lua);                      \
-			break;                                                             \
-		}                                                                      \
+	bool read_##NAME##_lua(serializer_t* ser, T* value, const char* name) {    \
+		*value = table_get_##NAME(ser->ser.lua.L, name);                       \
+		return true;                                                           \
 	}
 
+bool read_string_network(serializer_t* ser, char* value, const char* name);
+bool read_string_lua(serializer_t* ser, char* value, const char* name);
 
-void ser_string_network(char* value, ser_network_t* ser);
-void ser_string_lua(char* value, const char* lua_name, ser_lua_t* ser);
-void ser_string(char* value, const char* lua_name, serializer_t* serializer);
+DECL_SER_T(Vector2, vector2)
+DECL_SER_T(int, int)
+DECL_SER_T(float, float)
+DECL_SER_T(double, double)
+DECL_SER_T(bool, bool)
 
-typedef struct Vector2 Vector2;
-DECL_SER_T(Vector2, vector2);
-DECL_SER_T(int, int);
-DECL_SER_T(float, float);
-DECL_SER_T(double, double);
-DECL_SER_T(bool, bool);
+serializer_t new_reader_lua(ser_lua_t ser_lua);
+serializer_t new_reader_network(ser_network_t ser_network);
