@@ -1,6 +1,7 @@
 #include "components.h"
 #include "rendersystem.h"
 #include "scriptloader.h"
+#include "serializer.h"
 #include <assert.h>
 #include <lauxlib.h>
 #include <lua.h>
@@ -49,6 +50,24 @@ ecs_id_t ecs_string_to_componentid(const char* value) {
 	assert(false && "tried to get nonexistent component, did you misspell?");
 	return 0;
 }
+
+void ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
+	ecs_t* ecs				  = script_get_userdata(L, "ecs");
+	comp_position_t* position = ecs_add(ecs, entity, id_comp_position, NULL);
+	ser_lua_t ser_lua		  = {.L = L};
+	serializer_t ser		  = new_reader_lua(ser_lua);
+	ser_position(&ser, position);
+}
+
+#define LUA_ADD_COMP(T)                                                        \
+	ecs_t* ecs				  = script_get_userdata(L, "ecs");\
+	void ecs_lua_add_##T(lua_State* L, ecs_id_t entity) {                 \
+		comp_position_t* position =                                            \
+			ecs_add(ecs, entity, id_comp_##T, NULL);                      \
+		ser_lua_t ser_lua = {.L = L};                                          \
+		serializer_t ser  = new_reader_lua(ser_lua);                           \
+		ser_##T(&ser, T);                                          \
+	}
 
 //int ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
 //	ecs_t* ecs				  = script_get_userdata(L, "ecs");
@@ -190,16 +209,13 @@ void ecs_components_register(ecs_t* ecs) {
 	ECS_REGISTER_COMPONENT(ecs, comp_draw_circle);
 }
 
-//static const struct luaL_Reg ecs_methods[] = {
-//{"AddComponent", ecs_lua_add_component},
-//{		  NULL,					NULL}
-//};
+static const struct luaL_Reg ecs_methods[] = {
+	{"AddComponent", ecs_lua_add_component},
+	 {		  NULL,					NULL}
+};
 
-//void ecs_lua_register_module(lua_State* L) {
-//int pos = lua_gettop(L);
-
-//luaL_register(L, "ECS", ecs_methods);
-//printf("registered methods\n");
-//luaL_setfuncs(L, ecs_methods, 0);
-//}
-
+void ecs_lua_register_module(lua_State* L) {
+	luaL_register(L, "ECS", ecs_methods);
+	printf("registered methods\n");
+	luaL_setfuncs(L, ecs_methods, 0);
+}
