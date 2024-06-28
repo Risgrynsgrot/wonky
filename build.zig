@@ -66,12 +66,12 @@ pub fn build(b: *std.Build) !void {
     ////const luaJIT_sources = try globFolder(allocator, "deps/luajit/src/", ".c");
     ////lib.addCSourceFiles(.{ .files = luaJIT_sources.items });
 
-    lua_binder.addIncludePath(.{ .path = "deps/luajit/src" });
-    lua_binder.addIncludePath(.{ .path = "src/" });
-    lua_binder.addIncludePath(.{ .path = "deps/raylib/src" });
+    lua_binder.addIncludePath(b.path("deps/luajit/src"));
+    lua_binder.addIncludePath(b.path("src/"));
+    lua_binder.addIncludePath(b.path("deps/raylib/src"));
     lua_binder.linkLibC();
     lua_binder.linkLibCpp();
-    //lua_binder.addObjectFile(.{ .path = "deps/luajit/src/libluajit.a" });
+    //lua_binder.addObjectFile(.{ .src_path = "deps/luajit/src/libluajit.a" });
 
     //// This declares intent for the library to be installed into the standard
     //// location when the user invokes the "install" step (the default step when
@@ -88,19 +88,19 @@ pub fn build(b: *std.Build) !void {
     exe.linkLibCpp();
 
     const raylib = try raySdk.addRaylib(b, target, optimize, .{});
-    exe.addIncludePath(.{ .path = "deps/raylib/src" });
+    exe.addIncludePath(b.path("deps/raylib/src"));
     exe.linkLibrary(raylib);
 
-    exe.addIncludePath(.{ .path = "deps/luajit/src" });
-    exe.addObjectFile(.{ .path = "deps/luajit/src/libluajit.a" });
+    exe.addIncludePath(b.path("deps/luajit/src"));
+    exe.addObjectFile(b.path("deps/luajit/src/libluajit.a"));
 
     //const json_c_files = try globFolder(allocator, b, "deps/json-c/", ".c");
-    //exe.addIncludePath(.{ .path = "deps/json-c/" });
+    //exe.addIncludePath(.{ .src_path = "deps/json-c/" });
     //exe.addCSourceFiles(.{ .files = json_c_files.items });
 
     const main_sources = try globFolder(allocator, b, "src/", ".c");
     exe.addCSourceFiles(.{ .files = main_sources.items });
-    exe.addIncludePath(.{ .path = "src/" });
+    exe.addIncludePath(b.path("src/"));
 
     exe.linkLibrary(lua_binder);
 
