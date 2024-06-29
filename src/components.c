@@ -20,6 +20,9 @@ ecs_id_t id_comp_draw_circle;
 ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 int ecs_component_string_count;
 
+//TODO(risgrynsgrot): Add ecs_lua_add_component_functions that maps component id to lua serialize
+//function
+
 void ecs_component_register_string(ecs_component_string_t value) {
 	int i						 = ecs_component_string_count;
 	ecs_component_string_t* dest = &ecs_component_strings[i];
@@ -60,13 +63,12 @@ void ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
 }
 
 #define LUA_ADD_COMP(T)                                                        \
-	ecs_t* ecs				  = script_get_userdata(L, "ecs");\
-	void ecs_lua_add_##T(lua_State* L, ecs_id_t entity) {                 \
-		comp_position_t* position =                                            \
-			ecs_add(ecs, entity, id_comp_##T, NULL);                      \
-		ser_lua_t ser_lua = {.L = L};                                          \
-		serializer_t ser  = new_reader_lua(ser_lua);                           \
-		ser_##T(&ser, T);                                          \
+	ecs_t* ecs = script_get_userdata(L, "ecs");                                \
+	void ecs_lua_add_##T(lua_State* L, ecs_id_t entity) {                      \
+		comp_position_t* position = ecs_add(ecs, entity, id_comp_##T, NULL);   \
+		ser_lua_t ser_lua		  = {.L = L};                                  \
+		serializer_t ser		  = new_reader_lua(ser_lua);                   \
+		ser_##T(&ser, T);                                                      \
 	}
 
 //int ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
