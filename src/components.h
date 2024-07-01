@@ -15,14 +15,8 @@ typedef struct ecs_component_string {
 extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define ECS_COMPONENT_T(T)                                                     \
-	extern ecs_id_t id_##T;                                                    \
+	extern ecs_id_t id_##T;                                                           \
 	typedef struct T
-
-#define ECS_REGISTER_COMPONENT(ECS, T)                                         \
-	id_##T = ecs_register_component(ECS, sizeof(T##_t), NULL, NULL);           \
-	ecs_component_register_string(                                             \
-		(ecs_component_string_t){.name = #T, .id = id_##T});                   \
-	ecs_component_string_count++;
 
 #define ECS_COMPONENTS_TYPE_ITER(_F, ...)                                      \
 	_F(position, POSITION, 0, __VA_ARGS__)                                     \
@@ -37,7 +31,14 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
+#define REGISTER_COMPONENTS(lc, uc, i, ECS, ...)                                    \
+	id_comp_##lc = ecs_register_component(ECS, sizeof(comp_##lc##_t), NULL, NULL);  \
+	ecs_component_register_string(                                             \
+		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});                 \
+	ecs_component_string_count++;
+
 #define DECL_COMPONENT_FIELD(T, NAME) T NAME;
+#define DECL_COMPONENT_IDS(lc, uc, i, ...) ecs_id_t id_comp_##lc;
 
 #define DECL_COMPONENT_STRUCT(T, ITER)                                         \
 	typedef struct comp_##T {                                                  \
