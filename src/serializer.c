@@ -23,9 +23,6 @@ bool read_string_lua(serializer_t* ser, char* value, const char* name) {
 	return true;
 }
 
-void ser_position(serializer_t* ser, comp_position_t* position) {
-	ser->ser_vec2(ser, &position->value, "value");
-}
 
 serializer_t new_reader_lua(ser_lua_t ser_lua) {
 	serializer_t result = {

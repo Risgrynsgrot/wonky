@@ -1,15 +1,15 @@
 #include "gameclient.h"
 #include "components.h"
 //#include "map.h"
+#include "lua.h"
 #include "movesystem.h"
 #include "rendersystem.h"
 #include "scriptloader.h"
+#include "zig_lua.h"
+#include <lauxlib.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "lua.h"
-#include <lauxlib.h>
-#include "zig_lua.h"
 
 #define PICO_ECS_MAX_SYSTEMS 16
 #define PICO_ECS_MAX_COMPONENTS 64
@@ -32,7 +32,7 @@ int client_init(client_t* client) {
 	client->input_map[0] = input_init();
 
 	printf("bruh");
-	test_func();
+	//test_func();
 
 	client->ecs = ecs_new(100, NULL);
 	ecs_components_register(client->ecs);
@@ -40,36 +40,36 @@ int client_init(client_t* client) {
 	ecs_register_input_systems(client->ecs, client->input_map);
 	ecs_register_move_systems(client->ecs);
 
-//	ldtk_map_t map;
-//	map_load_ldtk("assets/levels/testgym.ldtk", &map);
-//	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0], "entities");
-//	if(entity_layer != NULL) {
-//		level_spawn_entities(entity_layer, client->ecs);
-//	}
-
-	//ecs_id_t entity = ecs_create(client->ecs);
-
-	//lua_State* L = script_lua_init();
-	//lua_pushlightuserdata(L, client->ecs);
-	//lua_setglobal(L, "ecs");
-	////ecs_lua_register_module(L);
-
-	//script_load(L, "assets/scripts/luatest.lua");
-
-	//lua_getglobal(L, "Luatest");
-	//if(lua_istable(L, -1)) {
-	//	lua_getfield(L, -1, "onCreate");
-	//	lua_pushinteger(L, entity);
-	//	printf("entityID: %d\n", entity);
-	//	if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
-	//		luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+	//	ldtk_map_t map;
+	//	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+	//	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0],
+	//"entities"); 	if(entity_layer != NULL) { 		level_spawn_entities(entity_layer,
+	//client->ecs);
 	//	}
-	//}
-	//else {
-	//	printf("uuuh\n");
-	//}
 
-	//script_lua_close(L);
+	ecs_id_t entity = ecs_create(client->ecs);
+
+	lua_State* L = script_lua_init();
+	lua_pushlightuserdata(L, client->ecs);
+	lua_setglobal(L, "ecs");
+	ecs_lua_register_module(L);
+
+	script_load(L, "assets/scripts/luatest.lua");
+
+	lua_getglobal(L, "Luatest");
+	if(lua_istable(L, -1)) {
+		lua_getfield(L, -1, "onCreate");
+		lua_pushinteger(L, entity);
+		printf("entityID: %d\n", entity);
+		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+		}
+	}
+	else {
+		printf("uuuh\n");
+	}
+
+	script_lua_close(L);
 
 	return 0;
 }

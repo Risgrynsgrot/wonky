@@ -162,6 +162,7 @@ Vector2 table_get_vector2(lua_State* L, const char* value) {
 	}
 	result.x = table_get_number(L, "x");
 	result.y = table_get_number(L, "y");
+	printf("Vector2 from lua: %f, %f\n", result.x, result.y);
 	lua_pop(L, 1);
 	return result;
 }

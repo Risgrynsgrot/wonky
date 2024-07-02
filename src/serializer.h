@@ -59,5 +59,3 @@ DECL_SER_T(bool, bool)
 serializer_t new_reader_lua(ser_lua_t ser_lua);
 serializer_t new_reader_network(ser_network_t ser_network);
 
-typedef struct comp_position comp_position_t;
-void ser_position(serializer_t* ser, comp_position_t* position);

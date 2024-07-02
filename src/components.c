@@ -15,6 +15,68 @@ int ecs_component_string_count;
 //TODO(risgrynsgrot): Add ecs_lua_add_component_functions that maps component id
 //to lua serialize function
 
+void ser_position(serializer_t* ser, comp_position_t* position) {
+	ser->ser_vec2(ser, &position->value, "value");
+}
+
+void ser_rotation(serializer_t* ser, comp_rotation_t* rotation) {
+	ser->ser_float(ser, &rotation->angle, "angle");
+}
+
+void ser_velocity(serializer_t* ser, comp_velocity_t* velocity) {
+	ser->ser_vec2(ser, &velocity->value, "value");
+}
+
+void ser_input(serializer_t* ser, comp_input_t* input) {
+	ser->ser_int(ser, &input->input_id, "input_id");
+	ser->ser_vec2(ser, &input->direction, "direction");
+	ser->ser_bool(ser, &input->interact, "interact");
+	ser->ser_bool(ser, &input->open_inventory, "open_directory");
+}
+
+void ser_area_box(serializer_t* ser, comp_area_box_t* area_box) {
+	ser->ser_float(ser, &area_box->width, "width");
+	ser->ser_float(ser, &area_box->height, "height");
+	ser->ser_float(ser, &area_box->offset_x, "offset_x");
+	ser->ser_float(ser, &area_box->offset_y, "offset_y");
+	//ecs_id_t overlaps[MAX_OVERLAP_COUNT];
+	//int overlapCount;
+}
+
+void ser_col_box(serializer_t* ser, comp_col_box_t* col_box) {
+	ser->ser_float(ser, &col_box->width, "width");
+	ser->ser_float(ser, &col_box->height, "height");
+	ser->ser_float(ser, &col_box->offset_x, "offset_x");
+	ser->ser_float(ser, &col_box->offset_y, "offset_y");
+}
+
+void ser_draw_sprite(serializer_t* ser, comp_draw_sprite_t* draw_sprite) {
+	ser->ser_float(ser, &draw_sprite->width, "width");
+	ser->ser_float(ser, &draw_sprite->height, "height");
+	ser->ser_float(ser, &draw_sprite->offset_x, "offset_x");
+	ser->ser_float(ser, &draw_sprite->offset_y, "offset_y");
+	ser->ser_bool(ser, &draw_sprite->visible, "visible");
+	//ser->ser_Color color;
+	//ser->ser_Texture2D texture;
+}
+
+void ser_draw_box(serializer_t* ser, comp_draw_box_t* draw_box) {
+	ser->ser_float(ser, &draw_box->width, "width");
+	ser->ser_float(ser, &draw_box->height, "height");
+	ser->ser_float(ser, &draw_box->offset_x, "offset_x");
+	ser->ser_float(ser, &draw_box->offset_y, "offset_y");
+	ser->ser_bool(ser, &draw_box->visible, "visible");
+	//ser->ser_Color (ser, &draw_box->color, "color");
+}
+
+void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle) {
+	ser->ser_float(ser, &draw_circle->radius, "radius");
+	ser->ser_float(ser, &draw_circle->offset_x, "offset_x");
+	ser->ser_float(ser, &draw_circle->offset_y, "offset_y");
+	ser->ser_bool(ser, &draw_circle->visible, "visible");
+	//Color color;
+}
+
 void ecs_component_register_string(ecs_component_string_t value) {
 	int i						 = ecs_component_string_count;
 	ecs_component_string_t* dest = &ecs_component_strings[i];
@@ -55,10 +117,10 @@ ecs_id_t ecs_string_to_componentid(const char* value) {
 //}
 
 #define LUA_ADD_COMP(lc, uc, i, ...)                                           \
-	int ecs_lua_add_##lc(serializer_t* ser, ecs_id_t entity) {                    \
-		ecs_t* ecs		  = script_get_userdata(ser->ser.lua.L, "ecs");                \
+	int ecs_lua_add_##lc(serializer_t* ser, ecs_id_t entity) {                 \
+		ecs_t* ecs		  = script_get_userdata(ser->ser.lua.L, "ecs");        \
 		comp_##lc##_t* lc = ecs_add(ecs, entity, id_comp_##lc, NULL);          \
-		ser_##lc(ser, lc);                                                    \
+		ser_##lc(ser, lc);                                                     \
 		return 0;                                                              \
 	}
 
@@ -80,6 +142,14 @@ int ecs_lua_add_component(lua_State* L) {
 			printf("component: %s\n", component);
 			serializer_t ser = new_reader_lua((ser_lua_t){.L = L});
 			ECS_COMPONENTS_TYPE_ITER(LUA_TRY_ADD_COMP, void)
+			//if(ecs_string_to_componentid(component) == id_comp_draw_sprite) {
+				//Do special case for loading sprites, or do something with some
+				//kind of asset loader
+				//ecs_t* ecs	= script_get_userdata(L,"ecs");
+				//comp_draw_sprite_t* sprite = ecs_get(ecs, entity,
+				//id_comp_draw_sprite); 
+				//render_load_sprite(ecs, sprite->);
+			//}
 		} else {
 			printf("not a string\n");
 		}
@@ -95,8 +165,8 @@ void ecs_components_register(ecs_t* ecs) {
 }
 
 static const struct luaL_Reg ecs_methods[] = {
-	//{"AddComponent", ecs_lua_add_component},
-	{NULL, NULL}
+	{"AddComponent", ecs_lua_add_component},
+	 {		  NULL,					NULL}
 };
 
 void ecs_lua_register_module(lua_State* L) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "pico_ecs.h"
+#include "serializer.h"
 #include <lua.h>
 #include <raylib.h>
 #include <raymath.h>
@@ -15,7 +16,7 @@ typedef struct ecs_component_string {
 extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define ECS_COMPONENT_T(T)                                                     \
-	extern ecs_id_t id_##T;                                                           \
+	extern ecs_id_t id_##T;                                                    \
 	typedef struct T
 
 #define ECS_COMPONENTS_TYPE_ITER(_F, ...)                                      \
@@ -31,10 +32,11 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
-#define REGISTER_COMPONENTS(lc, uc, i, ECS, ...)                                    \
-	id_comp_##lc = ecs_register_component(ECS, sizeof(comp_##lc##_t), NULL, NULL);  \
+#define REGISTER_COMPONENTS(lc, uc, i, ECS, ...)                               \
+	id_comp_##lc =                                                             \
+		ecs_register_component(ECS, sizeof(comp_##lc##_t), NULL, NULL);        \
 	ecs_component_register_string(                                             \
-		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});                 \
+		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});            \
 	ecs_component_string_count++;
 
 #define DECL_COMPONENT_FIELD(T, NAME) T NAME;
@@ -55,30 +57,21 @@ ECS_COMPONENT_T(comp_position) {
 
 comp_position_t;
 
-#define DEF_COMP_POSITION(_F, ...) _F(Vector2, value)
-
-#define DEF_COMP_INPUT(_F, ...)                                                \
-	_F(int, input_id)                                                          \
-	_F(Vector2, direction)                                                     \
-	_F(bool, interact)                                                         \
-	_F(bool, open_inventory)
-
-//DECL_COMPONENT_STRUCT(position, DEF_COMP_POSITION)
-//DECL_COMPONENT_STRUCT(input, DEF_COMP_INPUT)
-
-comp_position_t lua_get_position(lua_State* L);
+void ser_position(serializer_t* ser, comp_position_t* position);
 
 ECS_COMPONENT_T(comp_rotation) {
 	float angle;
 }
 
 comp_rotation_t;
+void ser_rotation(serializer_t* ser, comp_rotation_t* rotation);
 
 ECS_COMPONENT_T(comp_velocity) {
 	Vector2 value;
 }
 
 comp_velocity_t;
+void ser_velocity(serializer_t* ser, comp_velocity_t* velocity);
 
 ECS_COMPONENT_T(comp_input) {
 	int input_id;
@@ -88,6 +81,7 @@ ECS_COMPONENT_T(comp_input) {
 }
 
 comp_input_t;
+void ser_input(serializer_t* ser, comp_input_t* input);
 
 #define MAX_OVERLAP_COUNT 256
 
@@ -101,6 +95,7 @@ ECS_COMPONENT_T(comp_area_box) {
 }
 
 comp_area_box_t;
+void ser_area_box(serializer_t* ser, comp_area_box_t* area_box);
 
 ECS_COMPONENT_T(comp_col_box) {
 	float width;
@@ -110,6 +105,7 @@ ECS_COMPONENT_T(comp_col_box) {
 }
 
 comp_col_box_t;
+void ser_col_box(serializer_t* ser, comp_col_box_t* col_box);
 
 ECS_COMPONENT_T(comp_draw_sprite) {
 	float width;
@@ -122,6 +118,7 @@ ECS_COMPONENT_T(comp_draw_sprite) {
 }
 
 comp_draw_sprite_t;
+void ser_draw_sprite(serializer_t* ser, comp_draw_sprite_t* draw_sprite);
 
 ECS_COMPONENT_T(comp_draw_box) {
 	float width;
@@ -133,6 +130,7 @@ ECS_COMPONENT_T(comp_draw_box) {
 }
 
 comp_draw_box_t;
+void ser_draw_box(serializer_t* ser, comp_draw_box_t* draw_box);
 
 ECS_COMPONENT_T(comp_draw_circle) {
 	float radius;
@@ -143,6 +141,7 @@ ECS_COMPONENT_T(comp_draw_circle) {
 }
 
 comp_draw_circle_t;
+void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle);
 
 void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
