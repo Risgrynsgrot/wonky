@@ -37,7 +37,7 @@ function Luatest.onCreate(e)
 	}
 
 	local draw_sprite = {
-		type = "draw_sprite",
+		type = "asset_sprite",
 		path = "assets/test.png"
 	}
 

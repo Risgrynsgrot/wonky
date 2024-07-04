@@ -96,16 +96,15 @@ void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value) {
 	return NULL;
 }
 
-ecs_id_t ecs_string_to_componentid(const char* value) {
+bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 	for(int i = 0; i < ecs_component_string_count; i++) {
 		if(strcmp(value, ecs_component_strings[i].name) != 0) {
 			continue;
 		}
-		ecs_id_t result = ecs_component_strings[i].id;
-		return result;
+		*out_result = ecs_component_strings[i].id;
+		return true;
 	}
-	assert(false && "tried to get nonexistent component, did you misspell?");
-	return 0;
+	return false;
 }
 
 //void ecs_lua_add_position(lua_State* L, ecs_id_t entity) {
@@ -127,9 +126,21 @@ ecs_id_t ecs_string_to_componentid(const char* value) {
 ECS_COMPONENTS_TYPE_ITER(LUA_ADD_COMP, void)
 
 #define LUA_TRY_ADD_COMP(lc, uc, i, ...)                                       \
-	if(ecs_string_to_componentid(component) == id_comp_##lc) {                 \
-		return ecs_lua_add_##lc(&ser, entity);                                 \
+	if(ecs_string_to_componentid(&component, type)) {                          \
+		if(component == id_comp_##lc) {                                        \
+			return ecs_lua_add_##lc(&ser, entity);                             \
+		}                                                                      \
 	}
+
+void ecs_lua_try_add_asset(lua_State* L, ecs_id_t entity, const char* type) {
+	if(strcmp(type, "asset_sprite") == 0) {
+		lua_getfield(L, -1, "path");
+		const char* path = lua_tostring(L, -1);
+		lua_pop(L, 1);
+		ecs_t* ecs = script_get_userdata(L, "ecs");
+		render_load_sprite(ecs, path, entity);
+	}
+}
 
 int ecs_lua_add_component(lua_State* L) {
 	printf("waba?\n");
@@ -137,19 +148,13 @@ int ecs_lua_add_component(lua_State* L) {
 	if(lua_istable(L, -1)) { //the table with the component info
 		lua_getfield(L, -1, "type");
 		if(lua_isstring(L, -1)) {
-			const char* component = lua_tostring(L, -1);
+			const char* type = lua_tostring(L, -1);
 			lua_pop(L, 1);
-			printf("component: %s\n", component);
+			printf("component_type: %s\n", type);
 			serializer_t ser = new_reader_lua((ser_lua_t){.L = L});
+			ecs_id_t component;
 			ECS_COMPONENTS_TYPE_ITER(LUA_TRY_ADD_COMP, void)
-			//if(ecs_string_to_componentid(component) == id_comp_draw_sprite) {
-				//Do special case for loading sprites, or do something with some
-				//kind of asset loader
-				//ecs_t* ecs	= script_get_userdata(L,"ecs");
-				//comp_draw_sprite_t* sprite = ecs_get(ecs, entity,
-				//id_comp_draw_sprite); 
-				//render_load_sprite(ecs, sprite->);
-			//}
+			ecs_lua_try_add_asset(L, entity, type);
 		} else {
 			printf("not a string\n");
 		}

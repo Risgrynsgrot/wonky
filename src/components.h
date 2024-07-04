@@ -20,21 +20,21 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	typedef struct T
 
 #define ECS_COMPONENTS_TYPE_ITER(_F, ...)                                      \
-	_F(position, POSITION, 0, __VA_ARGS__)                                     \
-	_F(rotation, ROTATION, 1, __VA_ARGS__)                                     \
-	_F(velocity, VELOCITY, 2, __VA_ARGS__)                                     \
-	_F(input, INPUT, 3, __VA_ARGS__)                                           \
-	_F(area_box, AREA_BOX, 4, __VA_ARGS__)                                     \
-	_F(col_box, COL_BOX, 5, __VA_ARGS__)                                       \
-	_F(draw_sprite, DRAW_SPRITE, 6, __VA_ARGS__)                               \
-	_F(draw_box, DRAW_BOX, 7, __VA_ARGS__)                                     \
-	_F(draw_circle, DRAW_CIRCLE, 8, __VA_ARGS__)
+	_F(position, POSITION, 0, NULL, NULL, __VA_ARGS__)                         \
+	_F(rotation, ROTATION, 1, NULL, NULL, __VA_ARGS__)                         \
+	_F(velocity, VELOCITY, 2, NULL, NULL, __VA_ARGS__)                         \
+	_F(input, INPUT, 3, NULL, NULL, __VA_ARGS__)                               \
+	_F(area_box, AREA_BOX, 4, NULL, NULL, __VA_ARGS__)                         \
+	_F(col_box, COL_BOX, 5, NULL, NULL, __VA_ARGS__)                           \
+	_F(draw_sprite, DRAW_SPRITE, 6, NULL, NULL, __VA_ARGS__)                   \
+	_F(draw_box, DRAW_BOX, 7, NULL, NULL, __VA_ARGS__)                         \
+	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
-#define REGISTER_COMPONENTS(lc, uc, i, ECS, ...)                               \
-	id_comp_##lc =                                                             \
-		ecs_register_component(ECS, sizeof(comp_##lc##_t), NULL, NULL);        \
+#define REGISTER_COMPONENTS(lc, uc, i, constructor, destructor, ECS, ...)      \
+	id_comp_##lc = ecs_register_component(                                     \
+		ECS, sizeof(comp_##lc##_t), constructor, destructor);                  \
 	ecs_component_register_string(                                             \
 		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});            \
 	ecs_component_string_count++;
@@ -145,7 +145,7 @@ void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle);
 
 void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
-ecs_id_t ecs_string_to_componentid(const char* value);
+bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value);
 void ecs_components_register(ecs_t* ecs);
 void ecs_lua_register_module(lua_State* L);
 
