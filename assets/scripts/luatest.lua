@@ -1,7 +1,7 @@
 Luatest = {}
 
 function Luatest.testfunc(e)
-	local position = e:get_component("position")
+	local position = ECS.get_component(e, "position")
 	position.x = position.x + 10
 	position.y = position.y + 10
 end
@@ -47,11 +47,11 @@ function Luatest.onCreate(e)
 	}
 
 	print("entityID in lua: " .. tostring(e))
-	ECS.AddComponent(e, position)
-	ECS.AddComponent(e, velocity)
-	ECS.AddComponent(e, draw_sprite)
-	ECS.AddComponent(e, draw_box)
-	ECS.AddComponent(e, input)
+	ECS.add_component(e, position)
+	ECS.add_component(e, velocity)
+	ECS.add_component(e, draw_sprite)
+	--ECS.add_component(e, draw_box)
+	ECS.add_component(e, input)
 end
 
 -- TO RUN THIS YOU NEED TO REGISTER USER DATA FOR ecs

@@ -47,6 +47,10 @@ typedef struct serializer {
 	bool read_##NAME##_lua(serializer_t* ser, T* value, const char* name) {    \
 		*value = table_get_##NAME(ser->ser.lua.L, name);                       \
 		return true;                                                           \
+	}                                                                          \
+	bool write_##NAME##_lua(serializer_t* ser, T* value, const char* name) {   \
+		*value = table_set_##NAME(ser->ser.lua.L, name);                       \
+		return true;                                                           \
 	}
 
 bool read_string_network(serializer_t* ser, char* value, const char* name);
@@ -60,5 +64,7 @@ DECL_SER_T(bool, bool)
 DECL_SER_T(Color, color)
 
 serializer_t new_reader_lua(ser_lua_t ser_lua);
+serializer_t new_writer_lua(ser_lua_t ser_lua);
+
 serializer_t new_reader_network(ser_network_t ser_network);
 

@@ -38,6 +38,20 @@ serializer_t new_reader_lua(ser_lua_t ser_lua) {
 	return result;
 }
 
+serializer_t new_writer_lua(ser_lua_t ser_lua) {
+	serializer_t result = {
+		.ser.lua	= ser_lua,
+		.ser_vec2	= read_vector2_lua,
+		.ser_int	= read_int_lua,
+		.ser_float	= read_float_lua,
+		.ser_double = read_double_lua,
+		.ser_bool	= read_bool_lua,
+		.ser_string = read_string_lua,
+		.ser_color = read_color_lua,
+	};
+	return result;
+}
+
 serializer_t new_reader_network(ser_network_t ser_network) {
 	serializer_t result = {
 		.ser.network = ser_network,
