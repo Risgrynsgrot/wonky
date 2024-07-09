@@ -1,5 +1,4 @@
 #include "serializer.h"
-#include "components.h"
 #include "scriptloader.h"
 #include <raylib.h>
 #include <string.h>
@@ -9,6 +8,7 @@ DEF_SER_T(int, int)
 DEF_SER_T(float, float)
 DEF_SER_T(double, double)
 DEF_SER_T(bool, bool)
+DEF_SER_T(Color, color)
 
 bool read_string_network(serializer_t* ser, char* value, const char* name) {
 	(void)ser;
@@ -33,6 +33,7 @@ serializer_t new_reader_lua(ser_lua_t ser_lua) {
 		.ser_double = read_double_lua,
 		.ser_bool	= read_bool_lua,
 		.ser_string = read_string_lua,
+		.ser_color = read_color_lua,
 	};
 	return result;
 }
@@ -45,7 +46,7 @@ serializer_t new_reader_network(ser_network_t ser_network) {
 		.ser_float	 = read_float_network,
 		.ser_double	 = read_double_network,
 		.ser_bool	 = read_bool_network,
-		.ser_string	 = read_string_network,
+		.ser_color	 = read_color_network,
 	};
 	return result;
 }

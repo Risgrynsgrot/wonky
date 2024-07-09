@@ -56,7 +56,7 @@ void ser_draw_sprite(serializer_t* ser, comp_draw_sprite_t* draw_sprite) {
 	ser->ser_float(ser, &draw_sprite->offset_x, "offset_x");
 	ser->ser_float(ser, &draw_sprite->offset_y, "offset_y");
 	ser->ser_bool(ser, &draw_sprite->visible, "visible");
-	//ser->ser_Color color;
+	ser->ser_color(ser, &draw_sprite->color, "color");
 	//ser->ser_Texture2D texture;
 }
 
@@ -66,7 +66,7 @@ void ser_draw_box(serializer_t* ser, comp_draw_box_t* draw_box) {
 	ser->ser_float(ser, &draw_box->offset_x, "offset_x");
 	ser->ser_float(ser, &draw_box->offset_y, "offset_y");
 	ser->ser_bool(ser, &draw_box->visible, "visible");
-	//ser->ser_Color (ser, &draw_box->color, "color");
+	ser->ser_color(ser, &draw_box->color, "color");
 }
 
 void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle) {
@@ -74,7 +74,7 @@ void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle) {
 	ser->ser_float(ser, &draw_circle->offset_x, "offset_x");
 	ser->ser_float(ser, &draw_circle->offset_y, "offset_y");
 	ser->ser_bool(ser, &draw_circle->visible, "visible");
-	//Color color;
+	ser->ser_color(ser, &draw_circle->color, "color");
 }
 
 void ecs_component_register_string(ecs_component_string_t value) {

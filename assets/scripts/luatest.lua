@@ -24,17 +24,17 @@ function Luatest.onCreate(e)
 		}
 	}
 
-	local draw_box = {
-		type = "draw_box",
-		width = 1000,
-		height = 1000,
-		color = {
-			r = 255,
-			g = 0.0,
-			b = 255,
-			a = 255
-		}
-	}
+	--local draw_box = {
+	--	type = "draw_box",
+	--	width = 1000,
+	--	height = 1000,
+	--	color = {
+	--		r = 255,
+	--		g = 0.0,
+	--		b = 255,
+	--		a = 255
+	--	}
+	--}
 
 	local draw_sprite = {
 		type = "asset_sprite",
@@ -52,7 +52,6 @@ function Luatest.onCreate(e)
 	ECS.AddComponent(e, draw_sprite)
 	ECS.AddComponent(e, draw_box)
 	ECS.AddComponent(e, input)
-	--ecs:add_component(e, flammable)
 end
 
 -- TO RUN THIS YOU NEED TO REGISTER USER DATA FOR ecs

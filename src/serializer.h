@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 typedef struct Vector2 Vector2;
+typedef struct Color Color;
 
 typedef struct network_buffer {
 	char buffer[256];
@@ -28,6 +29,7 @@ typedef struct serializer {
 	bool (*ser_vec2)(struct serializer* ser, Vector2* value, const char* name);
 	bool (*ser_bool)(struct serializer* ser, bool* value, const char* name);
 	bool (*ser_string)(struct serializer* ser, char* value, const char* name);
+	bool (*ser_color)(struct serializer* ser, Color* value, const char* name);
 } serializer_t;
 
 #define DECL_SER_T(T, NAME)                                                    \
@@ -55,6 +57,7 @@ DECL_SER_T(int, int)
 DECL_SER_T(float, float)
 DECL_SER_T(double, double)
 DECL_SER_T(bool, bool)
+DECL_SER_T(Color, color)
 
 serializer_t new_reader_lua(ser_lua_t ser_lua);
 serializer_t new_reader_network(ser_network_t ser_network);
