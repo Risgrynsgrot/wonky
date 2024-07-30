@@ -123,6 +123,14 @@ bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 		return 0;                                                              \
 	}
 
+#define LUA_SET_COMP(lc, uc, i, ...)                                           \
+	int ecs_lua_set_##lc(serializer_t* ser, ecs_id_t entity) {                 \
+		ecs_t* ecs		  = script_get_userdata(ser->ser.lua.L, "ecs");        \
+		comp_##lc##_t* lc = ecs_get(ecs, entity, id_comp_##lc);                \
+		ser_##lc(ser, lc);                                                     \
+		return 0;                                                              \
+	}
+
 //TODO(risgrynsgrot) Create table and return it as part of getting comp
 #define LUA_GET_COMP(lc, uc, i, ...)                                           \
 	int ecs_lua_get_##lc(serializer_t* ser, ecs_id_t entity) {                 \
@@ -140,12 +148,20 @@ bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 	}
 
 ECS_COMPONENTS_TYPE_ITER(LUA_ADD_COMP, void)
+ECS_COMPONENTS_TYPE_ITER(LUA_SET_COMP, void)
 ECS_COMPONENTS_TYPE_ITER(LUA_GET_COMP, void)
 
 #define LUA_TRY_ADD_COMP(lc, uc, i, ...)                                       \
 	if(ecs_string_to_componentid(&component, type)) {                          \
 		if(component == id_comp_##lc) {                                        \
 			return ecs_lua_add_##lc(&ser, entity);                             \
+		}                                                                      \
+	}
+
+#define LUA_TRY_SET_COMP(lc, uc, i, ...)                                       \
+	if(ecs_string_to_componentid(&component, type)) {                          \
+		if(component == id_comp_##lc) {                                        \
+			return ecs_lua_set_##lc(&ser, entity);                             \
 		}                                                                      \
 	}
 
@@ -188,6 +204,28 @@ int ecs_lua_add_component(lua_State* L) {
 	return 0;
 }
 
+int ecs_lua_set_component(lua_State* L) {
+	printf("setting component...\n");
+	ecs_id_t entity = lua_tointeger(L, -2);
+	if(lua_istable(L, -1)) { //the table with the component info
+		lua_getfield(L, -1, "type");
+		if(lua_isstring(L, -1)) {
+			const char* type = lua_tostring(L, -1);
+			lua_pop(L, 1);
+			printf("component_type: %s\n", type);
+			serializer_t ser = new_reader_lua(
+				(ser_lua_t){.L = L}); //this might be better to put in userdata
+			ecs_id_t component;
+			ECS_COMPONENTS_TYPE_ITER(LUA_TRY_SET_COMP, void)
+		} else {
+			printf("not a string\n");
+		}
+	} else {
+		printf("not a table\n");
+	}
+	return 0;
+}
+
 //TODO(risgrynsgrot) Change type getting to use ints, to reduce strcmp
 int ecs_lua_get_component(lua_State* L) {
 	ecs_id_t entity = lua_tointeger(L, -2);
@@ -212,6 +250,7 @@ void ecs_components_register(ecs_t* ecs) {
 static const struct luaL_Reg ecs_methods[] = {
 	{"add_component", ecs_lua_add_component},
 	{"get_component", ecs_lua_get_component},
+	{"set_component", ecs_lua_set_component},
 	{		   NULL,				  NULL}
 };
 
