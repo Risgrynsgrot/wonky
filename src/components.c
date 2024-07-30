@@ -128,8 +128,15 @@ bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 	int ecs_lua_get_##lc(serializer_t* ser, ecs_id_t entity) {                 \
 		ecs_t* ecs		  = script_get_userdata(ser->ser.lua.L, "ecs");        \
 		comp_##lc##_t* lc = ecs_get(ecs, entity, id_comp_##lc);                \
+		lua_newtable(ser->ser.lua.L);                                          \
+		lua_pushstring(ser->ser.lua.L, #lc);                                   \
+		lua_setfield(ser->ser.lua.L, -2, "type");                              \
+		printf("stack before ser: \n");                                        \
+		script_dumpstack(ser->ser.lua.L);                                      \
 		ser_##lc(ser, lc);                                                     \
-		return 0;                                                              \
+		printf("stack after ser: \n");                                         \
+		script_dumpstack(ser->ser.lua.L);                                      \
+		return 1;                                                              \
 	}
 
 ECS_COMPONENTS_TYPE_ITER(LUA_ADD_COMP, void)
@@ -184,10 +191,9 @@ int ecs_lua_add_component(lua_State* L) {
 //TODO(risgrynsgrot) Change type getting to use ints, to reduce strcmp
 int ecs_lua_get_component(lua_State* L) {
 	ecs_id_t entity = lua_tointeger(L, -2);
-	lua_getfield(L, -1, "type");
+	//lua_getfield(L, -1, "type");
 	if(lua_isstring(L, -1)) {
 		const char* type = lua_tostring(L, -1);
-		lua_newtable(L);
 		serializer_t ser = new_writer_lua((ser_lua_t){.L = L});
 		ecs_id_t component;
 		ECS_COMPONENTS_TYPE_ITER(LUA_TRY_GET_COMP, void)

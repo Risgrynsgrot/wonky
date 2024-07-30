@@ -2,8 +2,9 @@ Luatest = {}
 
 function Luatest.testfunc(e)
 	local position = ECS.get_component(e, "position")
-	position.x = position.x + 100
-	position.y = position.y + 100
+	position.value.x = position.value.x - 1000
+	position.value.y = position.value.y + 100
+	ECS.set_component(e, position)
 	print("yas queen")
 end
 

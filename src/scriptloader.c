@@ -4,6 +4,31 @@
 #include <lualib.h>
 #include <raylib.h>
 
+void script_dumpstack (lua_State *L) {
+  int top=lua_gettop(L);
+  for (int i=1; i <= top; i++) {
+    printf("%d\t%s\t", i, luaL_typename(L,i));
+    switch (lua_type(L, i)) {
+      case LUA_TNUMBER:
+        printf("%g\n",lua_tonumber(L,i));
+        break;
+      case LUA_TSTRING:
+        printf("%s\n",lua_tostring(L,i));
+        break;
+      case LUA_TBOOLEAN:
+        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
+        break;
+      case LUA_TNIL:
+        printf("%s\n", "nil");
+        break;
+      default:
+        printf("%p\n",lua_topointer(L,i));
+        break;
+    }
+  }
+}
+
+
 lua_State* script_lua_init(void) {
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
@@ -155,7 +180,7 @@ Vector2 table_get_vector2(lua_State* L, const char* value) {
 	lua_getfield(L, -1, value);
 	if(!lua_istable(L, -1)) {
 		printf(
-			"LUA TRIED TO GET Vector2 %s BUT FAILED, RETURNING EMPTY STRING\n",
+			"LUA TRIED TO GET Vector2 %s BUT FAILED, RETURNING EMPTY VECTOR\n",
 			value);
 		lua_pop(L, 1);
 		return result;
@@ -187,68 +212,59 @@ Color table_get_color(lua_State* L, const char* value) {
 
 void table_set_number(lua_State* L, const char* value, double data) {
 	lua_pushnumber(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_int(lua_State* L, const char* value, int data) {
 	lua_pushnumber(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_float(lua_State* L, const char* value, float data) {
 	lua_pushnumber(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_double(lua_State* L, const char* value, double data) {
 	lua_pushnumber(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_string(lua_State* L, const char* value, const char* data) {
 	lua_pushstring(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_bool(lua_State* L, const char* value, bool data) {
 	lua_pushboolean(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_userdata(lua_State* L, const char* value, void* data) { //might be wrong using light user data
 	lua_pushlightuserdata(L, data);
-	lua_setfield(L, -1, value);
-	lua_pop(L, 1);
+	lua_setfield(L, -2, value);
 }
 
 void table_set_vector2(lua_State* L, const char* value, Vector2 data) {
+	lua_newtable(L);
+	lua_setfield(L, -2, value);
 	lua_getfield(L, -1, value);
-	if(!lua_istable(L, -1)) {
-		printf("LUA TRIED TO GET Color %s BUT FAILED, RETURNING EMPTY STRING\n",
-			   value);
-		lua_pop(L, 1);
-	}
 	table_set_number(L, "x", data.x);
 	table_set_number(L, "y", data.y);
 	lua_pop(L, 1);
+	printf("stack during ser: \n");
+	script_dumpstack(L);
 }
 
 void table_set_color(lua_State* L, const char* value, Color data) {
+	lua_newtable(L);
+	lua_setfield(L, -2, value);
 	lua_getfield(L, -1, value);
-	if(!lua_istable(L, -1)) {
-		printf("LUA TRIED TO GET Color %s BUT FAILED, RETURNING EMPTY STRING\n",
-			   value);
-		lua_pop(L, 1);
-	}
 	table_set_number(L, "r", data.r);
 	table_set_number(L, "g", data.g);
 	table_set_number(L, "b", data.b);
 	table_set_number(L, "a", data.a);
 	lua_pop(L, 1);
+	printf("stack during ser: \n");
+	script_dumpstack(L);
 }
