@@ -35,7 +35,6 @@ double script_get_number(lua_State* L, const char* value) {
 	return result;
 }
 
-
 int script_get_int(lua_State* L, const char* value) {
 	lua_getglobal(L, value);
 
@@ -107,6 +106,7 @@ double table_get_number(lua_State* L, const char* value) {
 float table_get_float(lua_State* L, const char* value) {
 	return table_get_number(L, value);
 }
+
 double table_get_double(lua_State* L, const char* value) {
 	return table_get_number(L, value);
 }
@@ -172,9 +172,8 @@ Color table_get_color(lua_State* L, const char* value) {
 
 	lua_getfield(L, -1, value);
 	if(!lua_istable(L, -1)) {
-		printf(
-			"LUA TRIED TO GET Color %s BUT FAILED, RETURNING EMPTY STRING\n",
-			value);
+		printf("LUA TRIED TO GET Color %s BUT FAILED, RETURNING EMPTY STRING\n",
+			   value);
 		lua_pop(L, 1);
 		return result;
 	}
@@ -186,29 +185,44 @@ Color table_get_color(lua_State* L, const char* value) {
 	return result;
 }
 
-double table_set_number(lua_State* L, const char* value) {
+void table_set_number(lua_State* L, const char* value, double data) {
+	lua_pushnumber(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
 
-int table_set_int(lua_State* L, const char* value) {
+void table_set_int(lua_State* L, const char* value, int data) {
+	lua_pushnumber(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
 
-float table_set_float(lua_State* L, const char* value) {
+void table_set_float(lua_State* L, const char* value, float data) {
+	lua_pushnumber(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
 
-double table_set_double(lua_State* L, const char* value) {
+void table_set_double(lua_State* L, const char* value, double data) {
+	lua_pushnumber(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
 
-const char* table_set_string(lua_State* L, const char* value) {
+void table_set_string(lua_State* L, const char* value, const char* data) {
+	lua_pushstring(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
 
-bool table_set_bool(lua_State* L, const char* value) {
+void table_set_bool(lua_State* L, const char* value, bool data) {
+	lua_pushboolean(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
 
-void* table_set_userdata(lua_State* L, const char* value) {
-}
-
-Vector2 table_set_vector2(lua_State* L, const char* value) {
-}
-
-Color table_set_color(lua_State* L, const char* value) {
+void table_set_userdata(lua_State* L, const char* value, void* data) { //might be wrong using light user data
+	lua_pushlightuserdata(L, data);
+	lua_setfield(L, -1, value);
+	lua_pop(L, 1);
 }
