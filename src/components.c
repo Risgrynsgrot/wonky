@@ -123,6 +123,7 @@ bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 		return 0;                                                              \
 	}
 
+//TODO(risgrynsgrot) Create table and return it as part of getting comp
 #define LUA_GET_COMP(lc, uc, i, ...)                                           \
 	int ecs_lua_get_##lc(serializer_t* ser, ecs_id_t entity) {                 \
 		ecs_t* ecs		  = script_get_userdata(ser->ser.lua.L, "ecs");        \

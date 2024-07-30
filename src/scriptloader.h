@@ -34,6 +34,5 @@ void table_set_string(lua_State* L, const char* name,  const char* data);
 void table_set_bool(lua_State* L, const char* name, bool data);
 void table_set_userdata(lua_State* L, const char* name, void* data);
 
-Vector2 table_set_vector2(lua_State* L, const char* value);
-
-Color table_set_color(lua_State* L, const char* value);
+void table_set_vector2(lua_State* L, const char* value, Vector2 data);
+void table_set_color(lua_State* L, const char* value, Color data);

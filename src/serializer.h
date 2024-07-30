@@ -49,7 +49,7 @@ typedef struct serializer {
 		return true;                                                           \
 	}                                                                          \
 	bool write_##NAME##_lua(serializer_t* ser, T* value, const char* name) {   \
-		table_set_##NAME(ser->ser.lua.L, name, value);                       \
+		table_set_##NAME(ser->ser.lua.L, name, *value);                       \
 		return true;                                                           \
 	}
 

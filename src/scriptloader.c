@@ -226,3 +226,29 @@ void table_set_userdata(lua_State* L, const char* value, void* data) { //might b
 	lua_setfield(L, -1, value);
 	lua_pop(L, 1);
 }
+
+void table_set_vector2(lua_State* L, const char* value, Vector2 data) {
+	lua_getfield(L, -1, value);
+	if(!lua_istable(L, -1)) {
+		printf("LUA TRIED TO GET Color %s BUT FAILED, RETURNING EMPTY STRING\n",
+			   value);
+		lua_pop(L, 1);
+	}
+	table_set_number(L, "x", data.x);
+	table_set_number(L, "y", data.y);
+	lua_pop(L, 1);
+}
+
+void table_set_color(lua_State* L, const char* value, Color data) {
+	lua_getfield(L, -1, value);
+	if(!lua_istable(L, -1)) {
+		printf("LUA TRIED TO GET Color %s BUT FAILED, RETURNING EMPTY STRING\n",
+			   value);
+		lua_pop(L, 1);
+	}
+	table_set_number(L, "r", data.r);
+	table_set_number(L, "g", data.g);
+	table_set_number(L, "b", data.b);
+	table_set_number(L, "a", data.a);
+	lua_pop(L, 1);
+}

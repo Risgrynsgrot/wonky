@@ -64,6 +64,15 @@ int client_init(client_t* client) {
 		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
+		//lua_pop(L, 2);
+
+		lua_getfield(L, -1, "testfunc");
+		lua_pushinteger(L, entity);
+		printf("entityID: %d\n", entity);
+		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+		}
+		lua_pop(L, 2);
 	}
 	else {
 		printf("uuuh\n");
