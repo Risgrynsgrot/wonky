@@ -14,6 +14,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/json-c)
 
+file(GLOB enet_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
+add_library(enet STATIC ${enet_sources})
+target_include_directories(enet PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/include/)
+
 add_library(luajit STATIC IMPORTED)
 target_include_directories(luajit INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/)
 set_target_properties(luajit PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src/libluajit.a)
@@ -35,9 +39,9 @@ target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} luajit)
-#target_link_libraries(${PROJECT_NAME} enet)
+target_link_libraries(${PROJECT_NAME} enet)
 
-# --- Set a symbolic link so exe can find the /Data folder ----
+# --- copy assets so exe can find the /assets folder ----
 set(link_src "${CMAKE_SOURCE_DIR}/assets")
 if(UNIX AND NOT APPLE) 
 	set(link_dst "${CMAKE_CURRENT_BINARY_DIR}/assets") 
@@ -47,7 +51,7 @@ endif()
 add_custom_command(
 	TARGET ${PROJECT_NAME} 
 	POST_BUILD COMMAND ${CMAKE_COMMAND} 
-	-E create_symlink ${link_src} ${link_dst} 
+	-E copy ${link_src} ${link_dst} 
 	DEPENDS ${link_dst} 
-	COMMENT "symbolic link ${link_src} => ${link_dst}" 
+	COMMENT "copy ${link_src} => ${link_dst}" 
 	)

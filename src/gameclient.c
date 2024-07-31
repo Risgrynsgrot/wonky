@@ -1,7 +1,7 @@
 #include "gameclient.h"
 #include "components.h"
-//#include "map.h"
 #include "lua.h"
+#include "map.h"
 #include "movesystem.h"
 #include "rendersystem.h"
 #include "scriptloader.h"
@@ -40,12 +40,12 @@ int client_init(client_t* client) {
 	ecs_register_input_systems(client->ecs, client->input_map);
 	ecs_register_move_systems(client->ecs);
 
-	//	ldtk_map_t map;
-	//	map_load_ldtk("assets/levels/testgym.ldtk", &map);
-	//	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0],
-	//"entities"); 	if(entity_layer != NULL) { 		level_spawn_entities(entity_layer,
-	//client->ecs);
-	//	}
+	ldtk_map_t map;
+	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0], "entities");
+	if(entity_layer != NULL) {
+		level_spawn_entities(entity_layer, client->ecs);
+	}
 
 	ecs_id_t entity = ecs_create(client->ecs);
 
@@ -61,7 +61,7 @@ int client_init(client_t* client) {
 		lua_getfield(L, -1, "onCreate");
 		lua_pushinteger(L, entity);
 		printf("entityID: %d\n", entity);
-		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
 		//lua_pop(L, 2);
@@ -69,12 +69,11 @@ int client_init(client_t* client) {
 		lua_getfield(L, -1, "testfunc");
 		lua_pushinteger(L, entity);
 		printf("entityID: %d\n", entity);
-		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
 		lua_pop(L, 2);
-	}
-	else {
+	} else {
 		printf("uuuh\n");
 	}
 
