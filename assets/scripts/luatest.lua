@@ -1,53 +1,63 @@
 Luatest = {}
 
 function Luatest.testfunc(e)
-	local position = e:get_component("comp_position")
-	position.x = position.x + 10
-	position.y = position.y + 10
+	local position = ECS.get_component(e, "position")
+	print(position.value.x)
+	print(position.value.y)
+	position.value.x = position.value.x - 1000
+	position.value.y = position.value.y + 100
+	print(position.value.x)
+	print(position.value.y)
+	ECS.set_component(e, position)
+	print("yas queen")
 end
 
 function Luatest.onCreate(e)
 	print("HEJ")
 	local position = {
-		type = "comp_position",
+		type = "position",
 		value = {
-			x = 800,
-			y = 800
+			x = 2000,
+			y = 400
 		}
 	}
 
 	local velocity = {
-		type = "comp_velocity",
-	}
-
-	local draw_box = {
-		type = "comp_draw_box",
-		width = 1000,
-		height = 1000,
-		color = {
-			r = 255,
-			g = 0.0,
-			b = 255,
-			a = 255
+		type = "velocity",
+		value = {
+			x = 0,
+			y = 0
 		}
 	}
 
+	--local draw_box = {
+	--	type = "draw_box",
+	--	width = 1000,
+	--	height = 1000,
+	--	color = {
+	--		r = 255,
+	--		g = 0.0,
+	--		b = 255,
+	--		a = 255
+	--	}
+	--}
+
 	local draw_sprite = {
-		type = "comp_draw_sprite",
+		type = "asset_sprite",
 		path = "assets/test.png"
 	}
 
 	local input = {
-		type = "comp_input",
+		type = "input",
 		input_id = 0
 	}
 
 	print("entityID in lua: " .. tostring(e))
-	ECS.AddComponent(e, position)
-	ECS.AddComponent(e, velocity)
-	ECS.AddComponent(e, draw_sprite)
-	ECS.AddComponent(e, draw_box)
-	ECS.AddComponent(e, input)
-	--ecs:add_component(e, flammable)
+	ECS.add_component(e, position)
+	ECS.add_component(e, velocity)
+	ECS.add_component(e, draw_sprite)
+	--ECS.add_component(e, draw_box)
+	ECS.add_component(e, input)
 end
+
 -- TO RUN THIS YOU NEED TO REGISTER USER DATA FOR ecs

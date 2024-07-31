@@ -1,0 +1,71 @@
+#include "serializer.h"
+#include "scriptloader.h"
+#include <raylib.h>
+#include <string.h>
+
+DEF_SER_T(Vector2, vector2)
+DEF_SER_T(int, int)
+DEF_SER_T(float, float)
+DEF_SER_T(double, double)
+DEF_SER_T(bool, bool)
+DEF_SER_T(Color, color)
+
+bool read_string_network(serializer_t* ser, char* value, const char* name) {
+	(void)ser;
+	(void)value;
+	(void)name;
+	return true;
+}
+
+bool read_string_lua(serializer_t* ser, char* value, const char* name) {
+	const char* result = table_get_string(ser->ser.lua.L, name);
+	strcpy(value, result);
+	return true;
+}
+
+bool write_string_lua(serializer_t* ser, char* value, const char* name) {
+	table_set_string(ser->ser.lua.L, name, value);
+	return true;
+}
+
+
+serializer_t new_reader_lua(ser_lua_t ser_lua) {
+	serializer_t result = {
+		.ser.lua	= ser_lua,
+		.ser_vec2	= read_vector2_lua,
+		.ser_int	= read_int_lua,
+		.ser_float	= read_float_lua,
+		.ser_double = read_double_lua,
+		.ser_bool	= read_bool_lua,
+		.ser_string = read_string_lua,
+		.ser_color = read_color_lua,
+	};
+	return result;
+}
+
+serializer_t new_writer_lua(ser_lua_t ser_lua) {
+	serializer_t result = {
+		.ser.lua	= ser_lua,
+		.ser_vec2	= write_vector2_lua,
+		.ser_int	= write_int_lua,
+		.ser_float	= write_float_lua,
+		.ser_double = write_double_lua,
+		.ser_bool	= write_bool_lua,
+		.ser_string = write_string_lua,
+		.ser_color = write_color_lua,
+	};
+	return result;
+}
+
+serializer_t new_reader_network(ser_network_t ser_network) {
+	serializer_t result = {
+		.ser.network = ser_network,
+		.ser_vec2	 = read_vector2_network,
+		.ser_int	 = read_int_network,
+		.ser_float	 = read_float_network,
+		.ser_double	 = read_double_network,
+		.ser_bool	 = read_bool_network,
+		.ser_color	 = read_color_network,
+	};
+	return result;
+}

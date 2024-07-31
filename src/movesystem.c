@@ -4,12 +4,13 @@
 #include <stdio.h>
 
 void ecs_register_move_systems(ecs_t* ecs) {
-	sys_move_players =
-		ecs_register_system(ecs, move_players, NULL, NULL, NULL);
+	sys_move_players = ecs_register_system(ecs, move_players, NULL, NULL, NULL);
 	ecs_require_component(ecs, sys_move_players, id_comp_position);
 	ecs_require_component(ecs, sys_move_players, id_comp_velocity);
 }
+
 ecs_id_t sys_move_players;
+
 ecs_ret_t move_players(ecs_t* ecs,
 					   ecs_id_t* entities,
 					   int entity_count,
@@ -27,6 +28,7 @@ ecs_ret_t move_players(ecs_t* ecs,
 		result.y = velocity->value.y * dt * 1000;
 
 		position->value = Vector2Add(position->value, result);
+		//printf("position: %f, %f", position->value.x, position->value.y);
 	}
 	return 0;
 }

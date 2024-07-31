@@ -29,7 +29,6 @@ ecs_ret_t render_sprites(ecs_t* ecs,
 		comp_draw_sprite_t* sprite = ecs_get(ecs, id, id_comp_draw_sprite);
 		comp_position_t* position  = ecs_get(ecs, id, id_comp_position);
 
-		//printf("texture pos: %f, %f\n", position->value.x, position->value.y);
 		sprite->texture.width  = sprite->width;
 		sprite->texture.height = sprite->height;
 		DrawTexture(sprite->texture,
@@ -63,10 +62,11 @@ ecs_ret_t render_boxes(ecs_t* ecs,
 }
 
 void render_load_sprite(ecs_t* ecs, const char* path, ecs_id_t entity) {
-	comp_draw_sprite_t* sprite = ecs_get(ecs, entity, id_comp_draw_sprite);
+	comp_draw_sprite_t* sprite = ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
 
 	sprite->texture = LoadTexture(path);
 	sprite->width	= sprite->texture.width;
 	sprite->height	= sprite->texture.height;
 	sprite->color	= WHITE;
+	sprite->visible = true;
 }

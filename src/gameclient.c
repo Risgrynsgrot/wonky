@@ -1,14 +1,15 @@
 #include "gameclient.h"
 #include "components.h"
+#include "lua.h"
 #include "map.h"
 #include "movesystem.h"
 #include "rendersystem.h"
 #include "scriptloader.h"
+#include "zig_lua.h"
+#include <lauxlib.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "lua.h"
-#include <lauxlib.h>
 
 #define PICO_ECS_MAX_SYSTEMS 16
 #define PICO_ECS_MAX_COMPONENTS 64
@@ -29,6 +30,9 @@ int client_init(client_t* client) {
 	client_raylib_init();
 
 	client->input_map[0] = input_init();
+
+	printf("bruh");
+	//test_func();
 
 	client->ecs = ecs_new(100, NULL);
 	ecs_components_register(client->ecs);
@@ -57,11 +61,19 @@ int client_init(client_t* client) {
 		lua_getfield(L, -1, "onCreate");
 		lua_pushinteger(L, entity);
 		printf("entityID: %d\n", entity);
-		if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
-	}
-	else {
+		//lua_pop(L, 2);
+
+		lua_getfield(L, -1, "testfunc");
+		lua_pushinteger(L, entity);
+		printf("entityID: %d\n", entity);
+		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
+			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+		}
+		lua_pop(L, 2);
+	} else {
 		printf("uuuh\n");
 	}
 

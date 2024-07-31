@@ -2,6 +2,8 @@
 #include "lua.h"
 #include <stdbool.h>
 
+void script_dumpstack (lua_State *L);
+
 lua_State* script_lua_init(void);
 void script_lua_close(lua_State* L);
 void script_load(lua_State* L, const char* path);
@@ -14,6 +16,8 @@ void* script_get_userdata(lua_State* L, const char* value);
 
 double table_get_number(lua_State* L, const char* value);
 int table_get_int(lua_State* L, const char* value);
+float table_get_float(lua_State* L, const char* value);
+double table_get_double(lua_State* L, const char* value);
 const char* table_get_string(lua_State* L, const char* value);
 bool table_get_bool(lua_State* L, const char* value);
 void* table_get_userdata(lua_State* L, const char* value);
@@ -24,38 +28,13 @@ Vector2 table_get_vector2(lua_State* L, const char* value);
 typedef struct Color Color;
 Color table_get_color(lua_State* L, const char* value);
 
-#define lua_table_get(L, value)                                                \
-	do {                                                                       \
-		lua_getfield(L, -1, value);                                            \
-		if(!lua_istable(L, -1)) {                                              \
-			return 0;                                                          \
-		}                                                                      \
-	} while(0)
+void table_set_number(lua_State* L, const char* name, double data);
+void table_set_int(lua_State* L, const char* name, int data);
+void table_set_float(lua_State* L, const char* name, float data);
+void table_set_double(lua_State* L, const char* name, double data);
+void table_set_string(lua_State* L, const char* name,  const char* data);
+void table_set_bool(lua_State* L, const char* name, bool data);
+void table_set_userdata(lua_State* L, const char* name, void* data);
 
-//int lua_get_movement_x(lua_State* L) {
-//	ecs_t* ecs				  = script_get_userdata(L, "ecs");
-//	ecs_id_t entity			  = lua_tointeger(L, -1);
-//	comp_movement_t* movement = ecs_get(ecs, entity, id_comp_movement, NULL);
-//	lua_pushnumber(L, movement->x); //add pushvector
-//	return 1;
-//}
-
-//Somehow the components need a reference to it's entity
-//they also need their id so it's easy to switch on the type
-//also needs to do things with the metatable to get field like behavior
-#define DEF_LUA_FIELD_GETSET(T, LT, FIELD)                                     \
-	int lua_get_##T_##FIELD(lua_State* L) {                                    \
-		ecs_t* ecs		= script_get_userdata(L, "ecs");                       \
-		ecs_id_t entity = lua_tointeger(L, -1);                                \
-		T* value		= ecs_get(ecs, entity, id_##T, NULL);                  \
-		lua_push##LT(L, value->##FIELD);                                       \
-		return 1;                                                              \
-	}                                                                          \
-	int lua_set_##T_##FIELD(lua_State* L) {                                    \
-		ecs_t* ecs		= script_get_userdata(L, "ecs");                       \
-		ecs_id_t entity = lua_to##LT(L, -1);                                   \
-		T* value		= ecs_get(ecs, entity, id_##T, NULL);                  \
-		lua_push##LT(L, value->##FIELD);                                       \
-		return 1;                                                              \
-	}
-
+void table_set_vector2(lua_State* L, const char* value, Vector2 data);
+void table_set_color(lua_State* L, const char* value, Color data);
