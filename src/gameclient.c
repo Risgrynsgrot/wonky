@@ -42,9 +42,15 @@ int client_init(client_t* client) {
 
 	ldtk_map_t map;
 	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+	//TODO(risgrynsgrot) these should be spawned using their type instead of id
+	//except for maybe special cases
 	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0], "entities");
 	if(entity_layer != NULL) {
 		level_spawn_entities(entity_layer, client->ecs);
+	}
+	ldtk_layer_t* int_layer = level_get_layer(&map.levels[0], "intgrid");
+	if(int_layer != NULL) {
+		level_spawn_terrain(int_layer, client->ecs);
 	}
 
 	ecs_id_t entity = ecs_create(client->ecs);

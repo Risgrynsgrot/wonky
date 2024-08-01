@@ -200,9 +200,30 @@ bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs) {
 			   lvl_entity->world_x,
 			   lvl_entity->world_y);
 
-		
 		ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
+		//TODO(risgrynsgrot) this should be using entity data to determine
+		//sprite
 		render_load_sprite(ecs, "assets/lildude.png", entity);
+	}
+
+	return true;
+}
+
+bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
+	for(int y = 0; y < layer->c_hei; y++) {
+		for(int x = 0; x < layer->c_wid; x++) {
+			int i = y % layer->c_wid + x;
+			int tile_data = layer->int_grid_csv[i];
+
+			//TODO(risgrynsgrot)
+			//create grid of all walls,
+			//find biggest rectangles to have fewer colliders
+			//create colliders
+			//map ints to what to render,
+			//render sprites based on tiles
+
+			//render_load_sprite(ecs, "assets/lildude.png", entity);
+		}
 	}
 
 	return true;
