@@ -1,3 +1,5 @@
+ECS = ECS or {}
+
 Luatest = {}
 
 function Luatest.testfunc(e)
