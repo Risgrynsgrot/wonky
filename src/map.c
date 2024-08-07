@@ -77,8 +77,19 @@ bool map_load_ldtk_layers(json_object* layers, ldtk_level_t* level) {
 		JSON_GET(int, layer_json, pxOffsetX, layer->px_offset_x);
 		JSON_GET(int, layer_json, pxOffsetY, layer->px_offset_y);
 		JSON_GET(boolean, layer_json, visible, layer->visible);
-		//optional rules
-		//int gridcsv
+
+		json_object* int_grid_csv =
+			json_object_object_get(layer_json, "intGridCsv");
+		layer->int_grid_count = json_object_array_length(int_grid_csv);
+		layer->int_grid_csv	  = malloc(sizeof(*layer->int_grid_csv) *
+									   layer->int_grid_count); //DEALLOC
+		for(int i = 0; i < layer->int_grid_count; i++) {
+			json_object* tile_id_json =
+				json_object_array_get_idx(int_grid_csv, i);
+			layer->int_grid_csv[i] = json_object_get_int(tile_id_json);
+			printf("%i", layer->int_grid_csv[i]);
+		}
+
 		//autolayer tiles
 		JSON_GET(
 			int, layer_json, overrideTilesetUid, layer->override_tileset_uid);
@@ -210,10 +221,29 @@ bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs) {
 }
 
 bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
+	(void)ecs;
+	int count = 0;
 	for(int y = 0; y < layer->c_hei; y++) {
 		for(int x = 0; x < layer->c_wid; x++) {
-			int i = y % layer->c_wid + x;
+			int i		  = y * layer->c_wid + x;
 			int tile_data = layer->int_grid_csv[i];
+
+			int tile_size = layer->grid_size;
+
+			printf("%i, %i\n", tile_data, count);
+			count++;
+			if(tile_data != 1) {
+				continue; //TODO(risgrynsgrot) this should be handled better
+			}
+			ecs_id_t entity = ecs_create(ecs);
+
+			comp_position_t* pos = ecs_add(ecs, entity, id_comp_position, NULL);
+			pos->value			 = (Vector2){x * tile_size, y * tile_size};
+
+			comp_draw_box_t* box = ecs_add(ecs, entity, id_comp_draw_box, NULL);
+			box->color			 = GRAY;
+			box->width			 = tile_size;
+			box->height			 = tile_size;
 
 			//TODO(risgrynsgrot)
 			//create grid of all walls,

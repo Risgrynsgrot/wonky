@@ -14,13 +14,6 @@ end
 
 function Luatest.onCreate(e)
 	print("HEJ")
-	local position = {
-		type = "position",
-		value = {
-			x = 2000,
-			y = 400
-		}
-	}
 
 	local velocity = {
 		type = "velocity",
@@ -53,7 +46,13 @@ function Luatest.onCreate(e)
 	}
 
 	print("entityID in lua: " .. tostring(e))
-	ECS.add_component(e, position)
+	ECS.add_component(e, {
+		type = "position",
+		value = {
+			x = 2000,
+			y = 400
+		}
+	})
 	ECS.add_component(e, velocity)
 	ECS.add_component(e, draw_sprite)
 	--ECS.add_component(e, draw_box)

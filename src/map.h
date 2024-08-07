@@ -3,42 +3,42 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define JSON_GET(TYPE, ROOT, JSON_NAME, RESULT) \
-do { \
-	printf("l: %d, f: %s, loading:%s\n", __LINE__, __FILE__, #JSON_NAME);\
-	json_object* JSON_NAME##_json;\
-	bool result = json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);\
-	printf("got value: %i\n", result);\
-	if(!result) {\
-		printf("%s doesn't exist, skipping\n", #JSON_NAME);\
-		break;\
-	}\
-	if (json_object_get_type(JSON_NAME##_json) == json_type_null){ \
-		printf("%s is null, skipping\n", #JSON_NAME);\
-		break;\
-	}\
-	RESULT = json_object_get_##TYPE(JSON_NAME##_json);\
-	printf("loaded %s.\n", #JSON_NAME);\
-} while(0)
+#define JSON_GET(TYPE, ROOT, JSON_NAME, RESULT)                                \
+	do {                                                                       \
+		/*printf("l: %d, f: %s, loading:%s\n", __LINE__, __FILE__,             \
+		 * #JSON_NAME);*/                                                      \
+		json_object* JSON_NAME##_json;                                         \
+		bool result =                                                          \
+			json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);    \
+		/*printf("got value: %i\n", result);*/                                 \
+		if(result) {                                                           \
+			if(json_object_get_type(JSON_NAME##_json) == json_type_null) {     \
+				printf("%s is null, skipping\n", #JSON_NAME);                  \
+			} else {                                                           \
+				RESULT = json_object_get_##TYPE(JSON_NAME##_json);             \
+				/*printf("loaded %s.\n", #JSON_NAME);*/                        \
+			}                                                                  \
+		}                                                                      \
+	} while(0)
 
-#define JSON_GET_STR(ROOT, JSON_NAME, RESULT) \
-do { \
-	printf("l: %d, f: %s, loadString:%s\n", __LINE__, __FILE__, #JSON_NAME);\
-	json_object* JSON_NAME##_json;\
-	bool result = json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);\
-	printf("got value: %i\n", result);\
-	if(!result){\
-		printf("%s is null, skipping\n", #JSON_NAME);\
-		break;\
-	}\
-	if (json_object_get_type(JSON_NAME##_json) == json_type_null){ \
-		printf("%s is null, skipping\n", #JSON_NAME);\
-		break;\
-	}\
-	const char* temp = json_object_get_string(JSON_NAME##_json);\
-	strcpy(RESULT, temp);\
-	printf("loaded %s: %s\n", #JSON_NAME, RESULT);\
-} while(0)
+#define JSON_GET_STR(ROOT, JSON_NAME, RESULT)                                  \
+	do {                                                                       \
+		printf(                                                                \
+			"l: %d, f: %s, loadString:%s\n", __LINE__, __FILE__, #JSON_NAME);  \
+		json_object* JSON_NAME##_json;                                         \
+		bool result =                                                          \
+			json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);    \
+		printf("got value: %i\n", result);                                     \
+		if(result) {                                                           \
+			if(json_object_get_type(JSON_NAME##_json) == json_type_null) {     \
+				printf("%s is null, skipping\n", #JSON_NAME);                  \
+			} else {                                                           \
+				const char* temp = json_object_get_string(JSON_NAME##_json);   \
+				strcpy(RESULT, temp);                                          \
+				printf("loaded %s: %s\n", #JSON_NAME, RESULT);                 \
+			}                                                                  \
+		}                                                                      \
+	} while(0)
 
 typedef struct ldtk_level_neighbour {
 	char dir[512];
@@ -131,14 +131,14 @@ typedef struct ldtk_layer {
 	ldtk_tile_t* grid_tiles;
 	int32_t grid_tile_count;
 	char iid[512];
-	int32_t* int_grid_csv;
-	int32_t int_grid_count;
 	int32_t layer_def_uid;
 	int32_t level_id;
 	int32_t override_tileset_uid;
 	int32_t px_offset_x;
 	int32_t px_offset_y;
 	bool visible;
+	int32_t* int_grid_csv;
+	int32_t int_grid_count;
 } ldtk_layer_t;
 
 typedef struct ldtk_level {
@@ -187,3 +187,4 @@ ldtk_layer_t* level_get_layer(ldtk_level_t* level, const char* identifier);
 
 typedef struct ecs_s ecs_t;
 bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs);
+bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs);

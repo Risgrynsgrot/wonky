@@ -50,6 +50,7 @@ int client_init(client_t* client) {
 	}
 	ldtk_layer_t* int_layer = level_get_layer(&map.levels[0], "intgrid");
 	if(int_layer != NULL) {
+		printf("spawning terrain\n");
 		level_spawn_terrain(int_layer, client->ecs);
 	}
 
