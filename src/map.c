@@ -261,10 +261,10 @@ bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
 
 ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position) {
 
-	ldtk_level_t* level = &map->data.levels[map->current_level];
+	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
-	int index			= (int)grid_position.y * current_layer->c_wid +
-				(int)grid_position.x;
+	int index =
+		(int)grid_position.y * current_layer->c_wid + (int)grid_position.x;
 	return map->entities[index];
 }
 
@@ -272,13 +272,14 @@ bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
 	ecs_id_t entity				= map_get_entity(map, layer, grid_position);
-	int index = (int)grid_position.y * current_layer->c_wid +
-				(int)grid_position.x;
+	int index =
+		(int)grid_position.y * current_layer->c_wid + (int)grid_position.x;
 
 	return entity == ECS_NULL && current_layer->int_grid_csv[index] == 0;
 }
 
-bool map_try_move(map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction) {
+bool map_try_move(
+	map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction) {
 	Vector2 target = Vector2Add(from, direction);
 
 	if(map_get_entity(map, layer, from) != entity) {
@@ -291,12 +292,24 @@ bool map_try_move(map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 
 
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
-	int from_index = (int)from.y * current_layer->c_wid +
-				(int)from.x;
-	int target_index = (int)target.y * current_layer->c_wid +
-				(int)target.x;
-	map->entities[from_index] = ECS_NULL;
+	int from_index	 = (int)from.y * current_layer->c_wid + (int)from.x;
+	int target_index = (int)target.y * current_layer->c_wid + (int)target.x;
+	map->entities[from_index]	= ECS_NULL;
 	map->entities[target_index] = entity;
 
 	return true;
+}
+
+Vector2 map_grid_to_world_pos(map_t* map, int layer, Vector2 position) {
+	ldtk_level_t* level			= &map->data.levels[map->current_level];
+	ldtk_layer_t* current_layer = &level->layers[layer];
+	return (Vector2){position.x * current_layer->grid_size,
+					 position.y * current_layer->grid_size};
+}
+
+Vector2 map_world_to_grid_pos(map_t* map, int layer, Vector2 position) {
+	ldtk_level_t* level			= &map->data.levels[map->current_level];
+	ldtk_layer_t* current_layer = &level->layers[layer];
+	return (Vector2){(int)(position.x / current_layer->grid_size),
+					 (int)(position.y / current_layer->grid_size)};
 }

@@ -198,3 +198,4 @@ typedef struct map {
 ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position);
 bool map_can_walk(map_t* map, int layer, Vector2 grid_position);
 bool map_try_move(map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction);
+Vector2 map_grid_to_world_pos(map_t* map, int layer, Vector2 position);

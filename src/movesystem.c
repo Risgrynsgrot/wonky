@@ -27,13 +27,20 @@ ecs_ret_t move_units(ecs_t* ecs,
 
 		mover->_move_cooldown -= dt;
 		Clamp(mover->_move_cooldown, 0.f, mover->movement_speed);
+
 		if(mover->_move_cooldown <= 0) {
-			mover->_move_cooldown = 1.f / mover->movement_speed;
 			Vector2 direction =
 				Vector2Subtract(mover->target_tile, mover->current_tile);
-			if(map_try_move(
-				   map, position->layer, id, mover->current_tile, direction)) {
-				position->grid_pos = mover->target_tile;
+			bool is_moving = fabs(direction.x) > 0.f || fabs(direction.y) > 0.f;
+			if(is_moving) {
+				if(map_try_move(map,
+								position->layer,
+								id,
+								mover->current_tile,
+								direction)) {
+					position->grid_pos	  = mover->target_tile;
+					mover->_move_cooldown = 1.f / mover->movement_speed;
+				}
 			}
 		}
 
@@ -42,10 +49,16 @@ ecs_ret_t move_units(ecs_t* ecs,
 			Clamp(inverse_cooldown - mover->_move_cooldown / inverse_cooldown,
 				  0.f,
 				  inverse_cooldown);
+
+		Vector2 current_world_pos =
+			map_grid_to_world_pos(map, position->layer, mover->current_tile);
+		Vector2 target_world_pos =
+			map_grid_to_world_pos(map, position->layer, mover->target_tile);
+
 		position->value.x =
-			Lerp(mover->current_tile.x, mover->target_tile.x, percentage);
+			Lerp(current_world_pos.x, target_world_pos.x, percentage);
 		position->value.y =
-			Lerp(mover->current_tile.y, mover->target_tile.y, percentage);
+			Lerp(current_world_pos.y, target_world_pos.y, percentage);
 
 		//Vector2 result;
 		//result.x = velocity->value.x * dt * mover->movement_speed;
