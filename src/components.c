@@ -17,6 +17,8 @@ int ecs_component_string_count;
 
 void ser_position(serializer_t* ser, comp_position_t* position) {
 	ser->ser_vec2(ser, &position->value, "value");
+	ser->ser_vec2(ser, &position->grid_pos, "grid_pos");
+	ser->ser_int(ser, &position->layer, "layer");
 }
 
 void ser_rotation(serializer_t* ser, comp_rotation_t* rotation) {
@@ -75,6 +77,10 @@ void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle) {
 	ser->ser_float(ser, &draw_circle->offset_y, "offset_y");
 	ser->ser_bool(ser, &draw_circle->visible, "visible");
 	ser->ser_color(ser, &draw_circle->color, "color");
+}
+
+void ser_mover(serializer_t* ser, comp_mover_t* mover) {
+	ser->ser_float(ser, &mover->movement_speed, "movement_speed");
 }
 
 void ecs_component_register_string(ecs_component_string_t value) {

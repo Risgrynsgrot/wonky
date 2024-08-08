@@ -1,5 +1,8 @@
 #pragma once
-#include "pico_ecs.h"
+//#include "map.h"
+//#include "pico_ecs.h"
+//#include "systems.h"
 
-ecs_ret_t col_box_box(
-	ecs_t* ecs, ecs_id_t* entities, int entity_count, ecs_dt_t dt, void* udata);
+//void register_collision_systems(ecs_t* ecs, ldtk_map_t* map);
+//ECS_DECL_SYSTEM(col_box_box);
+//ECS_DECL_SYSTEM(col_box_map);

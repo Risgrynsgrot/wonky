@@ -143,7 +143,7 @@ void client_handle_input(client_t* client) {
 }
 
 void client_update(client_t* client, float dt) {
-	ecs_update_system(client->ecs, sys_move_players, dt);
+	ecs_update_system(client->ecs, sys_move_units, dt);
 }
 
 void client_render(client_t* client) {

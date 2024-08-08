@@ -28,7 +28,8 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	_F(col_box, COL_BOX, 5, NULL, NULL, __VA_ARGS__)                           \
 	_F(draw_sprite, DRAW_SPRITE, 6, NULL, NULL, __VA_ARGS__)                   \
 	_F(draw_box, DRAW_BOX, 7, NULL, NULL, __VA_ARGS__)                         \
-	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)
+	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)\
+	_F(mover, MOVER, 9, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
@@ -53,6 +54,8 @@ typedef enum component_types {
 
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
+	Vector2 grid_pos;
+	int layer;
 }
 
 comp_position_t;
@@ -141,6 +144,16 @@ ECS_COMPONENT_T(comp_draw_circle) {
 
 comp_draw_circle_t;
 void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle);
+
+ECS_COMPONENT_T(comp_mover) {
+	float movement_speed; //movespeed in squares per second
+	Vector2 target_tile;
+	Vector2 current_tile;
+	float _move_cooldown;
+}
+
+comp_mover_t;
+void ser_mover(serializer_t* ser, comp_mover_t* mover);
 
 void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);

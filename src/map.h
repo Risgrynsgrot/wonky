@@ -188,3 +188,13 @@ ldtk_layer_t* level_get_layer(ldtk_level_t* level, const char* identifier);
 typedef struct ecs_s ecs_t;
 bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs);
 bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs);
+
+typedef struct map {
+	ldtk_map_t data;
+	ecs_id_t* entities;
+	int current_level;
+} map_t;
+
+ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position);
+bool map_can_walk(map_t* map, int layer, Vector2 grid_position);
+bool map_try_move(map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction);
