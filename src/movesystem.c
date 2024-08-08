@@ -25,6 +25,8 @@ ecs_ret_t move_units(ecs_t* ecs,
 		//comp_velocity_t* velocity = ecs_get(ecs, id, id_comp_velocity);
 		comp_mover_t* mover = ecs_get(ecs, id, id_comp_mover);
 
+		mover->_move_cooldown -= dt;
+		Clamp(mover->_move_cooldown, 0.f, mover->movement_speed);
 		if(mover->_move_cooldown <= 0) {
 			mover->_move_cooldown = 1.f / mover->movement_speed;
 			Vector2 direction =
