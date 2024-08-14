@@ -6,7 +6,7 @@
 void ecs_register_move_systems(ecs_t* ecs, map_t* map) {
 	sys_move_units = ecs_register_system(ecs, move_units, NULL, NULL, map);
 	ecs_require_component(ecs, sys_move_units, id_comp_position);
-	ecs_require_component(ecs, sys_move_units, id_comp_velocity);
+	//ecs_require_component(ecs, sys_move_units, id_comp_velocity);
 	ecs_require_component(ecs, sys_move_units, id_comp_mover);
 }
 
@@ -29,8 +29,7 @@ ecs_ret_t move_units(ecs_t* ecs,
 		Clamp(mover->_move_cooldown, 0.f, mover->movement_speed);
 
 		if(mover->_move_cooldown <= 0) {
-			Vector2 direction =
-				Vector2Subtract(mover->target_tile, mover->current_tile);
+			Vector2 direction = mover->direction;
 			bool is_moving = fabs(direction.x) > 0.f || fabs(direction.y) > 0.f;
 			if(is_moving) {
 				if(map_try_move(map,
@@ -38,7 +37,8 @@ ecs_ret_t move_units(ecs_t* ecs,
 								id,
 								mover->current_tile,
 								direction)) {
-					position->grid_pos	  = mover->target_tile;
+					position->grid_pos =
+						Vector2Add(position->grid_pos, direction);
 					mover->_move_cooldown = 1.f / mover->movement_speed;
 				}
 			}
@@ -53,7 +53,7 @@ ecs_ret_t move_units(ecs_t* ecs,
 		Vector2 current_world_pos =
 			map_grid_to_world_pos(map, position->layer, mover->current_tile);
 		Vector2 target_world_pos =
-			map_grid_to_world_pos(map, position->layer, mover->target_tile);
+			map_grid_to_world_pos(map, position->layer, position->grid_pos);
 
 		position->value.x =
 			Lerp(current_world_pos.x, target_world_pos.x, percentage);
@@ -65,7 +65,7 @@ ecs_ret_t move_units(ecs_t* ecs,
 		//result.y = velocity->value.y * dt * mover->movement_speed;
 
 		//position->value = Vector2Add(position->value, result);
-		//printf("position: %f, %f", position->value.x, position->value.y);
+		printf("position: %f, %f\n", position->value.x, position->value.y);
 	}
 	return 0;
 }

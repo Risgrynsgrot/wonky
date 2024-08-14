@@ -268,6 +268,17 @@ ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position) {
 	return map->entities[index];
 }
 
+void map_add_entity(map_t* map,
+					int layer,
+					Vector2 grid_position,
+					ecs_id_t entity) {
+	ldtk_level_t* level			= &map->data.levels[map->current_level];
+	ldtk_layer_t* current_layer = &level->layers[layer];
+	int index =
+		(int)grid_position.y * current_layer->c_wid + (int)grid_position.x;
+	map->entities[index] = entity;
+}
+
 bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
@@ -281,6 +292,11 @@ bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
 bool map_try_move(
 	map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction) {
 	Vector2 target = Vector2Add(from, direction);
+	printf("trying to move from %f, %f, to %f, %f\n",
+		   from.x,
+		   from.y,
+		   target.x,
+		   target.y);
 
 	if(map_get_entity(map, layer, from) != entity) {
 		printf("trying to move entity that isn't there, cheating?\n");
@@ -312,4 +328,24 @@ Vector2 map_world_to_grid_pos(map_t* map, int layer, Vector2 position) {
 	ldtk_layer_t* current_layer = &level->layers[layer];
 	return (Vector2){(int)(position.x / current_layer->grid_size),
 					 (int)(position.y / current_layer->grid_size)};
+}
+
+bool map_new(const char* path, map_t* map) {
+	map->current_level = 0;
+	map->entity_count  = 0;
+	if(!map_load_ldtk(path, &map->data)) {
+		return false;
+	}
+
+	//map->data.levels[0].layers[0].entities;
+	ldtk_layer_t* layer = &map->data.levels[0].layers[0];
+	map->entities = malloc(layer->c_wid * layer->c_hei * sizeof(ecs_id_t));
+
+	return true;
+}
+
+bool map_delete(map_t* map) {
+	(void)map;
+	free(map->entities);
+	return true;
 }

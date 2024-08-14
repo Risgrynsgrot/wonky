@@ -1,6 +1,7 @@
 #pragma once
 #include "inputsystem.h"
 #include "pico_ecs.h"
+#include "map.h"
 
 typedef struct client {
 	float tickrate;
@@ -10,6 +11,7 @@ typedef struct client {
 	ecs_t* ecs;
     bool quit;
 	input_map_t input_map[8];
+	map_t map;
 } client_t;
 
 int client_init(client_t* client);

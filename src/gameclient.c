@@ -38,21 +38,21 @@ int client_init(client_t* client) {
 	ecs_components_register(client->ecs);
 	ecs_register_render_systems(client->ecs);
 	ecs_register_input_systems(client->ecs, client->input_map);
-	ecs_register_move_systems(client->ecs);
 
-	ldtk_map_t map;
-	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+	map_new("assets/levels/testgym.ldtk", &client->map);
 	//TODO(risgrynsgrot) these should be spawned using their type instead of id
 	//except for maybe special cases
-	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0], "entities");
+	ldtk_layer_t* entity_layer = level_get_layer(&client->map.data.levels[0], "entities");
 	if(entity_layer != NULL) {
 		level_spawn_entities(entity_layer, client->ecs);
 	}
-	ldtk_layer_t* int_layer = level_get_layer(&map.levels[0], "intgrid");
+	ldtk_layer_t* int_layer = level_get_layer(&client->map.data.levels[0], "intgrid");
 	if(int_layer != NULL) {
 		printf("spawning terrain\n");
 		level_spawn_terrain(int_layer, client->ecs);
 	}
+
+	ecs_register_move_systems(client->ecs, &client->map);
 
 	ecs_id_t entity = ecs_create(client->ecs);
 
@@ -85,6 +85,10 @@ int client_init(client_t* client) {
 	}
 
 	script_lua_close(L);
+
+	comp_position_t* position = ecs_get(client->ecs, entity, id_comp_position);
+	printf("placing entity at %f, %f", position->value.x, position->value.y);
+	map_add_entity(&client->map, 0, position->value, entity);
 
 	return 0;
 }

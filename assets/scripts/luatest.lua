@@ -55,6 +55,10 @@ function Luatest.onCreate(e)
 			y = 400
 		}
 	})
+	ECS.add_component(e, {
+		type = "mover",
+		movement_speed = 2
+	})
 	ECS.add_component(e, velocity)
 	ECS.add_component(e, draw_sprite)
 	--ECS.add_component(e, draw_box)

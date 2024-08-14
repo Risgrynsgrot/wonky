@@ -147,8 +147,9 @@ void ser_draw_circle(serializer_t* ser, comp_draw_circle_t* draw_circle);
 
 ECS_COMPONENT_T(comp_mover) {
 	float movement_speed; //movespeed in squares per second
-	Vector2 target_tile;
+	//Vector2 target_tile;//maybe not useful, removed for now
 	Vector2 current_tile;
+	Vector2 direction;
 	float _move_cooldown;
 }
 
