@@ -287,6 +287,7 @@ bool map_try_move(
 		return false;
 	}
 	if(!map_can_walk(map, layer, target)) {
+		printf("you can't walk there!\n");
 		return false;
 	}
 

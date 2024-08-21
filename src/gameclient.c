@@ -5,7 +5,6 @@
 #include "movesystem.h"
 #include "rendersystem.h"
 #include "scriptloader.h"
-#include "zig_lua.h"
 #include <lauxlib.h>
 #include <raylib.h>
 #include <stdio.h>
@@ -38,17 +37,17 @@ int client_init(client_t* client) {
 	ecs_components_register(client->ecs);
 	ecs_register_render_systems(client->ecs);
 	ecs_register_input_systems(client->ecs, client->input_map);
-	ecs_register_move_systems(client->ecs);
 
-	ldtk_map_t map;
-	map_load_ldtk("assets/levels/testgym.ldtk", &map);
+	map_load_ldtk("assets/levels/testgym.ldtk", &client->map.data);
+	ldtk_map_t* map = &client->map.data;
+	ecs_register_move_systems(client->ecs, &client->map);
 	//TODO(risgrynsgrot) these should be spawned using their type instead of id
 	//except for maybe special cases
-	ldtk_layer_t* entity_layer = level_get_layer(&map.levels[0], "entities");
+	ldtk_layer_t* entity_layer = level_get_layer(&map->levels[0], "entities");
 	if(entity_layer != NULL) {
 		level_spawn_entities(entity_layer, client->ecs);
 	}
-	ldtk_layer_t* int_layer = level_get_layer(&map.levels[0], "intgrid");
+	ldtk_layer_t* int_layer = level_get_layer(&map->levels[0], "intgrid");
 	if(int_layer != NULL) {
 		printf("spawning terrain\n");
 		level_spawn_terrain(int_layer, client->ecs);

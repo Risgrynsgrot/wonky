@@ -38,13 +38,13 @@ ecs_ret_t input_handle(ecs_t* ecs,
 	for(int i = 0; i < entity_count; i++) {
 		ecs_id_t id			= entities[i];
 		comp_input_t* input = ecs_get(ecs, id, id_comp_input);
-		int input_id = input->input_id;
+		int input_id		= input->input_id;
 
 		input->interact		  = IsKeyPressed(keymap[input_id].interact);
 		input->open_inventory = IsKeyPressed(keymap[input_id].open_inventory);
 
 		Vector2 direction;
-		direction.x	 = IsKeyDown(keymap[input_id].right) -
+		direction.x = IsKeyDown(keymap[input_id].right) -
 					  IsKeyDown(keymap[input_id].left);
 		if(direction.x == 0.f) {
 			direction.y = IsKeyDown(keymap[input_id].down) -

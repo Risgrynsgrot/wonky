@@ -17,13 +17,13 @@ end
 function Luatest.onCreate(e)
 	print("HEJ")
 
-	local velocity = {
-		type = "velocity",
-		value = {
-			x = 0,
-			y = 0
-		}
-	}
+	-- local velocity = {
+	-- 	type = "velocity",
+	-- 	value = {
+	-- 		x = 0,
+	-- 		y = 0
+	-- 	}
+	-- }
 
 	--local draw_box = {
 	--	type = "draw_box",
@@ -53,12 +53,22 @@ function Luatest.onCreate(e)
 		value = {
 			x = 2000,
 			y = 400
-		}
+		},
+		grid_pos = {
+			x = 32,
+			y = 32
+		},
+		layer = 0
 	})
-	ECS.add_component(e, velocity)
+	--ECS.add_component(e, velocity)
 	ECS.add_component(e, draw_sprite)
 	--ECS.add_component(e, draw_box)
 	ECS.add_component(e, input)
+
+	ECS.add_component(e, {
+		type = "mover",
+		movement_speed = 2
+	})
 end
 
 -- TO RUN THIS YOU NEED TO REGISTER USER DATA FOR ecs
