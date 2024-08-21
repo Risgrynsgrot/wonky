@@ -15,16 +15,16 @@ input_map_t input_init(void) {
 }
 
 ecs_id_t sys_input_handle;
-ecs_id_t sys_input_move;
+//ecs_id_t sys_input_move;
 
 void ecs_register_input_systems(ecs_t* ecs, input_map_t* keymap) {
 	sys_input_handle =
 		ecs_register_system(ecs, input_handle, NULL, NULL, keymap);
 	ecs_require_component(ecs, sys_input_handle, id_comp_input);
 
-	sys_input_move = ecs_register_system(ecs, input_move, NULL, NULL, NULL);
-	ecs_require_component(ecs, sys_input_move, id_comp_input);
-	ecs_require_component(ecs, sys_input_move, id_comp_mover);
+	//sys_input_move = ecs_register_system(ecs, input_move, NULL, NULL, NULL);
+	//ecs_require_component(ecs, sys_input_move, id_comp_input);
+	//ecs_require_component(ecs, sys_input_move, id_comp_mover);
 }
 
 ecs_ret_t input_handle(ecs_t* ecs,
@@ -55,22 +55,20 @@ ecs_ret_t input_handle(ecs_t* ecs,
 	return 0;
 }
 
-ecs_ret_t input_move(ecs_t* ecs,
-					 ecs_id_t* entities,
-					 int entity_count,
-					 ecs_dt_t dt,
-					 void* udata) {
-
-	(void)dt;
-	(void)udata;
-
-	for(int i = 0; i < entity_count; i++) {
-		ecs_id_t id				  = entities[i];
-		comp_input_t* input		  = ecs_get(ecs, id, id_comp_input);
-		comp_mover_t* mover = ecs_get(ecs, id, id_comp_mover);
-
-		mover->direction = input->direction;
-		//printf("velocity: %f, %f\n", velocity->value.x, velocity->value.y);
-	}
-	return 0;
-}
+/*ecs_ret_t input_move(ecs_t* ecs,*/
+/*					 ecs_id_t* entities,*/
+/*					 int entity_count,*/
+/*					 ecs_dt_t dt,*/
+/*					 void* udata) {*/
+/**/
+/*	(void)dt;*/
+/*	(void)udata;*/
+/**/
+/*	for(int i = 0; i < entity_count; i++) {*/
+/*		ecs_id_t id				  = entities[i];*/
+/*		comp_input_t* input		  = ecs_get(ecs, id, id_comp_input);*/
+/*		comp_mover_t* mover = ecs_get(ecs, id, id_comp_mover);*/
+/*		//printf("velocity: %f, %f\n", velocity->value.x, velocity->value.y);*/
+/*	}*/
+/*	return 0;*/
+/*}*/

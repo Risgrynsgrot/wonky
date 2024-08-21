@@ -30,7 +30,7 @@ int client_init(client_t* client) {
 
 	client->input_map[0] = input_init();
 
-	printf("bruh");
+	printf("bruh\n");
 	//test_func();
 
 	client->ecs = ecs_new(100, NULL);
@@ -38,7 +38,8 @@ int client_init(client_t* client) {
 	ecs_register_render_systems(client->ecs);
 	ecs_register_input_systems(client->ecs, client->input_map);
 
-	map_load_ldtk("assets/levels/testgym.ldtk", &client->map.data);
+	map_new("assets/levels/testgym.ldtk", &client->map);
+	//map_load_ldtk("assets/levels/testgym.ldtk", &client->map.data);
 	ldtk_map_t* map = &client->map.data;
 	ecs_register_move_systems(client->ecs, &client->map);
 	//TODO(risgrynsgrot) these should be spawned using their type instead of id
@@ -88,8 +89,8 @@ int client_init(client_t* client) {
 	script_lua_close(L);
 
 	comp_position_t* position = ecs_get(client->ecs, entity, id_comp_position);
-	printf("placing entity at %f, %f", position->value.x, position->value.y);
-	map_add_entity(&client->map, 0, position->value, entity);
+	printf("placing entity at %f, %f", position->grid_pos.x, position->grid_pos.y);
+	map_add_entity(&client->map, 0, position->grid_pos, entity);
 
 	return 0;
 }
@@ -144,7 +145,7 @@ void client_main_loop(client_t* client) {
 
 void client_handle_input(client_t* client) {
 	ecs_update_system(client->ecs, sys_input_handle, 0.f);
-	ecs_update_system(client->ecs, sys_input_move, 0.f);
+	//ecs_update_system(client->ecs, sys_input_move, 0.f);
 }
 
 void client_update(client_t* client, float dt) {

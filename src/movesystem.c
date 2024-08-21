@@ -25,14 +25,13 @@ ecs_ret_t move_units(ecs_t* ecs,
 		comp_input_t* input		  = ecs_get(ecs, id, id_comp_input);
 		comp_mover_t* mover		  = ecs_get(ecs, id, id_comp_mover);
 
-		mover->_move_cooldown -= dt;
-		Clamp(mover->_move_cooldown, 0.f, mover->movement_speed);
+		mover->_move_cooldown += dt * mover->movement_speed;
+		Clamp(mover->_move_cooldown, 0.f, 1.0f);
 
-		if(mover->_move_cooldown <= 0) {
+		if(mover->_move_cooldown >= 1.0f) {
 			bool is_moving = fabs(input->direction.x) > 0.f ||
 							 fabs(input->direction.y) > 0.f;
 			if(is_moving) {
-				printf("trying to move!\n");
 				if(map_try_move(map,
 								position->layer,
 								id,
@@ -41,16 +40,15 @@ ecs_ret_t move_units(ecs_t* ecs,
 					mover->from_tile = position->grid_pos;
 					position->grid_pos =
 						Vector2Add(position->grid_pos, input->direction);
-					mover->_move_cooldown = 1.f / mover->movement_speed;
+					mover->_move_cooldown = 0;
 				}
 			}
 		}
 
-		float inverse_cooldown = 1.f / mover->movement_speed;
 		float percentage =
-			Clamp(inverse_cooldown - mover->_move_cooldown / inverse_cooldown,
+			Clamp(mover->_move_cooldown,
 				  0.f,
-				  inverse_cooldown);
+				  1.f);
 
 		Vector2 current_world_pos =
 			map_grid_to_world_pos(map, position->layer, mover->from_tile);
@@ -68,6 +66,9 @@ ecs_ret_t move_units(ecs_t* ecs,
 
 		//position->value = Vector2Add(position->value, result);
 		printf("position: %f, %f\n", position->value.x, position->value.y);
+		printf("tile_position: %f, %f\n",
+			   position->grid_pos.x,
+			   position->grid_pos.y);
 	}
 	return 0;
 }

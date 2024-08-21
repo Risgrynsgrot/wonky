@@ -230,7 +230,7 @@ bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
 
 			int tile_size = layer->grid_size;
 
-			printf("%i, %i\n", tile_data, count);
+			//printf("%i, %i\n", tile_data, count);
 			count++;
 			if(tile_data != 1) {
 				continue; //TODO(risgrynsgrot) this should be handled better
@@ -281,12 +281,15 @@ void map_add_entity(map_t* map,
 
 bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
-	ldtk_layer_t* current_layer = &level->layers[layer];
+	//ldtk_layer_t* current_layer = &level->layers[layer];
+	ldtk_layer_t* int_layer = level_get_layer(level, "intgrid");
 	ecs_id_t entity				= map_get_entity(map, layer, grid_position);
 	int index =
-		(int)grid_position.y * current_layer->c_wid + (int)grid_position.x;
+		(int)grid_position.y * int_layer->c_wid + (int)grid_position.x;
+	printf("entity and tile: %d, %d\n", entity, index);
+	printf("%d", int_layer->int_grid_csv[index]);
 
-	return entity == ECS_NULL && current_layer->int_grid_csv[index] == 0;
+	return entity == ECS_NULL && int_layer->int_grid_csv[index] == 0;
 }
 
 bool map_try_move(
@@ -335,12 +338,18 @@ bool map_new(const char* path, map_t* map) {
 	map->current_level = 0;
 	map->entity_count  = 0;
 	if(!map_load_ldtk(path, &map->data)) {
+		printf("failed to load map\n");
 		return false;
 	}
 
 	//map->data.levels[0].layers[0].entities;
 	ldtk_layer_t* layer = &map->data.levels[0].layers[0];
-	map->entities = malloc(layer->c_wid * layer->c_hei * sizeof(ecs_id_t));
+	int malloc_amount	= layer->c_wid * layer->c_hei * sizeof(ecs_id_t);
+	printf("mallocing %d\n", malloc_amount);
+	map->entities = malloc(malloc_amount);
+	for(int i = 0; i < layer->c_wid * layer->c_hei; i++) {
+		map->entities[i] = ECS_NULL;
+	}
 
 	return true;
 }

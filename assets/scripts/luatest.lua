@@ -6,8 +6,8 @@ function Luatest.testfunc(e)
 	local position = ECS.get_component(e, "position")
 	print(position.value.x)
 	print(position.value.y)
-	position.value.x = position.value.x - 1000
-	position.value.y = position.value.y + 100
+	--position.value.x = position.value.x - 1000
+	--position.value.y = position.value.y + 100
 	print(position.value.x)
 	print(position.value.y)
 	ECS.set_component(e, position)
@@ -51,12 +51,12 @@ function Luatest.onCreate(e)
 	ECS.add_component(e, {
 		type = "position",
 		value = {
-			x = 2000,
-			y = 400
+			x = 0.0,
+			y = 0.0
 		},
 		grid_pos = {
-			x = 32,
-			y = 32
+			x = 0.0,
+			y = 0.0
 		},
 		layer = 0
 	})
@@ -67,7 +67,7 @@ function Luatest.onCreate(e)
 
 	ECS.add_component(e, {
 		type = "mover",
-		movement_speed = 2
+		movement_speed = 5
 	})
 end
 
