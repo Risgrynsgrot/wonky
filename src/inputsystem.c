@@ -24,7 +24,7 @@ void ecs_register_input_systems(ecs_t* ecs, input_map_t* keymap) {
 
 	sys_input_move = ecs_register_system(ecs, input_move, NULL, NULL, NULL);
 	ecs_require_component(ecs, sys_input_move, id_comp_input);
-	ecs_require_component(ecs, sys_input_move, id_comp_velocity);
+	ecs_require_component(ecs, sys_input_move, id_comp_mover);
 }
 
 ecs_ret_t input_handle(ecs_t* ecs,
@@ -67,9 +67,9 @@ ecs_ret_t input_move(ecs_t* ecs,
 	for(int i = 0; i < entity_count; i++) {
 		ecs_id_t id				  = entities[i];
 		comp_input_t* input		  = ecs_get(ecs, id, id_comp_input);
-		comp_velocity_t* velocity = ecs_get(ecs, id, id_comp_velocity);
+		comp_mover_t* mover = ecs_get(ecs, id, id_comp_mover);
 
-		velocity->value = input->direction;
+		mover->direction = input->direction;
 		//printf("velocity: %f, %f\n", velocity->value.x, velocity->value.y);
 	}
 	return 0;

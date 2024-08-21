@@ -60,7 +60,7 @@ function Luatest.onCreate(e)
 		},
 		layer = 0
 	})
-	--ECS.add_component(e, velocity)
+
 	ECS.add_component(e, draw_sprite)
 	--ECS.add_component(e, draw_box)
 	ECS.add_component(e, input)

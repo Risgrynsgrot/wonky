@@ -67,7 +67,7 @@ ecs_ret_t move_units(ecs_t* ecs,
 		//result.y = velocity->value.y * dt * mover->movement_speed;
 
 		//position->value = Vector2Add(position->value, result);
-		//printf("position: %f, %f", position->value.x, position->value.y);
+		printf("position: %f, %f\n", position->value.x, position->value.y);
 	}
 	return 0;
 }

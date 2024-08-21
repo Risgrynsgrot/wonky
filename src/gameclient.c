@@ -53,6 +53,8 @@ int client_init(client_t* client) {
 		level_spawn_terrain(int_layer, client->ecs);
 	}
 
+	ecs_register_move_systems(client->ecs, &client->map);
+
 	ecs_id_t entity = ecs_create(client->ecs);
 
 	lua_State* L = script_lua_init();
@@ -84,6 +86,10 @@ int client_init(client_t* client) {
 	}
 
 	script_lua_close(L);
+
+	comp_position_t* position = ecs_get(client->ecs, entity, id_comp_position);
+	printf("placing entity at %f, %f", position->value.x, position->value.y);
+	map_add_entity(&client->map, 0, position->value, entity);
 
 	return 0;
 }

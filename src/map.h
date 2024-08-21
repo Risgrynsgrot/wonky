@@ -192,10 +192,19 @@ bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs);
 typedef struct map {
 	ldtk_map_t data;
 	ecs_id_t* entities;
+	int entity_count;
 	int current_level;
 } map_t;
 
+bool map_new(const char* path, map_t* map);
+bool map_delete(map_t* map);
+
 ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position);
+void map_add_entity(map_t* map,
+					int layer,
+					Vector2 grid_position,
+					ecs_id_t entity);
 bool map_can_walk(map_t* map, int layer, Vector2 grid_position);
-bool map_try_move(map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction);
+bool map_try_move(
+	map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction);
 Vector2 map_grid_to_world_pos(map_t* map, int layer, Vector2 position);
