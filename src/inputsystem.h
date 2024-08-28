@@ -3,8 +3,6 @@
 #include "pico_ecs.h"
 #include "systems.h"
 
-typedef struct client client_t;
-
 typedef struct input_map {
 	KeyboardKey left;
 	KeyboardKey right;

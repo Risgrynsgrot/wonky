@@ -1,6 +1,5 @@
 #include "inputsystem.h"
 #include "components.h"
-#include "gameclient.h"
 #include <stdio.h>
 
 input_map_t input_init(void) {
