@@ -286,8 +286,8 @@ bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
 	ecs_id_t entity				= map_get_entity(map, layer, grid_position);
 	int index =
 		(int)grid_position.y * int_layer->c_wid + (int)grid_position.x;
-	printf("entity and tile: %d, %d\n", entity, index);
-	printf("%d", int_layer->int_grid_csv[index]);
+	//printf("entity and tile: %d, %d\n", entity, index);
+	//printf("%d", int_layer->int_grid_csv[index]);
 
 	return entity == ECS_NULL && int_layer->int_grid_csv[index] == 0;
 }
@@ -295,11 +295,11 @@ bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
 bool map_try_move(
 	map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction) {
 	Vector2 target = Vector2Add(from, direction);
-	printf("trying to move from %f, %f, to %f, %f\n",
-		   from.x,
-		   from.y,
-		   target.x,
-		   target.y);
+	//printf("trying to move from %f, %f, to %f, %f\n",
+		   //from.x,
+		   //from.y,
+		   //target.x,
+		   //target.y);
 
 	if(map_get_entity(map, layer, from) != entity) {
 		printf("trying to move entity that isn't there, cheating?\n");
