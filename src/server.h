@@ -16,3 +16,5 @@ bool server_init(server_t* server);
 void server_update(server_t* server);
 void server_deinit(server_t* server);
 void server_int_handler(int value);
+
+void server_send(server_t* server, const char* data);

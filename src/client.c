@@ -50,13 +50,6 @@ void client_update(client_t* client) {
 		while(enet_host_service(client->host, &event, 1000) >
 			  0) { //TODO(risgrynsgrot) the 1000 should be 0 for non blocking
 			switch(event.type) {
-			case ENET_EVENT_TYPE_CONNECT: //not sure this should be here on the
-										  //client
-				printf("client connected: %x:%u\n",
-					   event.peer->address.host,
-					   event.peer->address.port);
-				event.peer->data = "Client information"; //Put client info here
-				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				printf(
 					"A packet of length %zu containing %s was received from %s "
@@ -66,11 +59,6 @@ void client_update(client_t* client) {
 					(char*)event.peer->data,
 					event.channelID);
 				enet_packet_destroy(event.packet);
-				break;
-			case ENET_EVENT_TYPE_DISCONNECT: //not sure this should be here on
-											 //the client
-				printf("%s disconnected\n", (char*)event.peer->data);
-				event.peer->data = NULL;
 				break;
 			default:
 				break;

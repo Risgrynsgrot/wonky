@@ -1,5 +1,6 @@
 #include "server.h"
 #include <stdio.h>
+#include <string.h>
 
 static bool keep_running = true;
 
@@ -41,6 +42,7 @@ void server_update(server_t* server) {
 					   event.peer->address.host,
 					   event.peer->address.port);
 				event.peer->data = "Client information"; //Put client info here
+				server_send(server, "nya");
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				printf(
@@ -71,4 +73,12 @@ void server_deinit(server_t* server) {
 void server_int_handler(int value) {
 	(void)value;
 	keep_running = false;
+}
+
+void server_send(server_t* server, const char* data) {
+	(void)data;
+	ENetPacket* packet = enet_packet_create("packet", strlen("packet") + 1, ENET_PACKET_FLAG_RELIABLE);
+	for(size_t i = 0; i < server->host->peerCount; i++) {
+		enet_peer_send(&server->host->peers[i], 0, packet);
+	}
 }
