@@ -6,7 +6,7 @@ typedef struct Vector2 Vector2;
 typedef struct Color Color;
 
 typedef struct network_buffer {
-	char buffer[256];
+	char buffer[1024];
 } network_buffer_t;
 
 typedef struct ser_network {
@@ -20,7 +20,7 @@ typedef struct ser_lua {
 typedef struct serializer {
 	union ser_u {
 		ser_lua_t lua;
-		ser_network_t network;
+		ser_network_t net;
 	} ser;
 
 	bool (*ser_int)(struct serializer* ser, int* value, const char* name);
@@ -39,9 +39,13 @@ typedef struct serializer {
 #define DEF_SER_T(T, NAME)                                                     \
 	bool read_##NAME##_network(                                                \
 		serializer_t* ser, T* value, const char* name) {                       \
-		(void)ser;                                                             \
-		(void)value;                                                           \
-		(void)name;                                                            \
+		net_read_##NAME(ser->ser.net, name);                                   \
+		return true;                                                           \
+	}                                                                          \
+                                                                               \
+	bool write_##NAME##_network(                                               \
+		serializer_t* ser, T* value, const char* name) {                       \
+		net_write_##NAME(ser->ser.net, name);                                  \
 		return true;                                                           \
 	}                                                                          \
 	bool read_##NAME##_lua(serializer_t* ser, T* value, const char* name) {    \
@@ -49,7 +53,7 @@ typedef struct serializer {
 		return true;                                                           \
 	}                                                                          \
 	bool write_##NAME##_lua(serializer_t* ser, T* value, const char* name) {   \
-		table_set_##NAME(ser->ser.lua.L, name, *value);                       \
+		table_set_##NAME(ser->ser.lua.L, name, *value);                        \
 		return true;                                                           \
 	}
 
@@ -67,4 +71,4 @@ serializer_t new_reader_lua(ser_lua_t ser_lua);
 serializer_t new_writer_lua(ser_lua_t ser_lua);
 
 serializer_t new_reader_network(ser_network_t ser_network);
-
+serializer_t new_writer_network(ser_network_t ser_network);

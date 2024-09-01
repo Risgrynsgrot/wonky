@@ -1,4 +1,5 @@
 #include "client.h"
+#include "network_common.h"
 #include <stdio.h>
 
 static bool keep_running = true;
@@ -20,8 +21,8 @@ bool client_init(client_t* client) {
 	enet_address_set_host(&client->address, "localhost");
 	client->address.port = 1234; //set this in config
 
-	client->peer = enet_host_connect(client->host, &client->address, 2, 0);
-	if(client->peer == NULL) {
+	client->server = enet_host_connect(client->host, &client->address, 2, 0);
+	if(client->server == NULL) {
 		fprintf(stderr,
 				"No available peers for initiating an ENet connection\n");
 		return false;
@@ -33,7 +34,7 @@ bool client_init(client_t* client) {
 		printf("Connection to localhost:1234 succeeded\n"); //change to real
 															//address
 	} else {
-		enet_peer_reset(client->peer);
+		enet_peer_reset(client->server);
 		printf(
 			"Connection to localhost:1234 failed\n"); //change to real address
 	}
@@ -47,7 +48,7 @@ void client_update(client_t* client) {
 		ENetEvent event;
 		//poll for events
 		//do update loop
-		while(enet_host_service(client->host, &event, 1000) >
+		while(enet_host_service(client->host, &event, 200) >
 			  0) { //TODO(risgrynsgrot) the 1000 should be 0 for non blocking
 			switch(event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
@@ -59,6 +60,7 @@ void client_update(client_t* client) {
 					(char*)event.peer->data,
 					event.channelID);
 				enet_packet_destroy(event.packet);
+				net_send_peer(client->server, "bruh");
 				break;
 			default:
 				break;

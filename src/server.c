@@ -1,10 +1,13 @@
 #include "server.h"
 #include <stdio.h>
 #include <string.h>
+//#include <notcurses/direct.h>
 
 static bool keep_running = true;
 
 bool server_init(server_t* server) {
+
+	//struct notcurses* terminal = notcurses_init(NULL, NULL);
 
 	server->act.sa_handler = server_int_handler;
 	sigaction(SIGINT, &server->act, NULL);
@@ -34,7 +37,7 @@ void server_update(server_t* server) {
 		ENetEvent event;
 		//poll for events
 		//do update loop
-		while(enet_host_service(server->host, &event, 1000) >
+		while(enet_host_service(server->host, &event, 200) >
 			  0) { //TODO(risgrynsgrot) the 1000 should be 0 for non blocking
 			switch(event.type) {
 			case ENET_EVENT_TYPE_CONNECT:
@@ -42,7 +45,7 @@ void server_update(server_t* server) {
 					   event.peer->address.host,
 					   event.peer->address.port);
 				event.peer->data = "Client information"; //Put client info here
-				server_send(server, "nya");
+				server_send_broadcast(server, "nya");
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				printf(
@@ -75,10 +78,7 @@ void server_int_handler(int value) {
 	keep_running = false;
 }
 
-void server_send(server_t* server, const char* data) {
-	(void)data;
-	ENetPacket* packet = enet_packet_create("packet", strlen("packet") + 1, ENET_PACKET_FLAG_RELIABLE);
-	for(size_t i = 0; i < server->host->peerCount; i++) {
-		enet_peer_send(&server->host->peers[i], 0, packet);
-	}
+void server_send_broadcast(server_t* server, const char* data) {
+	ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->host, 0, packet);
 }

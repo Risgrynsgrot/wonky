@@ -5,7 +5,7 @@
 
 typedef struct client {
 	ENetHost* host;
-	ENetPeer* peer;
+	ENetPeer* server;
 	ENetAddress address;
 	bool quit;
 
@@ -16,4 +16,3 @@ bool client_init(client_t* client);
 void client_update(client_t* client);
 void client_deinit(client_t* client);
 void client_int_handler(int value);
-
