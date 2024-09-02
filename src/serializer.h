@@ -5,13 +5,14 @@
 typedef struct Vector2 Vector2;
 typedef struct Color Color;
 
-typedef struct network_buffer {
+typedef struct net_buf {
 	char buffer[1024];
-} network_buffer_t;
+	int index;
+} net_buf_t;
 
-typedef struct ser_network {
-	network_buffer_t net_buf;
-} ser_network_t;
+typedef struct ser_net {
+	net_buf_t net_buf;
+} ser_net_t;
 
 typedef struct ser_lua {
 	lua_State* L;
@@ -20,7 +21,7 @@ typedef struct ser_lua {
 typedef struct serializer {
 	union ser_u {
 		ser_lua_t lua;
-		ser_network_t net;
+		ser_net_t net;
 	} ser;
 
 	bool (*ser_int)(struct serializer* ser, int* value, const char* name);
@@ -70,5 +71,5 @@ DECL_SER_T(Color, color)
 serializer_t new_reader_lua(ser_lua_t ser_lua);
 serializer_t new_writer_lua(ser_lua_t ser_lua);
 
-serializer_t new_reader_network(ser_network_t ser_network);
-serializer_t new_writer_network(ser_network_t ser_network);
+serializer_t new_reader_network(ser_net_t ser_network);
+serializer_t new_writer_network(ser_net_t ser_network);

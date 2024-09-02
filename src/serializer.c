@@ -57,7 +57,7 @@ serializer_t new_writer_lua(ser_lua_t ser_lua) {
 	return result;
 }
 
-serializer_t new_reader_network(ser_network_t ser_network) {
+serializer_t new_reader_network(ser_net_t ser_network) {
 	serializer_t result = {
 		.ser.net = ser_network,
 		.ser_vec2	 = read_vector2_network,
@@ -70,7 +70,7 @@ serializer_t new_reader_network(ser_network_t ser_network) {
 	return result;
 }
 
-serializer_t new_writer_network(ser_network_t ser_network) {
+serializer_t new_writer_network(ser_net_t ser_network) {
 	serializer_t result = {
 		.ser.net = ser_network,
 		.ser_vec2	 = write_vector2_network,
