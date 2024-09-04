@@ -40,13 +40,13 @@ typedef struct serializer {
 #define DEF_SER_T(T, NAME)                                                     \
 	bool read_##NAME##_network(                                                \
 		serializer_t* ser, T* value, const char* name) {                       \
-		net_read_##NAME(ser->ser.net, name);                                   \
+		net_read_##NAME(&ser->ser.net, value, name);                           \
 		return true;                                                           \
 	}                                                                          \
                                                                                \
 	bool write_##NAME##_network(                                               \
 		serializer_t* ser, T* value, const char* name) {                       \
-		net_write_##NAME(ser->ser.net, name);                                  \
+		net_write_##NAME(&ser->ser.net, *value, name);                         \
 		return true;                                                           \
 	}                                                                          \
 	bool read_##NAME##_lua(serializer_t* ser, T* value, const char* name) {    \

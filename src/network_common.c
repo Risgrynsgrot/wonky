@@ -36,11 +36,39 @@ void net_write_int(ser_net_t* ser, int32_t value, const char* name) {
 }
 
 void net_read_bool(ser_net_t* ser, bool* value, const char* name) {
+	(void)ser;
 	(void)name;
+	(void)value;
 }
 
 void net_write_bool(ser_net_t* ser, bool value, const char* name) {
+	(void)ser;
 	(void)name;
+	(void)value;
+}
+
+void net_read_byte(ser_net_t* ser, char* value, const char* name) {
+	(void)ser;
+	(void)name;
+	(void)value;
+}
+
+void net_write_byte(ser_net_t* ser, char value, const char* name) {
+	(void)ser;
+	(void)name;
+	(void)value;
+}
+
+void net_read_ubyte(ser_net_t* ser, unsigned char* value, const char* name) {
+	(void)ser;
+	(void)name;
+	(void)value;
+}
+
+void net_write_ubyte(ser_net_t* ser, unsigned char value, const char* name) {
+	(void)ser;
+	(void)name;
+	(void)value;
 }
 
 void net_read_float(ser_net_t* ser, float* value, const char* name) {
@@ -55,6 +83,18 @@ void net_write_float(ser_net_t* ser, float value, const char* name) {
 	net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
 }
 
+void net_read_double(ser_net_t* ser, double* value, const char* name) {
+	(void)name;
+	double* net_value = net_buffer_read(&ser->net_buf, sizeof(double));
+	*value			  = ntohl(*net_value);
+}
+
+void net_write_double(ser_net_t* ser, double value, const char* name) {
+	(void)name;
+	double net_value = htonl(value);
+	net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
+}
+
 void net_read_vector2(ser_net_t* ser, Vector2* value, const char* name) {
 	net_read_float(ser, &value->x, name);
 	net_read_float(ser, &value->y, name);
@@ -63,4 +103,18 @@ void net_read_vector2(ser_net_t* ser, Vector2* value, const char* name) {
 void net_write_vector2(ser_net_t* ser, Vector2 value, const char* name) {
 	net_write_float(ser, value.x, name);
 	net_write_float(ser, value.y, name);
+}
+
+void net_read_color(ser_net_t* ser, Color* value, const char* name) {
+	net_read_ubyte(ser, &value->r, name);
+	net_read_ubyte(ser, &value->g, name);
+	net_read_ubyte(ser, &value->b, name);
+	net_read_ubyte(ser, &value->a, name);
+}
+
+void net_write_color(ser_net_t* ser, Color value, const char* name) {
+	net_write_ubyte(ser, value.r, name);
+	net_write_ubyte(ser, value.g, name);
+	net_write_ubyte(ser, value.b, name);
+	net_write_ubyte(ser, value.a, name);
 }

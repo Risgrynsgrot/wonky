@@ -1,5 +1,6 @@
 #include "serializer.h"
 #include "scriptloader.h"
+#include "network_common.h"
 #include <raylib.h>
 #include <string.h>
 
