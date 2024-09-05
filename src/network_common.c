@@ -9,18 +9,38 @@ void net_send_peer(ENetPeer* peer, const char* data) {
 	enet_peer_send(peer, 0, packet);
 }
 
-void* net_buffer_read(net_buf_t* buf, int32_t size) {
-	void* result = &buf->buffer[buf->index];
-	buf->index += size;
-	return result;
+void net_buffer_reset(net_buf_t* buf) {
+	buf->word_index	  = 0;
+	buf->scratch	  = 0;
+	buf->scratch_bits = 0;
 }
 
-void net_buffer_write(net_buf_t* buf, int32_t size, void* value) {
-	for(int i = 0; i < size; i++) {
-		buf->buffer[buf->index + i] =
-			*((char*)(value) + i); //this needs to be checked that it's valid
+void net_buffer_flush(net_buf_t* buf) {
+	if(buf->scratch_bits == 0) {
+		return;
 	}
-	buf->index += size;
+	buf->buffer[buf->word_index] = (buf->scratch & 0xFFFFFFFF);
+	buf->scratch_bits			 = 0;
+	buf->scratch >>= 32;
+	buf->word_index++;
+}
+
+void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
+	buf->scratch |=
+		value << buf->scratch_bits; //add value to scratch, shifted by how much
+									//is in the scratch right now
+	buf->scratch_bits += size_bits; //shift how much to shift next time
+	if(buf->scratch_bits >= 32) {	//if scratch is full
+		buf->buffer[buf->word_index] =
+			buf->scratch & 0xFFFFFFFF; //move from scratch to buffer
+		buf->word_index++;			   //move buffer index
+		buf->scratch >>= 32;	 //shift scratch if there is anything left in it
+		buf->scratch_bits -= 32; //and move the index back
+	}
+}
+
+int32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
+	buf->scratch = buf->buffer[buf->word_index] << buf->scratch_bits;
 }
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name) {
@@ -117,4 +137,10 @@ void net_write_color(ser_net_t* ser, Color value, const char* name) {
 	net_write_ubyte(ser, value.g, name);
 	net_write_ubyte(ser, value.b, name);
 	net_write_ubyte(ser, value.a, name);
+}
+
+void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
+}
+
+void net_write_string(ser_net_t* ser, net_string_t* value, const char* name) {
 }

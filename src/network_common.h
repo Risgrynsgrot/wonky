@@ -2,6 +2,11 @@
 #include "serializer.h"
 #include <enet/enet.h>
 
+typedef struct net_string {
+	const char* str;
+	int length;
+} net_string_t;
+
 void net_send_peer(ENetPeer* peer, const char* data);
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name);
@@ -27,3 +32,6 @@ void net_write_vector2(ser_net_t* ser, Vector2 value, const char* name);
 
 void net_read_color(ser_net_t* ser, Color* value, const char* name);
 void net_write_color(ser_net_t* ser, Color value, const char* name);
+
+void net_read_string(ser_net_t* ser, net_string_t* value, const char* name);
+void net_write_string(ser_net_t* ser, net_string_t* value, const char* name);

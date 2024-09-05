@@ -1,13 +1,21 @@
 #pragma once
 #include <lua.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef struct Vector2 Vector2;
 typedef struct Color Color;
 
+#define NET_MAX_PACKET_SIZE 1024
 typedef struct net_buf {
-	char buffer[1024];
-	int index;
+	uint32_t buffer[NET_MAX_PACKET_SIZE];
+	uint64_t scratch;
+	int32_t scratch_bits;
+	int32_t word_index;
+
+	//for reading
+	int32_t total_bits;
+	int32_t num_bits_read;
 } net_buf_t;
 
 typedef struct ser_net {
