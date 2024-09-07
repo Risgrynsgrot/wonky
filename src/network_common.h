@@ -7,7 +7,12 @@ typedef struct net_string {
 	int length;
 } net_string_t;
 
-void net_send_peer(ENetPeer* peer, const char* data);
+void net_peer_send(ENetPeer* peer, ser_net_t* ser);
+
+void net_peer_receive(ENetPacket* packet);
+
+void net_buffer_flush(net_buf_t* buf);
+void net_buffer_print(net_buf_t* buf);
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name);
 void net_write_int(ser_net_t* ser, int32_t value, const char* name);

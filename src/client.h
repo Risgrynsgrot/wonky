@@ -2,6 +2,7 @@
 #include <enet/enet.h>
 #include <stdbool.h>
 #include <signal.h>
+#include "serializer.h"
 
 typedef struct client {
 	ENetHost* host;

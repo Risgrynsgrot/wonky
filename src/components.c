@@ -83,6 +83,13 @@ void ser_mover(serializer_t* ser, comp_mover_t* mover) {
 	ser->ser_float(ser, &mover->movement_speed, "movement_speed");
 }
 
+void ser_net_test(serializer_t* ser, comp_net_test_t* net_test) {
+	ser->ser_int(ser, &net_test->a, "a");
+	ser->ser_int(ser, &net_test->a, "b");
+	ser->ser_int(ser, &net_test->a, "c");
+	ser->ser_int(ser, &net_test->a, "d");
+}
+
 void ecs_component_register_string(ecs_component_string_t value) {
 	int i						 = ecs_component_string_count;
 	ecs_component_string_t* dest = &ecs_component_strings[i];

@@ -1,4 +1,6 @@
 #include "server.h"
+#include "components.h"
+#include "network_common.h"
 #include <stdio.h>
 #include <string.h>
 //#include <notcurses/direct.h>
@@ -45,16 +47,17 @@ void server_update(server_t* server) {
 					   event.peer->address.host,
 					   event.peer->address.port);
 				event.peer->data = "Client information"; //Put client info here
-				server_send_broadcast(server, "nya");
+				//server_send_broadcast(server, "nya");
+				comp_net_test_t test = {.a = 10, .b = 25, .c = 12, .d = 30};
+				serializer_t ser	 = new_writer_network((ser_net_t){0});
+				net_write_byte(&ser.ser.net, COMPONENT_NET_TEST, "type");
+				ser_net_test(&ser, &test);
+				net_buffer_flush(&ser.ser.net.net_buf);
+				net_buffer_print(&ser.ser.net.net_buf);
+				net_peer_send(event.peer, &ser.ser.net);
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
-				printf(
-					"A packet of length %zu containing %s was received from %s "
-					"on channel %u\n",
-					event.packet->dataLength,
-					event.packet->data,
-					(char*)event.peer->data,
-					event.channelID);
+				net_peer_receive(event.packet);
 				enet_packet_destroy(event.packet);
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
@@ -79,6 +82,7 @@ void server_int_handler(int value) {
 }
 
 void server_send_broadcast(server_t* server, const char* data) {
-	ENetPacket* packet = enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+	ENetPacket* packet =
+		enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
 	enet_host_broadcast(server->host, 0, packet);
 }

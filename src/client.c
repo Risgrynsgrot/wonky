@@ -39,6 +39,8 @@ bool client_init(client_t* client) {
 			"Connection to localhost:1234 failed\n"); //change to real address
 	}
 
+	//net_peer_send(client->server, "bruh");
+
 	return true;
 }
 
@@ -52,20 +54,14 @@ void client_update(client_t* client) {
 			  0) { //TODO(risgrynsgrot) the 1000 should be 0 for non blocking
 			switch(event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
-				printf(
-					"A packet of length %zu containing %s was received from %s "
-					"on channel %u\n",
-					event.packet->dataLength,
-					event.packet->data,
-					(char*)event.peer->data,
-					event.channelID);
+				net_peer_receive(event.packet);
 				enet_packet_destroy(event.packet);
-				net_send_peer(client->server, "bruh");
 				break;
 			default:
 				break;
 			}
 		}
+
 		//send results
 	}
 }

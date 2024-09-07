@@ -28,8 +28,9 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	_F(col_box, COL_BOX, 5, NULL, NULL, __VA_ARGS__)                           \
 	_F(draw_sprite, DRAW_SPRITE, 6, NULL, NULL, __VA_ARGS__)                   \
 	_F(draw_box, DRAW_BOX, 7, NULL, NULL, __VA_ARGS__)                         \
-	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)\
-	_F(mover, MOVER, 9, NULL, NULL, __VA_ARGS__)
+	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)                   \
+	_F(mover, MOVER, 9, NULL, NULL, __VA_ARGS__)                               \
+	_F(net_test, NET_TEST, 10, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
@@ -153,6 +154,16 @@ ECS_COMPONENT_T(comp_mover) {
 
 comp_mover_t;
 void ser_mover(serializer_t* ser, comp_mover_t* mover);
+
+ECS_COMPONENT_T(comp_net_test) {
+	int32_t a;
+	int32_t b;
+	int32_t c;
+	int32_t d;
+}
+
+comp_net_test_t;
+void ser_net_test(serializer_t* ser, comp_net_test_t* net_test);
 
 void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);

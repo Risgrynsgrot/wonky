@@ -1,12 +1,41 @@
 #include "network_common.h"
+#include "components.h"
 #include "raylib.h"
 #include <arpa/inet.h>
+#include <stdio.h>
 #include <string.h>
 
-void net_send_peer(ENetPeer* peer, const char* data) {
+void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
 	ENetPacket* packet =
-		enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+		enet_packet_create(ser->net_buf.buffer, ser->net_buf.word_index, ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, packet);
+}
+
+void net_peer_receive(ENetPacket* packet) {
+	serializer_t ser = new_reader_network((ser_net_t){0});
+	memcpy(ser.ser.net.net_buf.buffer,
+		   packet->data,
+		   packet->dataLength); //this might cause issues, but we'll see
+	net_buffer_print(&ser.ser.net.net_buf);
+
+	char type;
+	net_read_byte(&ser.ser.net, &type, "type");
+	component_types_e comp_type = type;
+	switch(comp_type) {
+	case COMPONENT_NET_TEST:
+		printf("received net test, serializing\n");
+		comp_net_test_t result;
+		ser_net_test(&ser, &result);
+		printf("net_test values: %d, %d, %d, %d\n",
+			   result.a,
+			   result.b,
+			   result.c,
+			   result.d);
+		break;
+	default:
+		printf("reading comp that doesn't exist: %d\n", comp_type);
+		break;
+	}
 }
 
 void net_buffer_reset(net_buf_t* buf) {
@@ -25,6 +54,14 @@ void net_buffer_flush(net_buf_t* buf) {
 	buf->word_index++;
 }
 
+void net_buffer_print(net_buf_t* buf) {
+	printf("buffer contains: ");
+	for(int i = 0; i < buf->word_index; i++) {
+		printf("%d, ", buf->buffer[i]);
+	}
+	printf("\n");
+}
+
 void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
 	buf->scratch |=
 		value << buf->scratch_bits; //add value to scratch, shifted by how much
@@ -35,24 +72,32 @@ void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
 			buf->scratch & 0xFFFFFFFF; //move from scratch to buffer
 		buf->word_index++;			   //move buffer index
 		buf->scratch >>= 32;	 //shift scratch if there is anything left in it
-		buf->scratch_bits -= 32; //and move the index back
+		buf->scratch_bits += 32; //and move the index back
 	}
 }
 
 int32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
-	buf->scratch = buf->buffer[buf->word_index] << buf->scratch_bits;
+	if(buf->scratch_bits < size_bits) {
+		buf->scratch |= buf->buffer[buf->word_index] << buf->scratch_bits;
+		buf->scratch_bits += 32;
+		buf->word_index++;
+	}
+	int32_t result = buf->scratch & (((uint64_t)1 << size_bits) - 1);
+	buf->scratch >>= size_bits;
+	buf->scratch_bits -= size_bits;
+	buf->num_bits_read += size_bits;
+
+	return result;
 }
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name) {
-	(void)name;
-	int32_t* net_value = net_buffer_read(&ser->net_buf, sizeof(int32_t));
-	*value			   = ntohl(*net_value);
+	printf("reading int %s\n", name);
+	*value = net_bits_read(&ser->net_buf, 32);
 }
 
 void net_write_int(ser_net_t* ser, int32_t value, const char* name) {
-	(void)name;
-	int32_t net_value = htonl(value);
-	net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
+	printf("writing int %s\n", name);
+	net_bits_write(&ser->net_buf, 32, value);
 }
 
 void net_read_bool(ser_net_t* ser, bool* value, const char* name) {
@@ -68,15 +113,13 @@ void net_write_bool(ser_net_t* ser, bool value, const char* name) {
 }
 
 void net_read_byte(ser_net_t* ser, char* value, const char* name) {
-	(void)ser;
-	(void)name;
-	(void)value;
+	printf("reading byte %s\n", name);
+	*value = net_bits_read(&ser->net_buf, 8);
 }
 
 void net_write_byte(ser_net_t* ser, char value, const char* name) {
-	(void)ser;
-	(void)name;
-	(void)value;
+	printf("writing byte %s\n", name);
+	net_bits_write(&ser->net_buf, 8, value);
 }
 
 void net_read_ubyte(ser_net_t* ser, unsigned char* value, const char* name) {
@@ -93,26 +136,28 @@ void net_write_ubyte(ser_net_t* ser, unsigned char value, const char* name) {
 
 void net_read_float(ser_net_t* ser, float* value, const char* name) {
 	(void)name;
-	float* net_value = net_buffer_read(&ser->net_buf, sizeof(float));
-	*value			 = ntohl(*net_value);
+	*value = net_bits_read(&ser->net_buf, 32);
 }
 
 void net_write_float(ser_net_t* ser, float value, const char* name) {
 	(void)name;
-	float net_value = htonl(value);
-	net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
+	net_bits_write(&ser->net_buf, 32, value);
 }
 
 void net_read_double(ser_net_t* ser, double* value, const char* name) {
 	(void)name;
-	double* net_value = net_buffer_read(&ser->net_buf, sizeof(double));
-	*value			  = ntohl(*net_value);
+	(void)ser;
+	(void)value;
+	//double* net_value = net_buffer_read(&ser->net_buf, sizeof(double));
+	//*value			  = ntohl(*net_value);
 }
 
 void net_write_double(ser_net_t* ser, double value, const char* name) {
 	(void)name;
-	double net_value = htonl(value);
-	net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
+	(void)ser;
+	(void)value;
+	//double net_value = htonl(value);
+	//net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
 }
 
 void net_read_vector2(ser_net_t* ser, Vector2* value, const char* name) {
@@ -140,7 +185,13 @@ void net_write_color(ser_net_t* ser, Color value, const char* name) {
 }
 
 void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
+	(void)name;
+	(void)ser;
+	(void)value;
 }
 
 void net_write_string(ser_net_t* ser, net_string_t* value, const char* name) {
+	(void)name;
+	(void)ser;
+	(void)value;
 }
