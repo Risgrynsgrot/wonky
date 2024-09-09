@@ -85,9 +85,10 @@ void ser_mover(serializer_t* ser, comp_mover_t* mover) {
 
 void ser_net_test(serializer_t* ser, comp_net_test_t* net_test) {
 	ser->ser_int(ser, &net_test->a, "a");
-	ser->ser_int(ser, &net_test->a, "b");
-	ser->ser_int(ser, &net_test->a, "c");
-	ser->ser_int(ser, &net_test->a, "d");
+	ser->ser_bool(ser, &net_test->extra, "extra");
+	ser->ser_int(ser, &net_test->b, "b");
+	ser->ser_int(ser, &net_test->c, "c");
+	ser->ser_int(ser, &net_test->d, "d");
 }
 
 void ecs_component_register_string(ecs_component_string_t value) {

@@ -48,7 +48,7 @@ void server_update(server_t* server) {
 					   event.peer->address.port);
 				event.peer->data = "Client information"; //Put client info here
 				//server_send_broadcast(server, "nya");
-				comp_net_test_t test = {.a = 10, .b = 25, .c = 12, .d = 30};
+				comp_net_test_t test = {.a = 30, .extra = true, .b = 25, .c = 12, .d = 30};
 				serializer_t ser	 = new_writer_network((ser_net_t){0});
 				net_write_byte(&ser.ser.net, COMPONENT_NET_TEST, "type");
 				ser_net_test(&ser, &test);

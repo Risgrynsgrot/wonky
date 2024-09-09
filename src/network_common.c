@@ -2,19 +2,21 @@
 #include "components.h"
 #include "raylib.h"
 #include <arpa/inet.h>
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
 void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
-	ENetPacket* packet = enet_packet_create(ser->net_buf.buffer,
-											ser->net_buf.word_index,
+	ENetPacket* packet = enet_packet_create(ser->net_buf.data,
+											ser->net_buf.word_index * 4,
 											ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, packet);
 }
 
 void net_peer_receive(ENetPacket* packet) {
 	serializer_t ser = new_reader_network((ser_net_t){0});
-	memcpy(ser.ser.net.net_buf.buffer, packet->data, packet->dataLength);
+	printf("data size: %lu", packet->dataLength);
+	memcpy(ser.ser.net.net_buf.data, packet->data, packet->dataLength);
 	net_buffer_print(&ser.ser.net.net_buf);
 
 	char type;
@@ -38,16 +40,17 @@ void net_peer_receive(ENetPacket* packet) {
 }
 
 void net_buffer_reset(net_buf_t* buf) {
-	buf->word_index	  = 0;
-	buf->scratch	  = 0;
-	buf->scratch_bits = 0;
+	buf->word_index	   = 0;
+	buf->scratch	   = 0;
+	buf->scratch_bits  = 0;
+	buf->num_bits_read = 0;
 }
 
 void net_buffer_flush(net_buf_t* buf) {
 	if(buf->scratch_bits == 0) {
 		return;
 	}
-	buf->buffer[buf->word_index] = (buf->scratch & 0xFFFFFFFF);
+	buf->data[buf->word_index] = (buf->scratch & 0xFFFFFFFF);
 	buf->scratch_bits			 = 0;
 	buf->scratch >>= 32;
 	buf->word_index++;
@@ -55,8 +58,8 @@ void net_buffer_flush(net_buf_t* buf) {
 
 void net_buffer_print(net_buf_t* buf) {
 	printf("buffer contains: ");
-	for(int i = 0; i < buf->word_index; i++) {
-		printf("%d, ", buf->buffer[i]);
+	for(int i = 0; i < NET_MAX_PACKET_SIZE; i++) {
+		printf("%d,", buf->data[i]);
 	}
 	printf("\n");
 }
@@ -69,20 +72,21 @@ void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
 	//if scratch is full
 	if(buf->scratch_bits >= 32) {
 		//move from scratch to buffer
-		buf->buffer[buf->word_index] = buf->scratch & 0xFFFFFFFF;
+		buf->data[buf->word_index] = buf->scratch & 0xFFFFFFFF;
 		buf->word_index++;		 //move buffer index
 		buf->scratch >>= 32;	 //shift scratch if there is anything left in it
-		buf->scratch_bits += 32; //and move the index back
+		buf->scratch_bits -= 32; //and move the index back
 	}
 }
 
-int32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
+uint32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
+
 	if(buf->scratch_bits < size_bits) {
-		buf->scratch |= buf->buffer[buf->word_index] << buf->scratch_bits;
+		buf->scratch |= (uint64_t)buf->data[buf->word_index] << buf->scratch_bits;
 		buf->scratch_bits += 32;
 		buf->word_index++;
 	}
-	int32_t result = buf->scratch & (((uint64_t)1 << size_bits) - 1);
+	int32_t result = buf->scratch & ((1 << size_bits) - 1);
 	buf->scratch >>= size_bits;
 	buf->scratch_bits -= size_bits;
 	buf->num_bits_read += size_bits;
@@ -93,6 +97,7 @@ int32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name) {
 	printf("reading int %s\n", name);
 	*value = net_bits_read(&ser->net_buf, 32);
+	printf("value: %d\n", *value);
 }
 
 void net_write_int(ser_net_t* ser, int32_t value, const char* name) {
@@ -101,20 +106,20 @@ void net_write_int(ser_net_t* ser, int32_t value, const char* name) {
 }
 
 void net_read_bool(ser_net_t* ser, bool* value, const char* name) {
-	(void)ser;
-	(void)name;
-	(void)value;
+	printf("reading bool %s\n", name);
+	*value = net_bits_read(&ser->net_buf, 1);
+	printf("value: %d\n", *value);
 }
 
 void net_write_bool(ser_net_t* ser, bool value, const char* name) {
-	(void)ser;
-	(void)name;
-	(void)value;
+	printf("writing byte %s\n", name);
+	net_bits_write(&ser->net_buf, 1, value);
 }
 
 void net_read_byte(ser_net_t* ser, char* value, const char* name) {
 	printf("reading byte %s\n", name);
 	*value = net_bits_read(&ser->net_buf, 8);
+	printf("value: %d\n", *value);
 }
 
 void net_write_byte(ser_net_t* ser, char value, const char* name) {

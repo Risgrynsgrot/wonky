@@ -69,7 +69,9 @@ add_custom_command(
 
 file(GLOB_RECURSE TestsToRun CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/test_*.c")
 create_test_sourcelist (tests, ${PROJECT_NAME}_tests.c ${TestsToRun})
-add_executable (${PROJECT_NAME}_tests ${TestsToRun})
+list(REMOVE_ITEM sources "${CMAKE_CURRENT_SOURCE_DIR}/src/main\.c")
+
+add_executable (${PROJECT_NAME}_tests ${TestsToRun} ${sources} ${headers})
 foreach (test ${TestsToRun})
 	get_filename_component (TName ${test} NAME_WE)
 	add_test (NAME ${TName} COMMAND commonCTests ${TNname})

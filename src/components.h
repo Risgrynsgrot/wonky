@@ -157,6 +157,7 @@ void ser_mover(serializer_t* ser, comp_mover_t* mover);
 
 ECS_COMPONENT_T(comp_net_test) {
 	int32_t a;
+	bool extra;
 	int32_t b;
 	int32_t c;
 	int32_t d;

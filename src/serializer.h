@@ -8,7 +8,7 @@ typedef struct Color Color;
 
 #define NET_MAX_PACKET_SIZE 1024
 typedef struct net_buf {
-	uint32_t buffer[NET_MAX_PACKET_SIZE];
+	uint32_t data[NET_MAX_PACKET_SIZE];
 	uint64_t scratch;
 	int32_t scratch_bits;
 	int32_t word_index;

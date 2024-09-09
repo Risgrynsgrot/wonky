@@ -13,6 +13,7 @@ void net_peer_receive(ENetPacket* packet);
 
 void net_buffer_flush(net_buf_t* buf);
 void net_buffer_print(net_buf_t* buf);
+void net_buffer_reset(net_buf_t* buf);
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name);
 void net_write_int(ser_net_t* ser, int32_t value, const char* name);
