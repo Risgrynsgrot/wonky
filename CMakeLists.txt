@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 project(wonky LANGUAGES C)
 set(CMAKE_C_STANDARD 11) # Requires C11 standard
 
+include(CTest)
+
 if (EMSCRIPTEN)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1 -s FORCE_FILESYSTEM=1 --embed-file ../assets@")
 	set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
@@ -13,6 +15,8 @@ endif ()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/raylib)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/json-c)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/Unity)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/notcurses)
 target_include_directories(notcurses PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/notcurses/include/)
@@ -29,6 +33,7 @@ set_target_properties(luajit PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE
 # add your source files here
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+list(FILTER sources EXCLUDE REGEX "/src/.*test_.*\.c$")
 add_executable(${PROJECT_NAME} ${headers} ${sources})
 
 if(MSVC)
@@ -38,12 +43,13 @@ else()
 endif()
 
 # link to your dependencies' targets here
-target_link_libraries(${PROJECT_NAME} json-c)
 #target_link_libraries(${PROJECT_NAME} tmx)
+target_link_libraries(${PROJECT_NAME} json-c)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} luajit)
 target_link_libraries(${PROJECT_NAME} enet)
 target_link_libraries(${PROJECT_NAME} notcurses)
+target_link_libraries(${PROJECT_NAME} unity)
 
 # --- copy assets so exe can find the /assets folder ----
 set(link_src "${CMAKE_SOURCE_DIR}/assets")
@@ -58,4 +64,19 @@ add_custom_command(
 	-E copy ${link_src} ${link_dst} 
 	DEPENDS ${link_dst} 
 	COMMENT "copy ${link_src} => ${link_dst}" 
-	)
+)
+
+
+file(GLOB_RECURSE TestsToRun CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/test_*.c")
+create_test_sourcelist (tests, ${PROJECT_NAME}_tests.c ${TestsToRun})
+add_executable (${PROJECT_NAME}_tests ${TestsToRun})
+foreach (test ${TestsToRun})
+	get_filename_component (TName ${test} NAME_WE)
+	add_test (NAME ${TName} COMMAND commonCTests ${TNname})
+endforeach ()
+target_link_libraries(${PROJECT_NAME}_tests json-c)
+target_link_libraries(${PROJECT_NAME}_tests raylib)
+target_link_libraries(${PROJECT_NAME}_tests luajit)
+target_link_libraries(${PROJECT_NAME}_tests enet)
+target_link_libraries(${PROJECT_NAME}_tests notcurses)
+target_link_libraries(${PROJECT_NAME}_tests unity)
