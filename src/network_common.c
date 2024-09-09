@@ -6,16 +6,15 @@
 #include <string.h>
 
 void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
-	ENetPacket* packet =
-		enet_packet_create(ser->net_buf.buffer, ser->net_buf.word_index, ENET_PACKET_FLAG_RELIABLE);
+	ENetPacket* packet = enet_packet_create(ser->net_buf.buffer,
+											ser->net_buf.word_index,
+											ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, packet);
 }
 
 void net_peer_receive(ENetPacket* packet) {
 	serializer_t ser = new_reader_network((ser_net_t){0});
-	memcpy(ser.ser.net.net_buf.buffer,
-		   packet->data,
-		   packet->dataLength); //this might cause issues, but we'll see
+	memcpy(ser.ser.net.net_buf.buffer, packet->data, packet->dataLength);
 	net_buffer_print(&ser.ser.net.net_buf);
 
 	char type;
@@ -63,14 +62,15 @@ void net_buffer_print(net_buf_t* buf) {
 }
 
 void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
-	buf->scratch |=
-		value << buf->scratch_bits; //add value to scratch, shifted by how much
-									//is in the scratch right now
-	buf->scratch_bits += size_bits; //shift how much to shift next time
-	if(buf->scratch_bits >= 32) {	//if scratch is full
-		buf->buffer[buf->word_index] =
-			buf->scratch & 0xFFFFFFFF; //move from scratch to buffer
-		buf->word_index++;			   //move buffer index
+	//add value to scratch, shifted by how much is in the scratch right now
+	buf->scratch |= value << buf->scratch_bits;
+	//shift how much to shift next time
+	buf->scratch_bits += size_bits;
+	//if scratch is full
+	if(buf->scratch_bits >= 32) {
+		//move from scratch to buffer
+		buf->buffer[buf->word_index] = buf->scratch & 0xFFFFFFFF;
+		buf->word_index++;		 //move buffer index
 		buf->scratch >>= 32;	 //shift scratch if there is anything left in it
 		buf->scratch_bits += 32; //and move the index back
 	}

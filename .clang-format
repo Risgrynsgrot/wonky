@@ -32,7 +32,7 @@ AccessModifierOffset: -4
 AlignAfterOpenBracket: true
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
-AlignEscapedNewlinesLeft: false
+AlignEscapedNewlines: Right
 AlignArrayOfStructures: Right
 AlignOperands:   true
 AlignTrailingComments: true
@@ -100,8 +100,7 @@ SpaceBeforeInheritanceColon: true
 SortUsingDeclarations: true
 SortIncludes: true
 
-# Comments are for developers, they should arrange them
-ReflowComments: true
+ReflowComments: false
 
 IncludeBlocks: Preserve
 IndentPPDirectives: AfterHash
