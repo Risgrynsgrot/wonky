@@ -51,7 +51,7 @@ void net_buffer_flush(net_buf_t* buf) {
 		return;
 	}
 	buf->data[buf->word_index] = (buf->scratch & 0xFFFFFFFF);
-	buf->scratch_bits			 = 0;
+	buf->scratch_bits		   = 0;
 	buf->scratch >>= 32;
 	buf->word_index++;
 }
@@ -59,7 +59,7 @@ void net_buffer_flush(net_buf_t* buf) {
 void net_buffer_print(net_buf_t* buf) {
 	printf("buffer contains: ");
 	for(int i = 0; i < NET_MAX_PACKET_SIZE; i++) {
-		printf("%d,", buf->data[i]);
+		printf("%#08x,", buf->data[i]);
 	}
 	printf("\n");
 }
@@ -82,11 +82,13 @@ void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
 uint32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
 
 	if(buf->scratch_bits < size_bits) {
-		buf->scratch |= (uint64_t)buf->data[buf->word_index] << buf->scratch_bits;
+		buf->scratch |= (uint64_t)buf->data[buf->word_index]
+						<< buf->scratch_bits;
 		buf->scratch_bits += 32;
 		buf->word_index++;
 	}
-	int32_t result = buf->scratch & ((1 << size_bits) - 1);
+	int32_t result =
+		buf->scratch & (((uint64_t)1 << (uint64_t)size_bits) - (uint64_t)1);
 	buf->scratch >>= size_bits;
 	buf->scratch_bits -= size_bits;
 	buf->num_bits_read += size_bits;
@@ -95,45 +97,44 @@ uint32_t net_bits_read(net_buf_t* buf, int32_t size_bits) {
 }
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name) {
-	printf("reading int %s\n", name);
+	(void)name;
 	*value = net_bits_read(&ser->net_buf, 32);
-	printf("value: %d\n", *value);
 }
 
 void net_write_int(ser_net_t* ser, int32_t value, const char* name) {
-	printf("writing int %s\n", name);
+	(void)name;
 	net_bits_write(&ser->net_buf, 32, value);
 }
 
 void net_read_bool(ser_net_t* ser, bool* value, const char* name) {
-	printf("reading bool %s\n", name);
+	(void)name;
 	*value = net_bits_read(&ser->net_buf, 1);
-	printf("value: %d\n", *value);
 }
 
 void net_write_bool(ser_net_t* ser, bool value, const char* name) {
-	printf("writing byte %s\n", name);
+	(void)name;
 	net_bits_write(&ser->net_buf, 1, value);
 }
 
 void net_read_byte(ser_net_t* ser, char* value, const char* name) {
-	printf("reading byte %s\n", name);
+	(void)name;
 	*value = net_bits_read(&ser->net_buf, 8);
-	printf("value: %d\n", *value);
 }
 
 void net_write_byte(ser_net_t* ser, char value, const char* name) {
-	printf("writing byte %s\n", name);
+	(void)name;
 	net_bits_write(&ser->net_buf, 8, value);
 }
 
 void net_read_ubyte(ser_net_t* ser, unsigned char* value, const char* name) {
+	assert(false);
 	(void)ser;
 	(void)name;
 	(void)value;
 }
 
 void net_write_ubyte(ser_net_t* ser, unsigned char value, const char* name) {
+	assert(false);
 	(void)ser;
 	(void)name;
 	(void)value;
@@ -150,19 +151,17 @@ void net_write_float(ser_net_t* ser, float value, const char* name) {
 }
 
 void net_read_double(ser_net_t* ser, double* value, const char* name) {
+	assert(false);
 	(void)name;
 	(void)ser;
 	(void)value;
-	//double* net_value = net_buffer_read(&ser->net_buf, sizeof(double));
-	//*value			  = ntohl(*net_value);
 }
 
 void net_write_double(ser_net_t* ser, double value, const char* name) {
+	assert(false);
 	(void)name;
 	(void)ser;
 	(void)value;
-	//double net_value = htonl(value);
-	//net_buffer_write(&ser->net_buf, sizeof(net_value), &net_value);
 }
 
 void net_read_vector2(ser_net_t* ser, Vector2* value, const char* name) {
@@ -190,12 +189,14 @@ void net_write_color(ser_net_t* ser, Color value, const char* name) {
 }
 
 void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
+	assert(false);
 	(void)name;
 	(void)ser;
 	(void)value;
 }
 
 void net_write_string(ser_net_t* ser, net_string_t* value, const char* name) {
+	assert(false);
 	(void)name;
 	(void)ser;
 	(void)value;

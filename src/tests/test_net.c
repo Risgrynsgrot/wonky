@@ -11,32 +11,32 @@ void tearDown(void) {
 
 void test_net_write() {
 	serializer_t ser_write = new_writer_network((ser_net_t){0});
-	net_write_byte(&ser_write.ser.net, 36, "value");
-	net_write_byte(&ser_write.ser.net, 36, "value");
-	net_write_byte(&ser_write.ser.net, 36, "value");
-	net_write_byte(&ser_write.ser.net, 36, "value");
+	net_write_byte(&ser_write.ser.net, 1, "value");
+	net_write_byte(&ser_write.ser.net, 2, "value");
+	net_write_byte(&ser_write.ser.net, 3, "value");
+	net_write_byte(&ser_write.ser.net, 4, "value");
 	printf("%#08x\n", ser_write.ser.net.net_buf.data[0]);
-	TEST_ASSERT_EQUAL(ser_write.ser.net.net_buf.data[0], 0x24242424);
-	net_write_byte(&ser_write.ser.net, 37, "value");
-	net_write_byte(&ser_write.ser.net, 37, "value");
-	net_write_byte(&ser_write.ser.net, 37, "value");
-	net_write_byte(&ser_write.ser.net, 37, "value");
+	TEST_ASSERT_EQUAL(ser_write.ser.net.net_buf.data[0], 0x04030201);
+	net_write_byte(&ser_write.ser.net, 5, "value");
+	net_write_byte(&ser_write.ser.net, 6, "value");
+	net_write_byte(&ser_write.ser.net, 7, "value");
+	net_write_byte(&ser_write.ser.net, 8, "value");
 	printf("%#08x\n", ser_write.ser.net.net_buf.data[1]);
-	TEST_ASSERT_EQUAL(ser_write.ser.net.net_buf.data[1], 0x25252525);
+	TEST_ASSERT_EQUAL(ser_write.ser.net.net_buf.data[1], 0x08070605);
 }
 
 void test_net_read() {
 
 	serializer_t ser_write = new_writer_network((ser_net_t){0});
-	net_write_byte(&ser_write.ser.net, 36, "value");
-	net_write_byte(&ser_write.ser.net, 36, "value");
-	net_write_byte(&ser_write.ser.net, 36, "value");
-	net_write_byte(&ser_write.ser.net, 36, "value");
+	net_write_byte(&ser_write.ser.net, 1, "value");
+	net_write_byte(&ser_write.ser.net, 2, "value");
+	net_write_byte(&ser_write.ser.net, 3, "value");
+	net_write_byte(&ser_write.ser.net, 4, "value");
 	printf("%#08x\n", ser_write.ser.net.net_buf.data[0]);
-	net_write_byte(&ser_write.ser.net, 37, "value");
-	net_write_byte(&ser_write.ser.net, 37, "value");
-	net_write_byte(&ser_write.ser.net, 37, "value");
-	net_write_byte(&ser_write.ser.net, 37, "value");
+	net_write_byte(&ser_write.ser.net, 5, "value");
+	net_write_byte(&ser_write.ser.net, 6, "value");
+	net_write_byte(&ser_write.ser.net, 7, "value");
+	net_write_byte(&ser_write.ser.net, 8, "value");
 	printf("%#08x\n", ser_write.ser.net.net_buf.data[1]);
 
 	serializer_t ser_read = new_reader_network((ser_net_t){0});
@@ -58,12 +58,12 @@ void test_net_read() {
 	printf("%c\n", value);
 	net_read_byte(&ser_read.ser.net, &value, "value");
 	printf("%c\n", value);
-	TEST_ASSERT_EQUAL(value, 37);
+	TEST_ASSERT_EQUAL(value, 8);
 }
 
 void test_net_serialize() {
 
-	comp_net_test_t test   = {.a = 10, .b = 25, .c = 12, .d = 30};
+	comp_net_test_t test   = {.a = 10, .extra = false, .b = 25, .c = 12, .d = 30};
 	serializer_t ser_write = new_writer_network((ser_net_t){0});
 	net_write_byte(&ser_write.ser.net, COMPONENT_NET_TEST, "type");
 	ser_net_test(&ser_write, &test);
