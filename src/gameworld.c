@@ -9,6 +9,7 @@
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 #define PICO_ECS_MAX_SYSTEMS 16
 #define PICO_ECS_MAX_COMPONENTS 64
@@ -19,14 +20,18 @@
 #	include <emscripten/emscripten.h>
 #endif
 
-int gameworld_init(gameworld_t* gameworld) {
-	gameworld->quit	 = false;
+int gameworld_init(gameworld_t* gameworld, bool headless) {
+	gameworld->quit		= false;
 	gameworld->tickrate = 1.f / 64.f;
-	gameworld->lag		 = 0.f;
+	gameworld->lag		= 0.f;
+	gameworld->headless = headless;
+	gameworld->net_writer = new_writer_network((ser_net_t){0});
 
 	//render_setup();
 
-	gameworld_raylib_init();
+	if(!gameworld->headless) {
+		gameworld_raylib_init();
+	}
 
 	gameworld->input_map[0] = input_init();
 
@@ -41,7 +46,6 @@ int gameworld_init(gameworld_t* gameworld) {
 	map_new("assets/levels/testgym.ldtk", &gameworld->map);
 	//map_load_ldtk("assets/levels/testgym.ldtk", &gameworld->map.data);
 	ldtk_map_t* map = &gameworld->map.data;
-	ecs_register_move_systems(gameworld->ecs, &gameworld->map);
 	//TODO(risgrynsgrot) these should be spawned using their type instead of id
 	//except for maybe special cases
 	ldtk_layer_t* entity_layer = level_get_layer(&map->levels[0], "entities");
@@ -54,7 +58,7 @@ int gameworld_init(gameworld_t* gameworld) {
 		level_spawn_terrain(int_layer, gameworld->ecs);
 	}
 
-	ecs_register_move_systems(gameworld->ecs, &gameworld->map);
+	ecs_register_move_systems(gameworld->ecs, &gameworld->map, &gameworld->net_writer);
 
 	ecs_id_t entity = ecs_create(gameworld->ecs);
 
@@ -88,8 +92,10 @@ int gameworld_init(gameworld_t* gameworld) {
 
 	script_lua_close(L);
 
-	comp_position_t* position = ecs_get(gameworld->ecs, entity, id_comp_position);
-	printf("placing entity at %f, %f", position->grid_pos.x, position->grid_pos.y);
+	comp_position_t* position =
+		ecs_get(gameworld->ecs, entity, id_comp_position);
+	printf(
+		"placing entity at %f, %f", position->grid_pos.x, position->grid_pos.y);
 	map_add_entity(&gameworld->map, 0, position->grid_pos, entity);
 
 	return 0;
@@ -101,7 +107,8 @@ void gameworld_raylib_init(void) {
 
 void gameworld_start_loop(gameworld_t* gameworld) {
 #if defined(PLATFORM_WEB)
-	emscripten_set_main_loop_arg(gameworld_start_emscripten_loop, gameworld, 0, 1);
+	emscripten_set_main_loop_arg(
+		gameworld_start_emscripten_loop, gameworld, 0, 1);
 	return;
 #endif
 	gameworld_start_native_loop(gameworld);
@@ -123,8 +130,11 @@ void gameworld_start_emscripten_loop(void* user_data) {
 #endif
 
 void gameworld_main_loop(gameworld_t* gameworld) {
-	float deltaTime = GetFrameTime();
-	gameworld->lag += deltaTime;
+	struct timeval t1, t2;
+	double elapsedTime;
+	gettimeofday(&t1, NULL);
+
+	gameworld->lag += gameworld->delta_time;
 	gameworld_handle_input(gameworld);
 	//printf("Tickrate: %f\n", gameworld->tickrate);
 	//printf("lag: %f\n", gameworld->lag);
@@ -140,6 +150,11 @@ void gameworld_main_loop(gameworld_t* gameworld) {
 		//input_reset(&gameworld->input);
 	}
 	gameworld_render(gameworld);
+
+	gettimeofday(&t2, NULL);
+	elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;
+	elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;
+	gameworld->delta_time = elapsedTime / 1000;
 }
 
 void gameworld_handle_input(gameworld_t* gameworld) {
@@ -149,6 +164,7 @@ void gameworld_handle_input(gameworld_t* gameworld) {
 
 void gameworld_update(gameworld_t* gameworld, float dt) {
 	ecs_update_system(gameworld->ecs, sys_move_units, dt);
+	ecs_update_system(gameworld->ecs, sys_net_send_move, dt);
 }
 
 void gameworld_render(gameworld_t* gameworld) {

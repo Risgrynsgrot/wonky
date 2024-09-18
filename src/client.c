@@ -9,6 +9,8 @@ bool client_init(client_t* client) {
 	sigaction(SIGINT, &client->act, NULL);
 	sigaction(SIGQUIT, &client->act, NULL);
 
+	gameworld_init(&client->gameworld, false);
+
 	client->host = enet_host_create(NULL, 1, 2, 0, 0);
 
 	if(client->host == NULL) {
@@ -48,10 +50,7 @@ void client_update(client_t* client) {
 	client->quit = !keep_running;
 	while(!client->quit) {
 		ENetEvent event;
-		//poll for events
-		//do update loop
-		while(enet_host_service(client->host, &event, 200) >
-			  0) { //TODO(risgrynsgrot) the 1000 should be 0 for non blocking
+		while(enet_host_service(client->host, &event, 0) > 0) {
 			switch(event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
 				net_peer_receive(event.packet);
@@ -62,11 +61,16 @@ void client_update(client_t* client) {
 			}
 		}
 
-		//send results
+		//poll for events
+		gameworld_main_loop(&client->gameworld);
+		net_peer_send(client->server, &client->gameworld.net_writer.ser.net);
+		//full buffer reset because it's sent
+		client->gameworld.net_writer.ser.net.net_buf = (net_buf_t){0};
 	}
 }
 
 void client_deinit(client_t* client) {
+	gameworld_deinit(&client->gameworld);
 	enet_host_destroy(client->host);
 }
 

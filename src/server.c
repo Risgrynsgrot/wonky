@@ -39,8 +39,7 @@ void server_update(server_t* server) {
 		ENetEvent event;
 		//poll for events
 		//do update loop
-		while(enet_host_service(server->host, &event, 200) >
-			  0) { //TODO(risgrynsgrot) the 1000 should be 0 for non blocking
+		while(enet_host_service(server->host, &event, 0) > 0) {
 			switch(event.type) {
 			case ENET_EVENT_TYPE_CONNECT:
 				printf("client connected: %x:%u\n",
@@ -48,8 +47,9 @@ void server_update(server_t* server) {
 					   event.peer->address.port);
 				event.peer->data = "Client information"; //Put client info here
 				//server_send_broadcast(server, "nya");
-				comp_net_test_t test = {.a = 30, .extra = true, .b = 25, .c = 12, .d = 30};
-				serializer_t ser	 = new_writer_network((ser_net_t){0});
+				comp_net_test_t test = {
+					.a = 30, .extra = true, .b = 25, .c = 12, .d = 30};
+				serializer_t ser = new_writer_network((ser_net_t){0});
 				net_write_byte(&ser.ser.net, COMPONENT_NET_TEST, "type");
 				ser_net_test(&ser, &test);
 				net_buffer_flush(&ser.ser.net.net_buf);

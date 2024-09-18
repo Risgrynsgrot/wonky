@@ -33,6 +33,17 @@ void net_peer_receive(ENetPacket* packet) {
 			   result.c,
 			   result.d);
 		break;
+	case COMPONENT_NET_MOVE:
+		printf("received net move, serializing\n");
+		comp_net_move_t net_move;
+		ser_net_move(&ser, &net_move);
+		printf("net_move values:\nfrom: %f, %f\nto: %f, %f\nentity: %u",
+			   net_move.from_tile.x,
+			   net_move.from_tile.y,
+			   net_move.to_tile.x,
+			   net_move.to_tile.y,
+			   net_move.entity);
+		break;
 	default:
 		printf("reading comp that doesn't exist: %d\n", comp_type);
 		break;
@@ -50,6 +61,7 @@ void net_buffer_flush(net_buf_t* buf) {
 	if(buf->scratch_bits == 0) {
 		return;
 	}
+	buf->total_bits += buf->scratch_bits;
 	buf->data[buf->word_index] = (buf->scratch & 0xFFFFFFFF);
 	buf->scratch_bits		   = 0;
 	buf->scratch >>= 32;
@@ -65,10 +77,13 @@ void net_buffer_print(net_buf_t* buf) {
 }
 
 void net_bits_write(net_buf_t* buf, int32_t size_bits, int32_t value) {
+	assert(size_bits + buf->total_bits <=
+		   NET_MAX_PACKET_SIZE * sizeof(uint32_t));
 	//add value to scratch, shifted by how much is in the scratch right now
 	buf->scratch |= value << buf->scratch_bits;
 	//shift how much to shift next time
 	buf->scratch_bits += size_bits;
+	buf->total_bits += size_bits;
 	//if scratch is full
 	if(buf->scratch_bits >= 32) {
 		//move from scratch to buffer
@@ -102,6 +117,16 @@ void net_read_int(ser_net_t* ser, int32_t* value, const char* name) {
 }
 
 void net_write_int(ser_net_t* ser, int32_t value, const char* name) {
+	(void)name;
+	net_bits_write(&ser->net_buf, 32, value);
+}
+
+void net_read_uint(ser_net_t* ser, uint32_t* value, const char* name) {
+	(void)name;
+	*value = net_bits_read(&ser->net_buf, 32);
+}
+
+void net_write_uint(ser_net_t* ser, uint32_t value, const char* name) {
 	(void)name;
 	net_bits_write(&ser->net_buf, 32, value);
 }

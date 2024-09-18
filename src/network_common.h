@@ -3,7 +3,7 @@
 #include <enet/enet.h>
 
 typedef struct net_string {
-	const char* str;
+	char str[512];
 	int length;
 } net_string_t;
 
@@ -17,6 +17,9 @@ void net_buffer_reset(net_buf_t* buf);
 
 void net_read_int(ser_net_t* ser, int32_t* value, const char* name);
 void net_write_int(ser_net_t* ser, int32_t value, const char* name);
+
+void net_read_uint(ser_net_t* ser, uint32_t* value, const char* name);
+void net_write_uint(ser_net_t* ser, uint32_t value, const char* name);
 
 void net_read_bool(ser_net_t* ser, bool* value, const char* name);
 void net_write_bool(ser_net_t* ser, bool value, const char* name);

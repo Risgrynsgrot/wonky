@@ -1,7 +1,7 @@
 #include "../components.h"
 #include "../network_common.h"
-#include <unity.h>
 #include <memory.h>
+#include <unity.h>
 
 void setUp(void) {
 }
@@ -40,7 +40,9 @@ void test_net_read() {
 	printf("%#08x\n", ser_write.ser.net.net_buf.data[1]);
 
 	serializer_t ser_read = new_reader_network((ser_net_t){0});
-	memcpy(ser_read.ser.net.net_buf.data, ser_write.ser.net.net_buf.data, 1024 * sizeof(uint32_t));
+	memcpy(ser_read.ser.net.net_buf.data,
+		   ser_write.ser.net.net_buf.data,
+		   1024 * sizeof(uint32_t));
 	char value = 0;
 	net_read_byte(&ser_read.ser.net, &value, "value");
 	printf("%c\n", value);
@@ -63,17 +65,18 @@ void test_net_read() {
 
 void test_net_serialize() {
 
-	comp_net_test_t test   = {.a = 10, .extra = false, .b = 25, .c = 12, .d = 30};
+	comp_net_test_t test = {.a = 10, .extra = false, .b = 25, .c = 12, .d = 30};
 	serializer_t ser_write = new_writer_network((ser_net_t){0});
 	net_write_byte(&ser_write.ser.net, COMPONENT_NET_TEST, "type");
 	ser_net_test(&ser_write, &test);
 	net_buffer_flush(&ser_write.ser.net.net_buf);
 	net_buffer_print(&ser_write.ser.net.net_buf);
 
-	serializer_t ser_read =
-		new_reader_network((ser_net_t){0});
+	serializer_t ser_read = new_reader_network((ser_net_t){0});
 	net_buffer_reset(&ser_read.ser.net.net_buf);
-	memcpy(ser_read.ser.net.net_buf.data, ser_write.ser.net.net_buf.data, 1024 * sizeof(uint32_t));
+	memcpy(ser_read.ser.net.net_buf.data,
+		   ser_write.ser.net.net_buf.data,
+		   1024 * sizeof(uint32_t));
 	net_buffer_print(&ser_read.ser.net.net_buf);
 	char type = 0;
 	net_read_byte(&ser_read.ser.net, &type, "type");

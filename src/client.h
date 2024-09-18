@@ -1,10 +1,12 @@
 #pragma once
+#include "gameworld.h"
 #include <enet/enet.h>
-#include <stdbool.h>
 #include <signal.h>
-#include "serializer.h"
+#include <stdbool.h>
 
 typedef struct client {
+	gameworld_t gameworld;
+
 	ENetHost* host;
 	ENetPeer* server;
 	ENetAddress address;

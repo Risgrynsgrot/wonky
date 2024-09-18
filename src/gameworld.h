@@ -12,9 +12,12 @@ typedef struct gameworld {
     bool quit;
 	input_map_t input_map[8];
 	map_t map;
+	bool headless;
+	float delta_time;
+	serializer_t net_writer;
 } gameworld_t;
 
-int gameworld_init(gameworld_t* client);
+int gameworld_init(gameworld_t* client, bool headless);
 void gameworld_start_loop(gameworld_t* client);
 void gameworld_start_native_loop(gameworld_t* client);
 void gameworld_start_emscripten_loop(void* user_data);

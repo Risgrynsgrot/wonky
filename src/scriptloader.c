@@ -60,16 +60,20 @@ double script_get_number(lua_State* L, const char* value) {
 	return result;
 }
 
-int script_get_int(lua_State* L, const char* value) {
+int32_t script_get_int(lua_State* L, const char* value) {
 	lua_getglobal(L, value);
 
 	if(!lua_isnumber(L, -1)) {
 		printf("LUA TRIED TO GET INTEGER %s BUT FAILED, RETURNING 0\n", value);
 		return 0;
 	}
-	int result = lua_tointeger(L, -1);
+	int32_t result = lua_tointeger(L, -1);
 	lua_pop(L, 1);
 	return result;
+}
+
+uint32_t script_get_uint(lua_State* L, const char* value) {
+	return script_get_number(L, value);
 }
 
 const char* script_get_string(lua_State* L, const char* value) {
@@ -136,16 +140,20 @@ double table_get_double(lua_State* L, const char* value) {
 	return table_get_number(L, value);
 }
 
-int table_get_int(lua_State* L, const char* value) {
+int32_t table_get_int(lua_State* L, const char* value) {
 	lua_getfield(L, -1, value);
 	if(!lua_isnumber(L, -1)) {
 		printf("LUA TRIED TO GET INTEGER %s BUT FAILED, RETURNING 0\n", value);
 		lua_pop(L, 1);
 		return 0;
 	}
-	int result = lua_tointeger(L, -1);
+	int32_t result = lua_tointeger(L, -1);
 	lua_pop(L, 1);
 	return result;
+}
+
+uint32_t table_get_uint(lua_State* L, const char* value) {
+	return table_get_number(L, value);
 }
 
 const char* table_get_string(lua_State* L, const char* value) {
@@ -215,7 +223,12 @@ void table_set_number(lua_State* L, const char* value, double data) {
 	lua_setfield(L, -2, value);
 }
 
-void table_set_int(lua_State* L, const char* value, int data) {
+void table_set_int(lua_State* L, const char* value, int32_t data) {
+	lua_pushnumber(L, data);
+	lua_setfield(L, -2, value);
+}
+
+void table_set_uint(lua_State* L, const char* value, uint32_t data) {
 	lua_pushnumber(L, data);
 	lua_setfield(L, -2, value);
 }

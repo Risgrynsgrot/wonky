@@ -30,7 +30,8 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	_F(draw_box, DRAW_BOX, 7, NULL, NULL, __VA_ARGS__)                         \
 	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)                   \
 	_F(mover, MOVER, 9, NULL, NULL, __VA_ARGS__)                               \
-	_F(net_test, NET_TEST, 10, NULL, NULL, __VA_ARGS__)
+	_F(net_test, NET_TEST, 10, NULL, NULL, __VA_ARGS__)                        \
+	_F(net_move, NET_MOVE, 11, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 
@@ -166,28 +167,17 @@ ECS_COMPONENT_T(comp_net_test) {
 comp_net_test_t;
 void ser_net_test(serializer_t* ser, comp_net_test_t* net_test);
 
+ECS_COMPONENT_T(comp_net_move) {
+	Vector2 from_tile;
+	Vector2 to_tile;
+	ecs_id_t entity;
+}
+
+comp_net_move_t;
+void ser_net_move(serializer_t* ser, comp_net_move_t* net_move);
+
 void ecs_component_register_string(ecs_component_string_t value);
 void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
 bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value);
 void ecs_components_register(ecs_t* ecs);
 void ecs_lua_register_module(lua_State* L);
-
-//typedef struct comp_draw_text {
-//	char text[MAX_TEXT_LENGTH];
-//	int size;
-//	float offset_x;
-//	float offset_y;
-//	Color color;
-//	int priority;
-//	bool visible;
-//} comp_draw_text_t;
-//
-//typedef struct comp_ui_button {
-//	entity_t text;
-//	float offset_x;
-//	float offset_y;
-//	Color color;
-//	int priority;
-//	bool visible;
-//	bool pressed;
-//} comp_ui_button_t;

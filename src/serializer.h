@@ -14,7 +14,7 @@ typedef struct net_buf {
 	int32_t word_index;
 
 	//for reading
-	int32_t total_bits;
+	uint32_t total_bits;
 	int32_t num_bits_read;
 } net_buf_t;
 
@@ -32,7 +32,8 @@ typedef struct serializer {
 		ser_net_t net;
 	} ser;
 
-	bool (*ser_int)(struct serializer* ser, int* value, const char* name);
+	bool (*ser_int)(struct serializer* ser, int32_t* value, const char* name);
+	bool (*ser_uint)(struct serializer* ser, uint32_t* value, const char* name);
 	bool (*ser_float)(struct serializer* ser, float* value, const char* name);
 	bool (*ser_double)(struct serializer* ser, double* value, const char* name);
 	bool (*ser_vec2)(struct serializer* ser, Vector2* value, const char* name);
@@ -70,7 +71,8 @@ bool read_string_network(serializer_t* ser, char* value, const char* name);
 bool read_string_lua(serializer_t* ser, char* value, const char* name);
 
 DECL_SER_T(Vector2, vector2)
-DECL_SER_T(int, int)
+DECL_SER_T(int32_t, int)
+DECL_SER_T(uint32_t, uint)
 DECL_SER_T(float, float)
 DECL_SER_T(double, double)
 DECL_SER_T(bool, bool)

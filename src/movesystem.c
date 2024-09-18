@@ -1,13 +1,19 @@
 #include "movesystem.h"
 #include "components.h"
+#include "network_common.h"
 #include "raymath.h"
 #include <stdio.h>
 
-void ecs_register_move_systems(ecs_t* ecs, map_t* map) {
+void ecs_register_move_systems(ecs_t* ecs,
+							   map_t* map,
+							   serializer_t* net_writer) {
 	sys_move_units = ecs_register_system(ecs, move_units, NULL, NULL, map);
 	ecs_require_component(ecs, sys_move_units, id_comp_position);
 	ecs_require_component(ecs, sys_move_units, id_comp_input);
 	ecs_require_component(ecs, sys_move_units, id_comp_mover);
+
+	sys_net_send_move =
+		ecs_register_system(ecs, net_send_move, NULL, NULL, net_writer);
 }
 
 ecs_id_t sys_move_units;
@@ -41,14 +47,16 @@ ecs_ret_t move_units(ecs_t* ecs,
 					position->grid_pos =
 						Vector2Add(position->grid_pos, input->direction);
 					mover->_move_cooldown = 0;
+					comp_net_move_t* net_move =
+						ecs_add(ecs, id, id_comp_net_move, NULL);
+					net_move->from_tile = mover->from_tile;
+					net_move->to_tile	= position->grid_pos;
+					net_move->entity	= id;
 				}
 			}
 		}
 
-		float percentage =
-			Clamp(mover->_move_cooldown,
-				  0.f,
-				  1.f);
+		float percentage = Clamp(mover->_move_cooldown, 0.f, 1.f);
 
 		Vector2 current_world_pos =
 			map_grid_to_world_pos(map, position->layer, mover->from_tile);
@@ -67,8 +75,29 @@ ecs_ret_t move_units(ecs_t* ecs,
 		//position->value = Vector2Add(position->value, result);
 		//printf("position: %f, %f\n", position->value.x, position->value.y);
 		//printf("tile_position: %f, %f\n",
-			   //position->grid_pos.x,
-			   //position->grid_pos.y);
+		//position->grid_pos.x,
+		//position->grid_pos.y);
+	}
+	return 0;
+}
+
+ecs_id_t sys_net_send_move;
+
+ecs_ret_t net_send_move(ecs_t* ecs,
+						ecs_id_t* entities,
+						int entity_count,
+						ecs_dt_t dt,
+						void* udata) {
+
+	(void)dt;
+	serializer_t* net_writer = udata;
+
+	for(int i = 0; i < entity_count; i++) {
+		ecs_id_t id			  = entities[i];
+		comp_net_move_t* move = ecs_get(ecs, id, id_comp_net_move);
+		//TODO(risgrynsgrot)this should maybe be put into the serializer somehow
+		net_write_byte(&net_writer->ser.net, COMPONENT_NET_MOVE, "type");
+		ser_net_move(net_writer, move);
 	}
 	return 0;
 }

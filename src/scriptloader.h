@@ -1,6 +1,7 @@
 #pragma once
 #include "lua.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 void script_dumpstack (lua_State *L);
 
@@ -9,13 +10,15 @@ void script_lua_close(lua_State* L);
 void script_load(lua_State* L, const char* path);
 
 double script_get_number(lua_State* L, const char* value);
-int script_get_int(lua_State* L, const char* value);
+int32_t script_get_int(lua_State* L, const char* value);
+uint32_t script_get_uint(lua_State* L, const char* value);
 const char* script_get_string(lua_State* L, const char* value);
 bool script_get_bool(lua_State* L, const char* value);
 void* script_get_userdata(lua_State* L, const char* value);
 
 double table_get_number(lua_State* L, const char* value);
-int table_get_int(lua_State* L, const char* value);
+int32_t table_get_int(lua_State* L, const char* value);
+uint32_t table_get_uint(lua_State* L, const char* value);
 float table_get_float(lua_State* L, const char* value);
 double table_get_double(lua_State* L, const char* value);
 const char* table_get_string(lua_State* L, const char* value);
@@ -29,7 +32,8 @@ typedef struct Color Color;
 Color table_get_color(lua_State* L, const char* value);
 
 void table_set_number(lua_State* L, const char* name, double data);
-void table_set_int(lua_State* L, const char* name, int data);
+void table_set_int(lua_State* L, const char* name, int32_t data);
+void table_set_uint(lua_State* L, const char* name, uint32_t data);
 void table_set_float(lua_State* L, const char* name, float data);
 void table_set_double(lua_State* L, const char* name, double data);
 void table_set_string(lua_State* L, const char* name,  const char* data);

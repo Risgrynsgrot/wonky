@@ -91,6 +91,12 @@ void ser_net_test(serializer_t* ser, comp_net_test_t* net_test) {
 	ser->ser_int(ser, &net_test->d, "d");
 }
 
+void ser_net_move(serializer_t* ser, comp_net_move_t* net_move) {
+	ser->ser_uint(ser, &net_move->entity, "entity");
+	ser->ser_vec2(ser, &net_move->from_tile, "from_tile");
+	ser->ser_vec2(ser, &net_move->to_tile, "to_tile");
+}
+
 void ecs_component_register_string(ecs_component_string_t value) {
 	int i						 = ecs_component_string_count;
 	ecs_component_string_t* dest = &ecs_component_strings[i];
