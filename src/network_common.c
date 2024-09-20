@@ -7,6 +7,10 @@
 #include <string.h>
 
 void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
+	if(ser->net_buf.word_index <= 0) {
+		return;
+	}
+	printf("packet size to send: %d\n", ser->net_buf.word_index);
 	ENetPacket* packet = enet_packet_create(ser->net_buf.data,
 											ser->net_buf.word_index * 4,
 											ENET_PACKET_FLAG_RELIABLE);
@@ -17,7 +21,7 @@ void net_peer_receive(ENetPacket* packet) {
 	serializer_t ser = new_reader_network((ser_net_t){0});
 	printf("data size: %lu", packet->dataLength);
 	memcpy(ser.ser.net.net_buf.data, packet->data, packet->dataLength);
-	net_buffer_print(&ser.ser.net.net_buf);
+	//net_buffer_print(&ser.ser.net.net_buf);
 
 	char type;
 	net_read_byte(&ser.ser.net, &type, "type");

@@ -25,12 +25,12 @@ int main(int argc, char** argv) {
 	}
 
 	if(is_server) {
-		server_t server;
+		server_t server = {0};
 		server_init(&server);
 		server_update(&server);
 		server_deinit(&server);
 	} else {
-		client_t client;
+		client_t client = {0};
 		client_init(&client);
 		client_update(&client);
 		client_deinit(&client);

@@ -34,6 +34,7 @@ bool map_load_ldtk_entities(json_object* entities, ldtk_layer_t* layer) {
 		malloc(sizeof(*layer->entities) * layer->entity_count); //DEALLOC
 	for(int i = 0; i < layer->entity_count; ++i) {
 		ldtk_entity_t* entity	 = &layer->entities[i];
+		*entity = (ldtk_entity_t){0};
 		json_object* entity_json = json_object_array_get_idx(entities, i);
 		JSON_GET_STR(entity_json, __identifier, entity->identifier);
 		map_load_ldtk_vector(entity_json, "__grid", &entity->grid);

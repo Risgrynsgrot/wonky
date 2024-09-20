@@ -70,5 +70,3 @@ function Luatest.onCreate(e)
 		movement_speed = 5
 	})
 end
-
--- TO RUN THIS YOU NEED TO REGISTER USER DATA FOR ecs

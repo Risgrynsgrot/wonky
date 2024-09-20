@@ -14,6 +14,7 @@ void ecs_register_move_systems(ecs_t* ecs,
 
 	sys_net_send_move =
 		ecs_register_system(ecs, net_send_move, NULL, NULL, net_writer);
+	ecs_require_component(ecs, sys_net_send_move, id_comp_net_move);
 }
 
 ecs_id_t sys_move_units;
@@ -47,6 +48,7 @@ ecs_ret_t move_units(ecs_t* ecs,
 					position->grid_pos =
 						Vector2Add(position->grid_pos, input->direction);
 					mover->_move_cooldown = 0;
+					printf("moving\n");
 					comp_net_move_t* net_move =
 						ecs_add(ecs, id, id_comp_net_move, NULL);
 					net_move->from_tile = mover->from_tile;
@@ -98,6 +100,10 @@ ecs_ret_t net_send_move(ecs_t* ecs,
 		//TODO(risgrynsgrot)this should maybe be put into the serializer somehow
 		net_write_byte(&net_writer->ser.net, COMPONENT_NET_MOVE, "type");
 		ser_net_move(net_writer, move);
+		printf("has net move: %i\n", ecs_has(ecs, id, id_comp_net_move));
+		printf("has drawing: %i\n", ecs_has(ecs, id, id_comp_draw_sprite));
+		ecs_queue_remove(ecs, id, id_comp_net_move);
 	}
+
 	return 0;
 }

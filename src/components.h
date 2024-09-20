@@ -34,6 +34,7 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 	_F(net_move, NET_MOVE, 11, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
+#define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,
 
 #define REGISTER_COMPONENTS(lc, uc, i, constructor, destructor, ECS, ...)      \
 	id_comp_##lc = ecs_register_component(                                     \
@@ -53,6 +54,10 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 typedef enum component_types {
 	ECS_COMPONENTS_TYPE_ITER(DECL_ENUM_COMPONENTS, void)
 } component_types_e;
+
+typedef enum component_bitset {
+	ECS_COMPONENTS_TYPE_ITER(DECL_BITSET_COMPONENTS, void)
+} component_bitset_e;
 
 ECS_COMPONENT_T(comp_position) {
 	Vector2 value;
