@@ -186,3 +186,4 @@ void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
 bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value);
 void ecs_components_register(ecs_t* ecs);
 void ecs_lua_register_module(lua_State* L);
+
