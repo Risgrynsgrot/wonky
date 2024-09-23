@@ -107,3 +107,19 @@ ecs_ret_t net_send_move(ecs_t* ecs,
 
 	return 0;
 }
+
+void net_send_move_trait(entities_t* entities,
+						 trait_haver_t* trait,
+						 serializer_t* net_writer) {
+	for(int i = 0; i < trait->count; i++) {
+		entity_t* entity		  = &trait->entity[i];
+		comp_net_move_t* move = &entities->net_move_a[entity->id];
+		net_write_byte(&net_writer->ser.net, COMPONENT_NET_MOVE, "type");
+		ser_net_move(net_writer, move);
+
+	}
+	for(int i = 0; i < trait->count; i++) {
+		entity_t* entity		  = &trait->entity[i];
+		trait_entity_remove(trait, TRAIT_NET_MOVE, entity);
+	}
+}
