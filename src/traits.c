@@ -22,3 +22,16 @@ void trait_entity_remove(trait_havers_t* traits,
 		}
 	}
 }
+
+bool trait_entity_has(trait_havers_t* traits,
+					  trait_types_e trait,
+					  entity_t entity) {
+	trait_haver_t* trait_haver = &traits->has_trait[trait];
+	for(int i = 0; i < trait_haver->count; i++) {
+		if(trait_haver->entity[i].id == entity.id &&
+		   trait_haver->entity[i].generation == entity.generation) {
+			return true;
+		}
+	}
+	return false;
+}

@@ -24,3 +24,4 @@ typedef struct trait_havers {
 
 void trait_entity_add(trait_havers_t* traits, trait_types_e trait, entity_t entity);
 void trait_entity_remove(trait_havers_t* traits, trait_types_e trait, entity_t entity);
+bool trait_entity_has(trait_havers_t* traits, trait_types_e trait, entity_t entity);

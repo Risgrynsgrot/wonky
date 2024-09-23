@@ -83,25 +83,25 @@ portals and such.
 https://www.dafont.com/dico.font?l[]=10&l[]=1
 
 
-### Trait system instead of components?
+## Trait system instead of components?
 
 basically bunch things up more, and do more like (movable),
 to satisfy this you put the entity id in the movable sparse set, 
 and then you just access the data through the big array of entities/soa of entities.
 
-## Pros 
+### Pros 
 * Easier to think about and potentially easy to just add lists of ids,
 then just loop through them.
 * Could be cool for lua, have callbacks for the different traits,
 like (update_flammable, on_flammable_added, on_flammable_removed), that
 you call based on this.
 
-## Cons
+### Cons
 * Might just be ecs with extra steps, as ecs is the same except you just
 do sets of components as the thing
 
 
-## what do I actually want?
+### what do I actually want?
 1. make level in ldtk
 2. set up entities with traits
 3. set up entities with lua scripts for unique behavior
