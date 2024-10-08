@@ -83,6 +83,61 @@ ecs_ret_t move_units(ecs_t* ecs,
 	return 0;
 }
 
+void trait_move_units(entities_t* entities,
+					  trait_haver_t* trait,
+					  map_t* map,
+					  float dt,
+					  serializer_t* net_writer) {
+
+	for(int i = 0; i < trait->count; i++) {
+		int id					  = trait->entity[i].id;
+		comp_position_t* position = &entities->position_a[id];
+		comp_input_t* input		  = &entities->input_a[id];
+		comp_mover_t* mover		  = &entities->mover_a[id];
+
+		mover->_move_cooldown += dt * mover->movement_speed;
+		Clamp(mover->_move_cooldown, 0.f, 1.0f);
+
+		if(mover->_move_cooldown >= 1.0f) {
+			bool is_moving = fabs(input->direction.x) > 0.f ||
+							 fabs(input->direction.y) > 0.f;
+			if(is_moving) {
+				if(map_try_move(map,
+								position->layer,
+								id,
+								position->grid_pos,
+								input->direction)) {
+					mover->from_tile = position->grid_pos;
+					position->grid_pos =
+						Vector2Add(position->grid_pos, input->direction);
+					mover->_move_cooldown = 0;
+					printf("moving\n");
+					comp_net_move_t net_move = {
+						.from_tile = mover->from_tile,
+						.to_tile   = position->grid_pos,
+						.entity	   = id,
+					};
+					net_write_byte(
+						&net_writer->ser.net, COMPONENT_NET_MOVE, "type");
+					ser_net_move(net_writer, &net_move);
+				}
+			}
+		}
+
+		float percentage = Clamp(mover->_move_cooldown, 0.f, 1.f);
+
+		Vector2 current_world_pos =
+			map_grid_to_world_pos(map, position->layer, mover->from_tile);
+		Vector2 target_world_pos =
+			map_grid_to_world_pos(map, position->layer, position->grid_pos);
+
+		position->value.x =
+			Lerp(current_world_pos.x, target_world_pos.x, percentage);
+		position->value.y =
+			Lerp(current_world_pos.y, target_world_pos.y, percentage);
+	}
+}
+
 ecs_id_t sys_net_send_move;
 
 ecs_ret_t net_send_move(ecs_t* ecs,
@@ -108,18 +163,18 @@ ecs_ret_t net_send_move(ecs_t* ecs,
 	return 0;
 }
 
+//this should not be in the trait system, just do it in the normal system
 void net_send_move_trait(entities_t* entities,
 						 trait_haver_t* trait,
 						 serializer_t* net_writer) {
 	for(int i = 0; i < trait->count; i++) {
-		entity_t* entity		  = &trait->entity[i];
+		entity_t* entity	  = &trait->entity[i];
 		comp_net_move_t* move = &entities->net_move_a[entity->id];
 		net_write_byte(&net_writer->ser.net, COMPONENT_NET_MOVE, "type");
 		ser_net_move(net_writer, move);
-
 	}
 	for(int i = 0; i < trait->count; i++) {
-		entity_t* entity		  = &trait->entity[i];
+		entity_t* entity = &trait->entity[i];
 		trait_entity_remove(trait, TRAIT_NET_MOVE, entity);
 	}
 }
