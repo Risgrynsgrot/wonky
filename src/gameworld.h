@@ -1,6 +1,6 @@
 #pragma once
 #include "inputsystem.h"
-#include "pico_ecs.h"
+//#include "pico_ecs.h"
 #include "map.h"
 #include "traits.h"
 #include "entity.h"
@@ -10,7 +10,7 @@ typedef struct gameworld {
 	float lag;
 	//input_t input;
     //graphics_t graphics;
-	ecs_t* ecs;
+	//ecs_t* ecs;
 
 	trait_havers_t traits;
 	entities_t entities;

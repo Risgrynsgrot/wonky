@@ -1,4 +1,6 @@
 #include "map.h"
+#include "entity.h"
+#include "gameworld.h"
 #include "pico_ecs.h"
 #include "rendersystem.h"
 #include <assert.h>
@@ -34,7 +36,7 @@ bool map_load_ldtk_entities(json_object* entities, ldtk_layer_t* layer) {
 		malloc(sizeof(*layer->entities) * layer->entity_count); //DEALLOC
 	for(int i = 0; i < layer->entity_count; ++i) {
 		ldtk_entity_t* entity	 = &layer->entities[i];
-		*entity = (ldtk_entity_t){0};
+		*entity					 = (ldtk_entity_t){0};
 		json_object* entity_json = json_object_array_get_idx(entities, i);
 		JSON_GET_STR(entity_json, __identifier, entity->identifier);
 		map_load_ldtk_vector(entity_json, "__grid", &entity->grid);
@@ -198,32 +200,29 @@ ldtk_layer_t* level_get_layer(ldtk_level_t* level, const char* identifier) {
 	return NULL;
 }
 
-bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs) {
+bool level_spawn_entities(ldtk_layer_t* layer, gameworld_t* world) {
 
 	for(int i = 0; i < layer->entity_count; i++) {
 		ldtk_entity_t* lvl_entity = &layer->entities[i];
 		printf("spawning entity: %s\n", lvl_entity->identifier);
-		ecs_id_t entity = ecs_create(ecs);
-		comp_position_t* position =
-			ecs_add(ecs, entity, id_comp_position, NULL);
-		position->value.x = lvl_entity->world_x;
-		position->value.y = lvl_entity->world_y;
+		entity_t entity			  = entity_new(&world->entities);
+		comp_position_t* position = &world->entities.position_a[entity.id];
+		position->value.x		  = lvl_entity->world_x;
+		position->value.y		  = lvl_entity->world_y;
 		printf("entity position: %d, %d\n",
 			   lvl_entity->world_x,
 			   lvl_entity->world_y);
 
-		ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
+		//ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
 		//TODO(risgrynsgrot) this should be using entity data to determine
 		//sprite
-		render_load_sprite(ecs, "assets/lildude.png", entity);
+		render_load_sprite(world, "assets/lildude.png", entity);
 	}
 
 	return true;
 }
 
-bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
-	(void)ecs;
-	int count = 0;
+bool level_spawn_terrain(ldtk_layer_t* layer, gameworld_t* world) {
 	for(int y = 0; y < layer->c_hei; y++) {
 		for(int x = 0; x < layer->c_wid; x++) {
 			int i		  = y * layer->c_wid + x;
@@ -231,17 +230,16 @@ bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
 
 			int tile_size = layer->grid_size;
 
-			//printf("%i, %i\n", tile_data, count);
-			count++;
 			if(tile_data != 1) {
 				continue; //TODO(risgrynsgrot) this should be handled better
 			}
-			ecs_id_t entity = ecs_create(ecs);
+			entity_t entity = entity_new(&world->entities);
 
-			comp_position_t* pos = ecs_add(ecs, entity, id_comp_position, NULL);
+			comp_position_t* pos = &world->entities.position_a[entity.id];
 			pos->value			 = (Vector2){x * tile_size, y * tile_size};
 
-			comp_draw_box_t* box = ecs_add(ecs, entity, id_comp_draw_box, NULL);
+			trait_entity_add(&world->traits, TRAIT_DRAW_BOX, entity);
+			comp_draw_box_t* box = &world->entities.draw_box_a[entity.id];
 			box->color			 = GRAY;
 			box->width			 = tile_size;
 			box->height			 = tile_size;
@@ -260,7 +258,7 @@ bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs) {
 	return true;
 }
 
-ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position) {
+entity_t map_get_entity(map_t* map, int layer, Vector2 grid_position) {
 
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
@@ -272,7 +270,7 @@ ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position) {
 void map_add_entity(map_t* map,
 					int layer,
 					Vector2 grid_position,
-					ecs_id_t entity) {
+					entity_t entity) {
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
 	int index =
@@ -281,28 +279,27 @@ void map_add_entity(map_t* map,
 }
 
 bool map_can_walk(map_t* map, int layer, Vector2 grid_position) {
-	ldtk_level_t* level			= &map->data.levels[map->current_level];
+	ldtk_level_t* level = &map->data.levels[map->current_level];
 	//ldtk_layer_t* current_layer = &level->layers[layer];
 	ldtk_layer_t* int_layer = level_get_layer(level, "intgrid");
-	ecs_id_t entity				= map_get_entity(map, layer, grid_position);
-	int index =
-		(int)grid_position.y * int_layer->c_wid + (int)grid_position.x;
+	entity_t entity			= map_get_entity(map, layer, grid_position);
+	int index = (int)grid_position.y * int_layer->c_wid + (int)grid_position.x;
 	//printf("entity and tile: %d, %d\n", entity, index);
 	//printf("%d", int_layer->int_grid_csv[index]);
 
-	return entity == ECS_NULL && int_layer->int_grid_csv[index] == 0;
+	return entity.id == -1 && int_layer->int_grid_csv[index] == 0;
 }
 
 bool map_try_move(
-	map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction) {
+	map_t* map, int layer, entity_t entity, Vector2 from, Vector2 direction) {
 	Vector2 target = Vector2Add(from, direction);
 	//printf("trying to move from %f, %f, to %f, %f\n",
-		   //from.x,
-		   //from.y,
-		   //target.x,
-		   //target.y);
+	//from.x,
+	//from.y,
+	//target.x,
+	//target.y);
 
-	if(map_get_entity(map, layer, from) != entity) {
+	if(map_get_entity(map, layer, from).id != entity.id) {
 		printf("trying to move entity that isn't there, cheating?\n");
 		return false;
 	}
@@ -315,8 +312,8 @@ bool map_try_move(
 	ldtk_layer_t* current_layer = &level->layers[layer];
 	int from_index	 = (int)from.y * current_layer->c_wid + (int)from.x;
 	int target_index = (int)target.y * current_layer->c_wid + (int)target.x;
-	map->entities[from_index]	= ECS_NULL;
-	map->entities[target_index] = entity;
+	map->entities[from_index].id = -1;
+	map->entities[target_index]	 = entity;
 
 	return true;
 }
@@ -349,7 +346,7 @@ bool map_new(const char* path, map_t* map) {
 	printf("mallocing %d\n", malloc_amount);
 	map->entities = malloc(malloc_amount);
 	for(int i = 0; i < layer->c_wid * layer->c_hei; i++) {
-		map->entities[i] = ECS_NULL;
+		map->entities[i].id = -1;
 	}
 
 	return true;

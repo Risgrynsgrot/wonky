@@ -1,10 +1,11 @@
 #pragma once
-#include "components.h"
 
+#include "components.h"
+#include <stdint.h>
 #define MAX_ENTITY_COUNT 1024 //this can be increased when needed
 
 typedef struct entity {
-	uint32_t id;
+	int32_t id;
 	uint32_t generation;
 } entity_t;
 
@@ -23,6 +24,7 @@ typedef struct entities {
 entity_t entity_new(entities_t* entities);
 void entity_delete(entities_t* entities, entity_t entity);
 
+
 /*
  * Do sparse set based on conditions instead of component sets
  * for example:
@@ -33,4 +35,3 @@ void entity_delete(entities_t* entities, entity_t entity);
  * so it's more like a trait thing
  *
  */
-

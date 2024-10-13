@@ -38,10 +38,10 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	printf("bruh\n");
 	//test_func();
 
-	world->ecs = ecs_new(100, NULL);
-	ecs_components_register(world->ecs);
-	ecs_register_render_systems(world->ecs);
-	ecs_register_input_systems(world->ecs, world->input_map);
+	//world->ecs = ecs_new(100, NULL);
+	//ecs_components_register(world->ecs);
+	//ecs_register_render_systems(world->ecs);
+	//ecs_register_input_systems(world->ecs, world->input_map);
 
 	map_new("assets/levels/testgym.ldtk", &world->map);
 	//map_load_ldtk("assets/levels/testgym.ldtk", &world->map.data);
@@ -50,21 +50,21 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	//except for maybe special cases
 	ldtk_layer_t* entity_layer = level_get_layer(&map->levels[0], "entities");
 	if(entity_layer != NULL) {
-		level_spawn_entities(entity_layer, world->ecs);
+		level_spawn_entities(entity_layer, world);
 	}
 	ldtk_layer_t* int_layer = level_get_layer(&map->levels[0], "intgrid");
 	if(int_layer != NULL) {
 		printf("spawning terrain\n");
-		level_spawn_terrain(int_layer, world->ecs);
+		level_spawn_terrain(int_layer, world);
 	}
 
-	ecs_register_move_systems(world->ecs, &world->map, &world->net_writer);
+	//ecs_register_move_systems(world->ecs, &world->map, &world->net_writer);
 
-	ecs_id_t entity = ecs_create(world->ecs);
+	entity_t entity = entity_new(&world->entities);
 
 	lua_State* L = script_lua_init();
-	lua_pushlightuserdata(L, world->ecs);
-	lua_setglobal(L, "ecs");
+	lua_pushlightuserdata(L, world);
+	lua_setglobal(L, "world");
 	ecs_lua_register_module(L);
 
 	script_load(L, "assets/scripts/luatest.lua");
@@ -72,16 +72,16 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	lua_getglobal(L, "Luatest");
 	if(lua_istable(L, -1)) {
 		lua_getfield(L, -1, "onCreate");
-		lua_pushinteger(L, entity);
-		printf("entityID: %d\n", entity);
+		lua_pushinteger(L, entity.id);
+		printf("entityID: %d\n", entity.id);
 		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
 		//lua_pop(L, 2);
 
 		lua_getfield(L, -1, "testfunc");
-		lua_pushinteger(L, entity);
-		printf("entityID: %d\n", entity);
+		lua_pushinteger(L, entity.id);
+		printf("entityID: %d\n", entity.id);
 		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
 		}
@@ -93,7 +93,8 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	script_lua_close(L);
 
 	comp_position_t* position =
-		ecs_get(world->ecs, entity, id_comp_position);
+		&world->entities.position_a[entity.id];
+		//ecs_get(world->ecs, entity, id_comp_position);
 	printf(
 		"placing entity at %f, %f", position->grid_pos.x, position->grid_pos.y);
 	map_add_entity(&world->map, 0, position->grid_pos, entity);
@@ -144,7 +145,7 @@ void gameworld_main_loop(gameworld_t* world) {
 	// after fixed update
 
 	while(world->lag >= world->tickrate) {
-		world->lag -= gaworld->tickrate;
+		world->lag -= world->tickrate;
 		// if(world->isgameworld) {
 		gameworld_update(world, world->tickrate);
 		//input_reset(&world->input);
@@ -158,20 +159,26 @@ void gameworld_main_loop(gameworld_t* world) {
 }
 
 void gameworld_handle_input(gameworld_t* world) {
-	ecs_update_system(world->ecs, sys_input_handle, 0.f);
+	//ecs_update_system(world->ecs, sys_input_handle, 0.f);
+	trait_input_handle(world);
 	//ecs_update_system(world->ecs, sys_input_move, 0.f);
 }
 
 void gameworld_update(gameworld_t* world, float dt) {
-	ecs_update_system(world->ecs, sys_move_units, dt);
-	ecs_update_system(world->ecs, sys_net_send_move, dt);
+	(void)dt;
+	(void)world;
+	trait_move_units(world, dt);
+	//ecs_update_system(world->ecs, sys_move_units, dt);
+	//ecs_update_system(world->ecs, sys_net_send_move, dt);
 }
 
 void gameworld_render(gameworld_t* world) {
 	BeginDrawing();
 	ClearBackground(RAYWHITE);
-	ecs_update_system(world->ecs, sys_render_sprites, 0.f);
-	ecs_update_system(world->ecs, sys_render_boxes, 0.f);
+	trait_render_sprites(world);
+	trait_render_boxes(world);
+	//ecs_update_system(world->ecs, sys_render_sprites, 0.f);
+	//ecs_update_system(world->ecs, sys_render_boxes, 0.f);
 	EndDrawing();
 	//SDL_SetRenderDrawColor(world->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	//SDL_RenderClear(world->renderer);
@@ -180,9 +187,10 @@ void gameworld_render(gameworld_t* world) {
 }
 
 int gameworld_deinit(gameworld_t* world) {
+	(void)world;
 	//SDL_DestroyWindow(gameworld->window);
 	//SDL_Quit();
-	ecs_free(world->ecs);
+	//ecs_free(world->ecs);
 	CloseWindow();
 	return EXIT_SUCCESS;
 }

@@ -1,5 +1,6 @@
 #include "inputsystem.h"
 #include "components.h"
+#include "gameworld.h"
 #include <stdio.h>
 
 input_map_t input_init(void) {
@@ -14,6 +15,7 @@ input_map_t input_init(void) {
 }
 
 ecs_id_t sys_input_handle;
+
 //ecs_id_t sys_input_move;
 
 void ecs_register_input_systems(ecs_t* ecs, input_map_t* keymap) {
@@ -71,3 +73,29 @@ ecs_ret_t input_handle(ecs_t* ecs,
 /*	}*/
 /*	return 0;*/
 /*}*/
+
+void trait_input_handle(gameworld_t* gameworld) {
+
+	trait_haver_t* trait =
+		&gameworld->traits.has_trait[TRAIT_PLAYER_CONTROLLED];
+	entities_t* entities = &gameworld->entities;
+	input_map_t* keymap	 = &gameworld->input_map[0]; //this should be handled per player
+
+	for(int i = 0; i < trait->count; i++) {
+		int id				= trait->entity[i].id;
+		comp_input_t* input = &entities->input_a[id];
+		int input_id		= input->input_id;
+
+		input->interact		  = IsKeyPressed(keymap[input_id].interact);
+		input->open_inventory = IsKeyPressed(keymap[input_id].open_inventory);
+
+		Vector2 direction;
+		direction.x = IsKeyDown(keymap[input_id].right) -
+					  IsKeyDown(keymap[input_id].left);
+		if(direction.x == 0.f) {
+			direction.y = IsKeyDown(keymap[input_id].down) -
+						  IsKeyDown(keymap[input_id].up);
+		}
+		input->direction = direction;
+	}
+}

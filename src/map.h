@@ -1,5 +1,6 @@
 #pragma once
 #include "components.h"
+#include "entity.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -185,13 +186,13 @@ typedef struct ldtk_map {
 bool map_load_ldtk(const char* path, ldtk_map_t* map);
 ldtk_layer_t* level_get_layer(ldtk_level_t* level, const char* identifier);
 
-typedef struct ecs_s ecs_t;
-bool level_spawn_entities(ldtk_layer_t* layer, ecs_t* ecs);
-bool level_spawn_terrain(ldtk_layer_t* layer, ecs_t* ecs);
+typedef struct gameworld gameworld_t;
+bool level_spawn_entities(ldtk_layer_t* layer, gameworld_t* world);
+bool level_spawn_terrain(ldtk_layer_t* layer, gameworld_t* world);
 
 typedef struct map {
 	ldtk_map_t data;
-	ecs_id_t* entities;
+	entity_t* entities;
 	int entity_count;
 	int current_level;
 } map_t;
@@ -199,12 +200,12 @@ typedef struct map {
 bool map_new(const char* path, map_t* map);
 bool map_delete(map_t* map);
 
-ecs_id_t map_get_entity(map_t* map, int layer, Vector2 grid_position);
+entity_t map_get_entity(map_t* map, int layer, Vector2 grid_position);
 void map_add_entity(map_t* map,
 					int layer,
 					Vector2 grid_position,
-					ecs_id_t entity);
+					entity_t entity);
 bool map_can_walk(map_t* map, int layer, Vector2 grid_position);
 bool map_try_move(
-	map_t* map, int layer, ecs_id_t entity, Vector2 from, Vector2 direction);
+	map_t* map, int layer, entity_t entity, Vector2 from, Vector2 direction);
 Vector2 map_grid_to_world_pos(map_t* map, int layer, Vector2 position);

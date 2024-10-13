@@ -5,7 +5,7 @@
 #include "systems.h"
 #include "traits.h"
 
-typedef struct gameworld client_t;
+typedef struct gameworld gameworld_t;
 
 void ecs_register_move_systems(ecs_t* ecs,
 							   map_t* map,
@@ -13,12 +13,4 @@ void ecs_register_move_systems(ecs_t* ecs,
 ECS_DECL_SYSTEM(move_units);
 ECS_DECL_SYSTEM(net_send_move);
 
-void trait_move_units(entities_t* entities,
-					  trait_haver_t* trait,
-					  map_t* map,
-					  float dt,
-					  serializer_t* net_writer);
-
-void net_send_move_trait(entities_t* entities,
-						 trait_haver_t* trait,
-						 serializer_t* net_writer);
+void trait_move_units(gameworld_t* gameworld, float dt);

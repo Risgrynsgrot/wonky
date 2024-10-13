@@ -46,7 +46,7 @@ void net_peer_receive(ENetPacket* packet) {
 			   net_move.from_tile.y,
 			   net_move.to_tile.x,
 			   net_move.to_tile.y,
-			   net_move.entity);
+			   net_move.entity_id);
 		break;
 	default:
 		printf("reading comp that doesn't exist: %d\n", comp_type);

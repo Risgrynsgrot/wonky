@@ -22,3 +22,4 @@ void entity_delete(entities_t* entities, entity_t entity) {
 	int32_t unused_count = MAX_ENTITY_COUNT - entities->entity_count;
 	entities->unused[unused_count - 1] = entity.id;
 }
+
