@@ -277,5 +277,5 @@ static const struct luaL_Reg ecs_methods[] = {
 void ecs_lua_register_module(lua_State* L) {
 	luaL_register(L, "ECS", ecs_methods);
 	printf("registered methods\n");
-	luaL_setfuncs(L, ecs_methods, 0);
+	//luaL_setfuncs(L, ecs_methods, 0); //don't think this is needed
 }
