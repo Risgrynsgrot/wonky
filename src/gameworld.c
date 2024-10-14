@@ -63,6 +63,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	entity_t entity = entity_new(&world->entities);
 
 	lua_State* L = script_lua_init();
+	lua_register_component_enum(L);
 	lua_pushlightuserdata(L, world);
 	lua_setglobal(L, "world");
 	ecs_lua_register_module(L);
@@ -72,7 +73,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	lua_getglobal(L, "Luatest");
 	if(lua_istable(L, -1)) {
 		lua_getfield(L, -1, "onCreate");
-		lua_pushinteger(L, entity.id);
+		lua_pushlightuserdata(L, &entity);
 		printf("entityID: %d\n", entity.id);
 		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
@@ -80,7 +81,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 		//lua_pop(L, 2);
 
 		lua_getfield(L, -1, "testfunc");
-		lua_pushinteger(L, entity.id);
+		lua_pushlightuserdata(L, &entity);
 		printf("entityID: %d\n", entity.id);
 		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
 			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));

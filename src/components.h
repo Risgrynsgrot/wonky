@@ -195,3 +195,8 @@ void* entity_get_component(entities_t* entities,
 #define DECL_COMPONENT_SERIALIZERS(lc, uc, i, ...) &ser_##lc,
 
 extern void (*component_serializers[])(serializer_t* serializer, void* data);
+
+void lua_register_component_enum(lua_State* L);
+#define DECL_COMPONENT_LUA_ENUM(lc, uc, i, ...)                                \
+	lua_pushnumber(L, i);                                                      \
+	lua_setfield(L, -1, #lc);

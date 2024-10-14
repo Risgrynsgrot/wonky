@@ -154,11 +154,11 @@ bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 
 //TODO(risgrynsgrot) Create table and return it as part of getting comp
 #define LUA_GET_COMP(lc, uc, i, ...)                                           \
-	int ecs_lua_get_##lc(serializer_t* ser, ecs_id_t entity) {                 \
-		ecs_t* ecs		  = script_get_userdata(ser->ser.lua.L, "ecs");        \
-		comp_##lc##_t* lc = ecs_get(ecs, entity, id_comp_##lc);                \
+	int ecs_lua_get_##lc(serializer_t* ser, entity_t entity) {                 \
+		gameworld_t* world = script_get_userdata(ser->ser.lua.L, "world");     \
+		comp_##lc##_t* lc  = &world->entities.lc##_a[entity.id];               \
 		lua_newtable(ser->ser.lua.L);                                          \
-		lua_pushstring(ser->ser.lua.L, #lc);                                   \
+		lua_pushnumber(ser->ser.lua.L, i);                                     \
 		lua_setfield(ser->ser.lua.L, -2, "type");                              \
 		printf("stack before ser: \n");                                        \
 		script_dumpstack(ser->ser.lua.L);                                      \
@@ -181,7 +181,7 @@ ECS_COMPONENTS_TYPE_ITER(LUA_GET_COMP, void)
 #define LUA_TRY_GET_COMP(lc, uc, i, ...)                                       \
 	if(ecs_string_to_componentid(&component, type)) {                          \
 		if(component == id_comp_##lc) {                                        \
-			return ecs_lua_get_##lc(&ser, entity);                             \
+			return ecs_lua_get_##lc(&ser, *entity);                            \
 		}                                                                      \
 	}
 
@@ -210,7 +210,7 @@ int ecs_lua_set_component(lua_State* L) {
 				entity_get_component(&world->entities, *entity, type);
 			component_serializers[type](&ser, component);
 		} else {
-			printf("not an entity\n");
+			printf("not a component number\n");
 		}
 	} else {
 		printf("not a table\n");
@@ -220,13 +220,24 @@ int ecs_lua_set_component(lua_State* L) {
 
 //TODO(risgrynsgrot) Change type getting to use ints, to reduce strcmp
 int ecs_lua_get_component(lua_State* L) {
-	ecs_id_t entity = lua_tointeger(L, -2);
-	//lua_getfield(L, -1, "type");
-	if(lua_isstring(L, -1)) {
-		const char* type = lua_tostring(L, -1);
-		serializer_t ser = new_writer_lua((ser_lua_t){.L = L});
-		ecs_id_t component;
-		ECS_COMPONENTS_TYPE_ITER(LUA_TRY_GET_COMP, void)
+	entity_t* entity = (entity_t*)lua_touserdata(L, -2);
+	lua_getfield(L, -1, "type");
+	if(lua_isnumber(L, -1)) {
+		component_types_e type = lua_tonumber(L, -1);
+		serializer_t ser	   = new_writer_lua((ser_lua_t){.L = L});
+		//ecs_id_t component;
+		//ECS_COMPONENTS_TYPE_ITER(LUA_TRY_GET_COMP, void)
+
+		gameworld_t* world = script_get_userdata(L, "world");
+		void* component = entity_get_component(&world->entities, *entity, type);
+
+		lua_newtable(L);
+		lua_pushnumber(L, type);
+		lua_setfield(L, -2, "type");
+
+		component_serializers[type](&ser, component);
+
+
 	} else {
 		printf("not a string\n");
 	}
@@ -264,4 +275,10 @@ void* entity_get_component(entities_t* entities,
 		assert(false);
 		return NULL;
 	}
+}
+
+void lua_register_component_enum(lua_State* L) {
+	lua_newtable(L);
+	lua_setglobal(L, "Comp");
+	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_LUA_ENUM, void)
 }

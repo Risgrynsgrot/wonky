@@ -342,7 +342,7 @@ bool map_new(const char* path, map_t* map) {
 
 	//map->data.levels[0].layers[0].entities;
 	ldtk_layer_t* layer = &map->data.levels[0].layers[0];
-	int malloc_amount	= layer->c_wid * layer->c_hei * sizeof(ecs_id_t);
+	int malloc_amount	= layer->c_wid * layer->c_hei * sizeof(entity_t);
 	printf("mallocing %d\n", malloc_amount);
 	map->entities = malloc(malloc_amount);
 	for(int i = 0; i < layer->c_wid * layer->c_hei; i++) {

@@ -30,10 +30,10 @@ int main(int argc, char** argv) {
 		server_update(&server);
 		server_deinit(&server);
 	} else {
-		client_t client = {0};
-		client_init(&client);
-		client_update(&client);
-		client_deinit(&client);
+		client_t* client = malloc(sizeof(*client));
+		client_init(client);
+		client_update(client);
+		client_deinit(client);
 	}
 
 	//gameworld_t gameworld;
