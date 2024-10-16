@@ -10,11 +10,11 @@
 #include <stdio.h>
 #include <string.h>
 
-ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_IDS, void)
-ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
+//ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_IDS, void)
+//ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 void (*component_serializers[])(serializer_t* serializer, void* data) = {
 	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_SERIALIZERS, void)};
-int ecs_component_string_count;
+//int ecs_component_string_count;
 
 //TODO(risgrynsgrot): Add ecs_lua_add_component_functions that maps component id
 //to lua serialize function
@@ -114,35 +114,35 @@ void ser_net_move(serializer_t* ser, void* data) {
 	ser->ser_vec2(ser, &net_move->to_tile, "to_tile");
 }
 
-void ecs_component_register_string(ecs_component_string_t value) {
-	int i						 = ecs_component_string_count;
-	ecs_component_string_t* dest = &ecs_component_strings[i];
-	dest->id					 = value.id;
-	strcpy(dest->name, value.name);
-}
+//void ecs_component_register_string(ecs_component_string_t value) {
+//	int i						 = ecs_component_string_count;
+//	ecs_component_string_t* dest = &ecs_component_strings[i];
+//	dest->id					 = value.id;
+//	strcpy(dest->name, value.name);
+//}
 
-void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value) {
-	for(int i = 0; i < ecs_component_string_count; i++) {
-		if(strcmp(value, ecs_component_strings[i].name) == 0) {
-			void* result =
-				ecs_add(ecs, entity, ecs_component_strings[i].id, NULL);
-			return result;
-		}
-	}
-	assert(false && "tried to add nonexistent component, did you misspell?");
-	return NULL;
-}
+//void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value) {
+//	for(int i = 0; i < ecs_component_string_count; i++) {
+//		if(strcmp(value, ecs_component_strings[i].name) == 0) {
+//			void* result =
+//				ecs_add(ecs, entity, ecs_component_strings[i].id, NULL);
+//			return result;
+//		}
+//	}
+//	assert(false && "tried to add nonexistent component, did you misspell?");
+//	return NULL;
+//}
 
-bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
-	for(int i = 0; i < ecs_component_string_count; i++) {
-		if(strcmp(value, ecs_component_strings[i].name) != 0) {
-			continue;
-		}
-		*out_result = ecs_component_strings[i].id;
-		return true;
-	}
-	return false;
-}
+//bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
+//	for(int i = 0; i < ecs_component_string_count; i++) {
+//		if(strcmp(value, ecs_component_strings[i].name) != 0) {
+//			continue;
+//		}
+//		*out_result = ecs_component_strings[i].id;
+//		return true;
+//	}
+//	return false;
+//}
 
 #define LUA_SET_COMP(lc, uc, i, ...)                                           \
 	int ecs_lua_set_##lc(serializer_t* ser, entity_t entity) {                 \
@@ -169,30 +169,16 @@ bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value) {
 	}
 
 //ECS_COMPONENTS_TYPE_ITER(LUA_SET_COMP, void)
-ECS_COMPONENTS_TYPE_ITER(LUA_GET_COMP, void)
+//ECS_COMPONENTS_TYPE_ITER(LUA_GET_COMP, void)
 
-#define LUA_TRY_SET_COMP(lc, uc, i, ...)                                       \
-	if(ecs_string_to_componentid(&component, type)) {                          \
-		if(component == id_comp_##lc) {                                        \
-			return ecs_lua_set_##lc(&ser, entity);                             \
-		}                                                                      \
-	}
-
-#define LUA_TRY_GET_COMP(lc, uc, i, ...)                                       \
-	if(ecs_string_to_componentid(&component, type)) {                          \
-		if(component == id_comp_##lc) {                                        \
-			return ecs_lua_get_##lc(&ser, *entity);                            \
-		}                                                                      \
-	}
-
-void ecs_lua_try_add_asset(lua_State* L, entity_t entity, const char* type) {
-	if(strcmp(type, "asset_sprite") == 0) {
-		lua_getfield(L, -1, "path");
-		const char* path = lua_tostring(L, -1);
-		lua_pop(L, 1);
-		gameworld_t* world = script_get_userdata(L, "world");
-		render_load_sprite(world, path, entity);
-	}
+int ecs_lua_add_sprite(lua_State* L) {
+	entity_t* entity = (entity_t*)lua_touserdata(L, -2);
+	lua_getfield(L, -1, "path");
+	const char* path = lua_tostring(L, -1);
+	lua_pop(L, 1);
+	gameworld_t* world = script_get_userdata(L, "world");
+	render_load_sprite(world, path, *entity);
+	return 0;
 }
 
 int ecs_lua_set_component(lua_State* L) {
@@ -221,12 +207,9 @@ int ecs_lua_set_component(lua_State* L) {
 //TODO(risgrynsgrot) Change type getting to use ints, to reduce strcmp
 int ecs_lua_get_component(lua_State* L) {
 	entity_t* entity = (entity_t*)lua_touserdata(L, -2);
-	lua_getfield(L, -1, "type");
 	if(lua_isnumber(L, -1)) {
 		component_types_e type = lua_tonumber(L, -1);
 		serializer_t ser	   = new_writer_lua((ser_lua_t){.L = L});
-		//ecs_id_t component;
-		//ECS_COMPONENTS_TYPE_ITER(LUA_TRY_GET_COMP, void)
 
 		gameworld_t* world = script_get_userdata(L, "world");
 		void* component = entity_get_component(&world->entities, *entity, type);
@@ -237,7 +220,6 @@ int ecs_lua_get_component(lua_State* L) {
 
 		component_serializers[type](&ser, component);
 
-
 	} else {
 		printf("not a string\n");
 	}
@@ -245,21 +227,20 @@ int ecs_lua_get_component(lua_State* L) {
 	return 1;
 }
 
-void ecs_components_register(ecs_t* ecs) {
-	ecs_component_string_count = 0;
-	ECS_COMPONENTS_TYPE_ITER(REGISTER_COMPONENTS, ecs, void);
-}
+static const struct luaL_Reg ecs_functions[] = {
+	{"get", ecs_lua_get_component},
+	{"set", ecs_lua_set_component},
+	{		   NULL,				  NULL}
+};
 
-static const struct luaL_Reg ecs_methods[] = {
-	{"get_component", ecs_lua_get_component},
-	{"set_component", ecs_lua_set_component},
+static const struct luaL_Reg asset_functions[] = {
+	{"add_sprite", ecs_lua_add_sprite},
 	{		   NULL,				  NULL}
 };
 
 void ecs_lua_register_module(lua_State* L) {
-	luaL_register(L, "ECS", ecs_methods);
-	printf("registered methods\n");
-	//luaL_setfuncs(L, ecs_methods, 0); //don't think this is needed
+	luaL_register(L, "Comp", ecs_functions);
+	luaL_register(L, "Asset", asset_functions);
 }
 
 #define DECL_COMPONENT_SWITCH(lc, uc, i, ...)                                  \
@@ -279,6 +260,7 @@ void* entity_get_component(entities_t* entities,
 
 void lua_register_component_enum(lua_State* L) {
 	lua_newtable(L);
-	lua_setglobal(L, "Comp");
 	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_LUA_ENUM, void)
+	script_dumpstack(L);
+	lua_setglobal(L, "Comp");
 }

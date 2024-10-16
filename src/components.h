@@ -6,17 +6,13 @@
 #include <raymath.h>
 #include <stdbool.h>
 
-typedef struct ecs_component_string {
-	char name[64];
-	int32_t id;
-} ecs_component_string_t;
+//typedef struct ecs_component_string {
+//	char name[64];
+//	int32_t id;
+//} ecs_component_string_t;
 
 #define COMPONENT_COUNT 64
-extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
-
-#define ECS_COMPONENT_T(T)                                                     \
-	extern ecs_id_t id_##T;                                                    \
-	typedef struct T
+//extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define ECS_COMPONENTS_TYPE_ITER(_F, ...)                                      \
 	_F(position, POSITION, 0, NULL, NULL, __VA_ARGS__)                         \
@@ -35,12 +31,12 @@ extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 #define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,
 
-#define REGISTER_COMPONENTS(lc, uc, i, constructor, destructor, ECS, ...)      \
-	id_comp_##lc = ecs_register_component(                                     \
-		ECS, sizeof(comp_##lc##_t), constructor, destructor);                  \
-	ecs_component_register_string(                                             \
-		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});            \
-	ecs_component_string_count++;
+//#define REGISTER_COMPONENTS(lc, uc, i, constructor, destructor, ECS, ...)      
+//	id_comp_##lc = ecs_register_component(                                     
+//		ECS, sizeof(comp_##lc##_t), constructor, destructor);                  
+//	ecs_component_register_string(                                             
+//		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});            
+//	ecs_component_string_count++;
 
 #define DECL_COMPONENT_FIELD(T, NAME) T NAME;
 #define DECL_COMPONENT_IDS(lc, uc, i, ...) ecs_id_t id_comp_##lc;
@@ -58,30 +54,33 @@ typedef enum component_bitset {
 	ECS_COMPONENTS_TYPE_ITER(DECL_BITSET_COMPONENTS, void)
 } component_bitset_e;
 
-ECS_COMPONENT_T(comp_position) {
+typedef struct comp_position {
 	Vector2 value;
 	Vector2 grid_pos;
 	int layer;
 }
 
 comp_position_t;
+
 void ser_position(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_rotation) {
+typedef struct comp_rotation {
 	float angle;
 }
 
 comp_rotation_t;
+
 void ser_rotation(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_velocity) {
+typedef struct comp_velocity {
 	Vector2 value;
 }
 
 comp_velocity_t;
+
 void ser_velocity(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_input) {
+typedef struct comp_input {
 	int input_id;
 	Vector2 direction;
 	bool interact;
@@ -89,11 +88,12 @@ ECS_COMPONENT_T(comp_input) {
 }
 
 comp_input_t;
+
 void ser_input(serializer_t* ser, void* data);
 
 #define MAX_OVERLAP_COUNT 256
 
-ECS_COMPONENT_T(comp_area_box) {
+typedef struct comp_area_box {
 	float width;
 	float height;
 	float offset_x;
@@ -103,9 +103,10 @@ ECS_COMPONENT_T(comp_area_box) {
 }
 
 comp_area_box_t;
+
 void ser_area_box(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_col_box) {
+typedef struct comp_col_box {
 	float width;
 	float height;
 	float offset_x;
@@ -113,9 +114,10 @@ ECS_COMPONENT_T(comp_col_box) {
 }
 
 comp_col_box_t;
+
 void ser_col_box(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_draw_sprite) {
+typedef struct comp_draw_sprite {
 	float width;
 	float height;
 	Texture2D texture;
@@ -126,21 +128,21 @@ ECS_COMPONENT_T(comp_draw_sprite) {
 }
 
 comp_draw_sprite_t;
+
 void ser_draw_sprite(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_draw_box) {
+typedef struct comp_draw_box {
 	float width;
 	float height;
 	float offset_x;
 	float offset_y;
 	bool visible;
 	Color color;
-}
+} comp_draw_box_t;
 
-comp_draw_box_t;
 void ser_draw_box(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_draw_circle) {
+typedef struct comp_draw_circle {
 	float radius;
 	float offset_x;
 	float offset_y;
@@ -149,41 +151,41 @@ ECS_COMPONENT_T(comp_draw_circle) {
 }
 
 comp_draw_circle_t;
+
 void ser_draw_circle(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_mover) {
+typedef struct comp_mover {
 	float movement_speed; //movespeed in squares per second
 	float _move_cooldown;
 	Vector2 from_tile;
 }
 
 comp_mover_t;
+
 void ser_mover(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_net_test) {
+typedef struct comp_net_test {
 	int32_t a;
 	bool extra;
 	int32_t b;
 	int32_t c;
 	int32_t d;
-}
+} comp_net_test_t;
 
-comp_net_test_t;
 void ser_net_test(serializer_t* ser, void* data);
 
-ECS_COMPONENT_T(comp_net_move) { //move this to separate net structs
+typedef struct comp_net_move { //move this to separate net structs
 	Vector2 from_tile;
 	Vector2 to_tile;
 	int32_t entity_id;
-}
+} comp_net_move_t;
 
-comp_net_move_t;
 void ser_net_move(serializer_t* ser, void* data);
 
-void ecs_component_register_string(ecs_component_string_t value);
-void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
-bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value);
-void ecs_components_register(ecs_t* ecs);
+//void ecs_component_register_string(ecs_component_string_t value);
+//void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);
+//bool ecs_string_to_componentid(ecs_id_t* out_result, const char* value);
+//void ecs_components_register(ecs_t* ecs);
 void ecs_lua_register_module(lua_State* L);
 
 typedef struct entities entities_t;
@@ -199,4 +201,4 @@ extern void (*component_serializers[])(serializer_t* serializer, void* data);
 void lua_register_component_enum(lua_State* L);
 #define DECL_COMPONENT_LUA_ENUM(lc, uc, i, ...)                                \
 	lua_pushnumber(L, i);                                                      \
-	lua_setfield(L, -1, #lc);
+	lua_setfield(L, -2, #lc);

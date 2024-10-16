@@ -1,17 +1,18 @@
 ECS = ECS or {}
 Comp = Comp or {}
+Asset = Asset or {}
 
 Luatest = {}
 
 function Luatest.testfunc(e)
-	local position = ECS.get_component(e, Comp.position)
+	local position = Comp.get(e, Comp.position)
 	print(position.value.x)
 	print(position.value.y)
 	--position.value.x = position.value.x - 1000
 	--position.value.y = position.value.y + 100
 	print(position.value.x)
 	print(position.value.y)
-	ECS.set_component(e, position)
+	Comp.set(e, position)
 	print("yas queen")
 end
 
@@ -40,10 +41,7 @@ function Luatest.onCreate(e)
 	print("yah")
 	print(Comp.position)
 
-	local draw_sprite = {
-		type = Comp.asset_sprite,
-		path = "assets/test.png"
-	}
+	Asset.add_sprite(e, "assets/test.png")
 
 	local input = {
 		type = Comp.input,
@@ -51,7 +49,7 @@ function Luatest.onCreate(e)
 	}
 
 	print("entityID in lua: " .. tostring(e))
-	ECS.set_component(e, {
+	Comp.set(e, {
 		type = Comp.position,
 		value = {
 			x = 0.0,
@@ -64,11 +62,10 @@ function Luatest.onCreate(e)
 		layer = 0
 	})
 
-	ECS.set_component(e, draw_sprite)
-	--ECS.set_component(e, draw_box)
-	ECS.set_component(e, input)
+	--Comp.set(e, draw_box)
+	Comp.set(e, input)
 
-	ECS.set_component(e, {
+	Comp.set(e, {
 		type = Comp.mover,
 		movement_speed = 5
 	})

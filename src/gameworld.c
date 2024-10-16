@@ -21,13 +21,11 @@
 #endif
 
 int gameworld_init(gameworld_t* world, bool headless) {
-	world->quit		= false;
-	world->tickrate = 1.f / 64.f;
-	world->lag		= 0.f;
-	world->headless = headless;
+	world->quit		  = false;
+	world->tickrate	  = 1.f / 64.f;
+	world->lag		  = 0.f;
+	world->headless	  = headless;
 	world->net_writer = new_writer_network((ser_net_t){0});
-
-	//render_setup();
 
 	if(!world->headless) {
 		gameworld_raylib_init();
@@ -35,16 +33,9 @@ int gameworld_init(gameworld_t* world, bool headless) {
 
 	world->input_map[0] = input_init();
 
-	printf("bruh\n");
-	//test_func();
-
-	//world->ecs = ecs_new(100, NULL);
-	//ecs_components_register(world->ecs);
-	//ecs_register_render_systems(world->ecs);
-	//ecs_register_input_systems(world->ecs, world->input_map);
+	entities_init(&world->entities);
 
 	map_new("assets/levels/testgym.ldtk", &world->map);
-	//map_load_ldtk("assets/levels/testgym.ldtk", &world->map.data);
 	ldtk_map_t* map = &world->map.data;
 	//TODO(risgrynsgrot) these should be spawned using their type instead of id
 	//except for maybe special cases
@@ -93,9 +84,8 @@ int gameworld_init(gameworld_t* world, bool headless) {
 
 	script_lua_close(L);
 
-	comp_position_t* position =
-		&world->entities.position_a[entity.id];
-		//ecs_get(world->ecs, entity, id_comp_position);
+	comp_position_t* position = &world->entities.position_a[entity.id];
+	//ecs_get(world->ecs, entity, id_comp_position);
 	printf(
 		"placing entity at %f, %f", position->grid_pos.x, position->grid_pos.y);
 	map_add_entity(&world->map, 0, position->grid_pos, entity);
@@ -109,8 +99,7 @@ void gameworld_raylib_init(void) {
 
 void gameworld_start_loop(gameworld_t* world) {
 #if defined(PLATFORM_WEB)
-	emscripten_set_main_loop_arg(
-		gameworld_start_emscripten_loop, world, 0, 1);
+	emscripten_set_main_loop_arg(gameworld_start_emscripten_loop, world, 0, 1);
 	return;
 #endif
 	gameworld_start_native_loop(world);

@@ -21,6 +21,7 @@ typedef struct entities {
 	uint32_t generation[MAX_ENTITY_COUNT];
 } entities_t;
 
+void entities_init(entities_t* entities);
 entity_t entity_new(entities_t* entities);
 void entity_delete(entities_t* entities, entity_t entity);
 

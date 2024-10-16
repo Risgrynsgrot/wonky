@@ -1,6 +1,12 @@
 #include "entity.h"
 #include <assert.h>
 
+void entities_init(entities_t* entities) {
+	for(int i = 0; i < MAX_ENTITY_COUNT; i++) {
+		entities->unused[i] = i;
+	}
+}
+
 entity_t entity_new(entities_t* entities) {
 	assert(entities->entity_count < MAX_ENTITY_COUNT);
 	entity_t result = {.id		   = entities->unused[0],

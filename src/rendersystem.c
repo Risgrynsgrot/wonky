@@ -2,7 +2,6 @@
 #include "components.h"
 #include "gameworld.h"
 #include "raylib.h"
-#include <stdio.h>
 
 //void ecs_register_render_systems(ecs_t* ecs) {
 //	sys_render_sprites =
@@ -96,7 +95,7 @@ void trait_render_boxes(gameworld_t* gameworld) {
 }
 
 void render_load_sprite(gameworld_t* world, const char* path, entity_t entity) {
-	//trait_entity_add(&world->traits, TRAIT_DRAW_SPRITE, entity);
+	trait_entity_add(&world->traits, TRAIT_DRAW_SPRITE, entity);
 	comp_draw_sprite_t* sprite =
 		&world->entities.draw_sprite_a[entity.id];
 
