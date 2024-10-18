@@ -41,6 +41,7 @@ void script_lua_close(lua_State* L) {
 
 void script_load(lua_State* L, const char* path) {
 	int status;
+	printf("running script: %s\n", path);
 	status = luaL_dofile(L, path);
 	if(status) {
 		fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));

@@ -5,7 +5,7 @@
 #include <string.h>
 //#include <notcurses/direct.h>
 
-static bool keep_running = true;
+static bool quit = false;
 
 bool server_init(server_t* server) {
 
@@ -21,7 +21,6 @@ bool server_init(server_t* server) {
 	server->address.host = ENET_HOST_ANY;
 	server->address.port = 1234;
 	server->host		 = enet_host_create(&server->address, 32, 2, 0, 0);
-	server->quit		 = false;
 
 	if(server->host == NULL) {
 		fprintf(
@@ -34,8 +33,7 @@ bool server_init(server_t* server) {
 }
 
 void server_update(server_t* server) {
-	server->quit = !keep_running;
-	while(!server->quit) {
+	while(!quit) {
 		ENetEvent event;
 		//poll for events
 		//do update loop
@@ -78,7 +76,7 @@ void server_deinit(server_t* server) {
 
 void server_int_handler(int value) {
 	(void)value;
-	keep_running = false;
+	quit = true;
 }
 
 void server_send_broadcast(server_t* server, const char* data) {

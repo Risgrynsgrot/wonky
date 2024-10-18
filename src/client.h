@@ -10,8 +10,6 @@ typedef struct client {
 	ENetHost* host;
 	ENetPeer* server;
 	ENetAddress address;
-	bool quit;
-
 	struct sigaction act;
 } client_t;
 

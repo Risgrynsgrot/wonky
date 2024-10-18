@@ -6,7 +6,6 @@
 typedef struct server {
 	ENetHost* host;
 	ENetAddress address;
-	bool quit;
 
 	struct sigaction act;
 }

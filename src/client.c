@@ -2,7 +2,7 @@
 #include "network_common.h"
 #include <stdio.h>
 
-static bool keep_running = true;
+static bool quit = false;
 
 bool client_init(client_t* client) {
 	client->act.sa_handler = client_int_handler;
@@ -47,8 +47,7 @@ bool client_init(client_t* client) {
 }
 
 void client_update(client_t* client) {
-	client->quit = !keep_running;
-	while(!client->quit) {
+	while(!quit) {
 		ENetEvent event;
 		while(enet_host_service(client->host, &event, 0) > 0) {
 			switch(event.type) {
@@ -76,5 +75,6 @@ void client_deinit(client_t* client) {
 
 void client_int_handler(int value) {
 	(void)value;
-	keep_running = false;
+	printf("killing client\n");
+	quit = true;
 }
