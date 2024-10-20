@@ -2,10 +2,28 @@
 #include "serializer.h"
 #include <enet/enet.h>
 
+#define MAX_PLAYERS 32
+
 typedef struct net_string {
 	char str[512];
 	int length;
 } net_string_t;
+
+typedef struct net_player {
+	ENetPeer* peer;
+	uint32_t id;
+	//entity id of controlled character, so we can map between server and client
+	uint32_t entity_id;
+	bool active;
+} net_player_t;
+
+typedef struct net_players {
+	net_player_t players[MAX_PLAYERS];
+	int32_t count;
+} net_players_t;
+
+int32_t net_player_add(net_players_t* players);
+void net_player_remove(net_players_t* players, int32_t id);
 
 void net_peer_send(ENetPeer* peer, ser_net_t* ser);
 

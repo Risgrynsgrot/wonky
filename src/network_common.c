@@ -1,10 +1,40 @@
 #include "network_common.h"
 #include "components.h"
+#include "net_data.h"
 #include "raylib.h"
 #include <arpa/inet.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+
+int32_t net_player_add(net_players_t* players) {
+	int32_t result = -1;
+	if(players->count >= MAX_PLAYERS) {
+		printf("tried to add player, but players were full\n");
+		return result;
+	}
+	for(int i = 0; i < MAX_PLAYERS; i++) {
+		net_player_t* player = &players->players[i];
+		if(!player->active) {
+			player->active = true;
+			players->count++;
+			result = i;
+			break;
+		}
+		assert(false && "somehow no players were inactive even though there "
+						"should be space");
+	}
+	return result;
+}
+
+void net_player_remove(net_players_t* players, int32_t id) {
+	if(id >= MAX_PLAYERS) {
+		printf("tried to remove player that is impossible to exist");
+		return;
+	}
+	players->players[id].active = false;
+	players->count--;
+}
 
 void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
 	if(ser->net_buf.word_index <= 0) {
@@ -27,9 +57,9 @@ void net_peer_receive(ENetPacket* packet) {
 	net_read_byte(&ser.ser.net, &type, "type");
 	component_types_e comp_type = type;
 	switch(comp_type) {
-	case COMPONENT_NET_TEST:
+	case NET_TEST:
 		printf("received net test, serializing\n");
-		comp_net_test_t result;
+		net_test_t result;
 		ser_net_test(&ser, &result);
 		printf("net_test values: %d, %d, %d, %d\n",
 			   result.a,
@@ -37,9 +67,9 @@ void net_peer_receive(ENetPacket* packet) {
 			   result.c,
 			   result.d);
 		break;
-	case COMPONENT_NET_MOVE:
+	case NET_MOVE:
 		printf("received net move, serializing\n");
-		comp_net_move_t net_move;
+		net_move_t net_move;
 		ser_net_move(&ser, &net_move);
 		printf("net_move values:\nfrom: %f, %f\nto: %f, %f\nentity: %u",
 			   net_move.from_tile.x,

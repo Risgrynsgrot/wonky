@@ -39,7 +39,7 @@ add_executable(${PROJECT_NAME} ${headers} ${sources})
 if(MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
 else()
-	target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+	target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wmaybe-uninitialized -Wextra -Wpedantic -Werror)
 endif()
 
 # link to your dependencies' targets here

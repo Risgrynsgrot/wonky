@@ -1,5 +1,6 @@
 #include "../components.h"
 #include "../network_common.h"
+#include "../net_data.h"
 #include <memory.h>
 #include <unity.h>
 
@@ -65,9 +66,9 @@ void test_net_read() {
 
 void test_net_serialize() {
 
-	comp_net_test_t test = {.a = 10, .extra = false, .b = 25, .c = 12, .d = 30};
+	net_test_t test = {.a = 10, .extra = false, .b = 25, .c = 12, .d = 30};
 	serializer_t ser_write = new_writer_network((ser_net_t){0});
-	net_write_byte(&ser_write.ser.net, COMPONENT_NET_TEST, "type");
+	net_write_byte(&ser_write.ser.net, NET_TEST, "type");
 	ser_net_test(&ser_write, &test);
 	net_buffer_flush(&ser_write.ser.net.net_buf);
 	net_buffer_print(&ser_write.ser.net.net_buf);
@@ -80,8 +81,8 @@ void test_net_serialize() {
 	net_buffer_print(&ser_read.ser.net.net_buf);
 	char type = 0;
 	net_read_byte(&ser_read.ser.net, &type, "type");
-	TEST_ASSERT_EQUAL(type, COMPONENT_NET_TEST);
-	comp_net_test_t test2 = {0};
+	TEST_ASSERT_EQUAL(type, NET_TEST);
+	net_test_t test2 = {0};
 	ser_net_test(&ser_read, &test2);
 
 	TEST_ASSERT_EQUAL(test.a, test2.a);
