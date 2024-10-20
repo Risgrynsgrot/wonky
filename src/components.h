@@ -31,11 +31,11 @@
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 #define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,
 
-//#define REGISTER_COMPONENTS(lc, uc, i, constructor, destructor, ECS, ...)      
-//	id_comp_##lc = ecs_register_component(                                     
-//		ECS, sizeof(comp_##lc##_t), constructor, destructor);                  
-//	ecs_component_register_string(                                             
-//		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});            
+//#define REGISTER_COMPONENTS(lc, uc, i, constructor, destructor, ECS, ...)
+//	id_comp_##lc = ecs_register_component(
+//		ECS, sizeof(comp_##lc##_t), constructor, destructor);
+//	ecs_component_register_string(
+//		(ecs_component_string_t){.name = #lc, .id = id_comp_##lc});
 //	ecs_component_string_count++;
 
 #define DECL_COMPONENT_FIELD(T, NAME) T NAME;
@@ -199,6 +199,8 @@ void* entity_get_component(entities_t* entities,
 extern void (*component_serializers[])(serializer_t* serializer, void* data);
 
 void lua_register_component_enum(lua_State* L);
-#define DECL_COMPONENT_LUA_ENUM(lc, uc, i, ...)                                \
+#define DECL_LUA_ENUM(lc, uc, i, ...)                                          \
 	lua_pushnumber(L, i);                                                      \
 	lua_setfield(L, -2, #lc);
+
+void lua_register_traits_enum(lua_State* L);

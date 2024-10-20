@@ -259,7 +259,6 @@ bool level_spawn_terrain(ldtk_layer_t* layer, gameworld_t* world) {
 }
 
 entity_t map_get_entity(map_t* map, int layer, Vector2 grid_position) {
-
 	ldtk_level_t* level			= &map->data.levels[map->current_level];
 	ldtk_layer_t* current_layer = &level->layers[layer];
 	int index =

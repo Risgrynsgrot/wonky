@@ -16,7 +16,7 @@
 
 void trait_render_sprites(gameworld_t* gameworld) {
 
-	trait_haver_t* trait = &gameworld->traits.has_trait[TRAIT_MOVABLE];
+	trait_haver_t* trait = &gameworld->traits.has_trait[TRAIT_DRAW_SPRITE];
 	entities_t* entities = &gameworld->entities;
 
 	for(int i = 0; i < trait->count; i++) {
@@ -80,7 +80,7 @@ void trait_render_sprites(gameworld_t* gameworld) {
 //}
 
 void trait_render_boxes(gameworld_t* gameworld) {
-	trait_haver_t* trait = &gameworld->traits.has_trait[TRAIT_MOVABLE];
+	trait_haver_t* trait = &gameworld->traits.has_trait[TRAIT_DRAW_BOX];
 	entities_t* entities = &gameworld->entities;
 
 	for(int i = 0; i < trait->count; i++) {

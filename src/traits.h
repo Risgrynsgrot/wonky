@@ -3,8 +3,8 @@
 
 #define TRAITS_TYPE_ITER(_F, ...)                                              \
 	_F(movable, MOVABLE, 0, NULL, NULL, __VA_ARGS__)                           \
-	_F(drawable, DRAW_SPRITE, 1, NULL, NULL, __VA_ARGS__)                      \
-	_F(drawable, DRAW_BOX, 2, NULL, NULL, __VA_ARGS__)                         \
+	_F(draw_sprite, DRAW_SPRITE, 1, NULL, NULL, __VA_ARGS__)                      \
+	_F(draw_box, DRAW_BOX, 2, NULL, NULL, __VA_ARGS__)                         \
 	_F(player_controlled, PLAYER_CONTROLLED, 3, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_TRAITS(lc, uc, i, ...) TRAIT_##uc = i,

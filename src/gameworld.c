@@ -55,6 +55,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 
 	lua_State* L = script_lua_init();
 	lua_register_component_enum(L);
+	lua_register_traits_enum(L);
 	lua_pushlightuserdata(L, world);
 	lua_setglobal(L, "world");
 	ecs_lua_register_module(L);
@@ -87,7 +88,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	comp_position_t* position = &world->entities.position_a[entity.id];
 	//ecs_get(world->ecs, entity, id_comp_position);
 	printf(
-		"placing entity at %f, %f", position->grid_pos.x, position->grid_pos.y);
+		"placing entity at %f, %f\n", position->grid_pos.x, position->grid_pos.y);
 	map_add_entity(&world->map, 0, position->grid_pos, entity);
 
 	return 0;

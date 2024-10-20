@@ -1,5 +1,6 @@
 ECS = ECS or {}
 Comp = Comp or {}
+Trait = Trait or {}
 Asset = Asset or {}
 
 Luatest = {}
@@ -45,7 +46,11 @@ function Luatest.onCreate(e)
 
 	local input = {
 		type = Comp.input,
-		input_id = 0
+		input_id = 0,
+		direction = {
+			0,
+			0
+		}
 	}
 
 	print("entityID in lua: " .. tostring(e))
@@ -56,8 +61,8 @@ function Luatest.onCreate(e)
 			y = 0.0
 		},
 		grid_pos = {
-			x = 0.0,
-			y = 0.0
+			x = 0,
+			y = 0
 		},
 		layer = 0
 	})
@@ -69,4 +74,6 @@ function Luatest.onCreate(e)
 		type = Comp.mover,
 		movement_speed = 5
 	})
+	Trait.add(e, Trait.movable)
+	Trait.add(e, Trait.player_controlled)
 end

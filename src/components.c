@@ -14,6 +14,7 @@
 //ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 void (*component_serializers[])(serializer_t* serializer, void* data) = {
 	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_SERIALIZERS, void)};
+
 //int ecs_component_string_count;
 
 //TODO(risgrynsgrot): Add ecs_lua_add_component_functions that maps component id
@@ -173,7 +174,6 @@ void ser_net_move(serializer_t* ser, void* data) {
 
 int ecs_lua_add_sprite(lua_State* L) {
 	entity_t* entity = (entity_t*)lua_touserdata(L, -2);
-	lua_getfield(L, -1, "path");
 	const char* path = lua_tostring(L, -1);
 	lua_pop(L, 1);
 	gameworld_t* world = script_get_userdata(L, "world");
@@ -227,20 +227,64 @@ int ecs_lua_get_component(lua_State* L) {
 	return 1;
 }
 
+int lua_add_trait(lua_State* L) {
+	if(!lua_isuserdata(L, -2)) {
+		printf("add trait called with first parameter not a entity\n");
+		return 0;
+	}
+	if(!lua_isnumber(L, -1)) {
+		printf("add trait called with second parameter not a number\n");
+		return 0;
+	}
+	entity_t* entity   = (entity_t*)lua_touserdata(L, -2);
+	trait_types_e type = lua_tonumber(L, -1);
+
+	gameworld_t* world = script_get_userdata(L, "world");
+	trait_entity_add(&world->traits, type, *entity);
+
+	return 1;
+}
+
+int lua_remove_trait(lua_State* L) {
+	if(!lua_isuserdata(L, -2)) {
+		printf("remove trait called with first parameter not a entity\n");
+		return 0;
+	}
+	if(!lua_isnumber(L, -1)) {
+		printf("remove trait called with second parameter not a number\n");
+		return 0;
+	}
+	entity_t* entity   = (entity_t*)lua_touserdata(L, -2);
+	trait_types_e type = lua_tonumber(L, -1);
+
+	gameworld_t* world = script_get_userdata(L, "world");
+	trait_entity_remove(&world->traits, type, *entity);
+
+	return 1;
+}
+
+//move all this to some lua scripting file
 static const struct luaL_Reg ecs_functions[] = {
 	{"get", ecs_lua_get_component},
 	{"set", ecs_lua_set_component},
-	{		   NULL,				  NULL}
+	{ NULL,				  NULL}
+};
+
+static const struct luaL_Reg trait_functions[] = {
+	{	 "add",	lua_add_trait},
+	{"remove", lua_remove_trait},
+	  {	   NULL,			 NULL}
 };
 
 static const struct luaL_Reg asset_functions[] = {
 	{"add_sprite", ecs_lua_add_sprite},
-	{		   NULL,				  NULL}
+	{		 NULL,			   NULL}
 };
 
 void ecs_lua_register_module(lua_State* L) {
 	luaL_register(L, "Comp", ecs_functions);
 	luaL_register(L, "Asset", asset_functions);
+	luaL_register(L, "Trait", trait_functions);
 }
 
 #define DECL_COMPONENT_SWITCH(lc, uc, i, ...)                                  \
@@ -260,7 +304,14 @@ void* entity_get_component(entities_t* entities,
 
 void lua_register_component_enum(lua_State* L) {
 	lua_newtable(L);
-	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_LUA_ENUM, void)
+	ECS_COMPONENTS_TYPE_ITER(DECL_LUA_ENUM, void)
 	script_dumpstack(L);
 	lua_setglobal(L, "Comp");
+}
+
+void lua_register_traits_enum(lua_State* L) {
+	lua_newtable(L);
+	TRAITS_TYPE_ITER(DECL_LUA_ENUM, void)
+	script_dumpstack(L);
+	lua_setglobal(L, "Trait");
 }

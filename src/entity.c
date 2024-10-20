@@ -1,7 +1,9 @@
 #include "entity.h"
 #include <assert.h>
+#include <memory.h>
 
 void entities_init(entities_t* entities) {
+	memset(entities, 0, sizeof(*entities));
 	for(int i = 0; i < MAX_ENTITY_COUNT; i++) {
 		entities->unused[i] = i;
 	}

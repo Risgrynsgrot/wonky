@@ -90,7 +90,7 @@ void trait_input_handle(gameworld_t* gameworld) {
 		input->interact		  = IsKeyPressed(keymap[input_id].interact);
 		input->open_inventory = IsKeyPressed(keymap[input_id].open_inventory);
 
-		Vector2 direction;
+		Vector2 direction = {0};
 		direction.x = IsKeyDown(keymap[input_id].right) -
 					  IsKeyDown(keymap[input_id].left);
 		if(direction.x == 0.f) {
