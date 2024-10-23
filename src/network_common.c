@@ -67,7 +67,7 @@ void net_peer_receive(ENetPacket* packet) {
 			   result.c,
 			   result.d);
 		break;
-	case NET_MOVE:
+	case NET_MOVE: {
 		printf("received net move, serializing\n");
 		net_move_t net_move;
 		ser_net_move(&ser, &net_move);
@@ -78,8 +78,14 @@ void net_peer_receive(ENetPacket* packet) {
 			   net_move.to_tile.y,
 			   net_move.entity_id);
 		break;
+	}
+	case NET_SPAWN_ENTITY: {
+		net_spawn_entity_t net_spawn_entity;
+		ser_spawn_entity(&ser, &net_spawn_entity);
+		break;
+	}
 	default:
-		printf("reading comp that doesn't exist: %d\n", comp_type);
+		printf("reading netdata that doesn't exist: %d\n", comp_type);
 		break;
 	}
 }
@@ -175,28 +181,24 @@ void net_write_bool(ser_net_t* ser, bool value, const char* name) {
 	net_bits_write(&ser->net_buf, 1, value);
 }
 
-void net_read_byte(ser_net_t* ser, char* value, const char* name) {
+void net_read_byte(ser_net_t* ser, int8_t* value, const char* name) {
 	(void)name;
 	*value = net_bits_read(&ser->net_buf, 8);
 }
 
-void net_write_byte(ser_net_t* ser, char value, const char* name) {
+void net_write_byte(ser_net_t* ser, int8_t value, const char* name) {
 	(void)name;
 	net_bits_write(&ser->net_buf, 8, value);
 }
 
-void net_read_ubyte(ser_net_t* ser, unsigned char* value, const char* name) {
-	assert(false);
-	(void)ser;
+void net_read_ubyte(ser_net_t* ser, uint8_t* value, const char* name) {
 	(void)name;
-	(void)value;
+	*value = net_bits_read(&ser->net_buf, 8);
 }
 
-void net_write_ubyte(ser_net_t* ser, unsigned char value, const char* name) {
-	assert(false);
-	(void)ser;
+void net_write_ubyte(ser_net_t* ser, uint8_t value, const char* name) {
 	(void)name;
-	(void)value;
+	net_bits_write(&ser->net_buf, 8, value);
 }
 
 void net_read_float(ser_net_t* ser, float* value, const char* name) {
@@ -248,15 +250,19 @@ void net_write_color(ser_net_t* ser, Color value, const char* name) {
 }
 
 void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
-	assert(false);
 	(void)name;
-	(void)ser;
-	(void)value;
+	assert(value->length <= MAX_NET_STRING_LENGTH);
+	net_read_uint(ser, &value->length, "length");
+	for(uint32_t i = 0; i < value->length; i++) {
+		net_read_ubyte(ser, &value->str[i], "");
+	}
 }
 
 void net_write_string(ser_net_t* ser, net_string_t* value, const char* name) {
-	assert(false);
 	(void)name;
-	(void)ser;
-	(void)value;
+	assert(value->length <= MAX_NET_STRING_LENGTH);
+	net_write_uint(ser, value->length, "length");
+	for(uint32_t i = 0; i < value->length; i++) {
+		net_write_ubyte(ser, value->str[i], "");
+	}
 }
