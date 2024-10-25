@@ -1,6 +1,6 @@
 #include "serializer.h"
-#include "scriptloader.h"
 #include "network_common.h"
+#include "scriptloader.h"
 #include <raylib.h>
 #include <string.h>
 
@@ -12,10 +12,17 @@ DEF_SER_T(double, double)
 DEF_SER_T(bool, bool)
 DEF_SER_T(Color, color)
 
-bool read_string_network(serializer_t* ser, char* value, const char* name) {
-	(void)ser;
-	(void)value;
-	(void)name;
+bool read_net_string_network(serializer_t* ser,
+							 net_string_t* value,
+							 const char* name) {
+	net_read_string(&ser->ser.net, value, name);
+	return true;
+}
+
+bool write_net_string_network(serializer_t* ser,
+							  net_string_t* value,
+							  const char* name) {
+	net_write_string(&ser->ser.net, value, name);
 	return true;
 }
 
@@ -30,7 +37,6 @@ bool write_string_lua(serializer_t* ser, char* value, const char* name) {
 	return true;
 }
 
-
 serializer_t new_reader_lua(ser_lua_t ser_lua) {
 	serializer_t result = {
 		.ser.lua	= ser_lua,
@@ -41,7 +47,7 @@ serializer_t new_reader_lua(ser_lua_t ser_lua) {
 		.ser_double = read_double_lua,
 		.ser_bool	= read_bool_lua,
 		.ser_string = read_string_lua,
-		.ser_color = read_color_lua,
+		.ser_color	= read_color_lua,
 	};
 	return result;
 }
@@ -56,35 +62,36 @@ serializer_t new_writer_lua(ser_lua_t ser_lua) {
 		.ser_double = write_double_lua,
 		.ser_bool	= write_bool_lua,
 		.ser_string = write_string_lua,
-		.ser_color = write_color_lua,
+		.ser_color	= write_color_lua,
 	};
 	return result;
 }
 
 serializer_t new_reader_network(ser_net_t ser_network) {
 	serializer_t result = {
-		.ser.net = ser_network,
-		.ser_vec2	 = read_vector2_network,
-		.ser_int	 = read_int_network,
-		.ser_uint	 = read_uint_network,
-		.ser_float	 = read_float_network,
-		.ser_double	 = read_double_network,
-		.ser_bool	 = read_bool_network,
-		.ser_color	 = read_color_network,
+		.ser.net		= ser_network,
+		.ser_vec2		= read_vector2_network,
+		.ser_int		= read_int_network,
+		.ser_uint		= read_uint_network,
+		.ser_float		= read_float_network,
+		.ser_double		= read_double_network,
+		.ser_bool		= read_bool_network,
+		.ser_color		= read_color_network,
+		.ser_net_string = read_net_string_network,
 	};
 	return result;
 }
 
 serializer_t new_writer_network(ser_net_t ser_network) {
 	serializer_t result = {
-		.ser.net = ser_network,
-		.ser_vec2	 = write_vector2_network,
-		.ser_int	 = write_int_network,
-		.ser_uint	 = write_uint_network,
-		.ser_float	 = write_float_network,
-		.ser_double	 = write_double_network,
-		.ser_bool	 = write_bool_network,
-		.ser_color	 = write_color_network,
+		.ser.net	= ser_network,
+		.ser_vec2	= write_vector2_network,
+		.ser_int	= write_int_network,
+		.ser_uint	= write_uint_network,
+		.ser_float	= write_float_network,
+		.ser_double = write_double_network,
+		.ser_bool	= write_bool_network,
+		.ser_color	= write_color_network,
 	};
 	return result;
 }

@@ -4,9 +4,14 @@
 
 #define MAX_PLAYERS 32
 
+typedef enum net_controller {
+	NET_CONTROLLER_GAME = -1,
+} net_controller_e;
+
+#define MAX_NET_STRING_LENGTH 512
 typedef struct net_string {
-	char str[512];
-	int length;
+	uint8_t str[MAX_NET_STRING_LENGTH];
+	uint32_t length;
 } net_string_t;
 
 typedef struct net_player {
@@ -42,11 +47,11 @@ void net_write_uint(ser_net_t* ser, uint32_t value, const char* name);
 void net_read_bool(ser_net_t* ser, bool* value, const char* name);
 void net_write_bool(ser_net_t* ser, bool value, const char* name);
 
-void net_read_byte(ser_net_t* ser, char* value, const char* name);
-void net_write_byte(ser_net_t* ser, char value, const char* name);
+void net_read_byte(ser_net_t* ser, int8_t* value, const char* name);
+void net_write_byte(ser_net_t* ser, int8_t value, const char* name);
 
-void net_read_ubyte(ser_net_t* ser, unsigned char* value, const char* name);
-void net_write_ubyte(ser_net_t* ser, unsigned char value, const char* name);
+void net_read_ubyte(ser_net_t* ser, uint8_t* value, const char* name);
+void net_write_ubyte(ser_net_t* ser, uint8_t value, const char* name);
 
 void net_read_float(ser_net_t* ser, float* value, const char* name);
 void net_write_float(ser_net_t* ser, float value, const char* name);

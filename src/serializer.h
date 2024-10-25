@@ -26,6 +26,8 @@ typedef struct ser_lua {
 	lua_State* L;
 } ser_lua_t;
 
+typedef struct net_string net_string_t;
+
 typedef struct serializer {
 	union ser_u {
 		ser_lua_t lua;
@@ -39,6 +41,7 @@ typedef struct serializer {
 	bool (*ser_vec2)(struct serializer* ser, Vector2* value, const char* name);
 	bool (*ser_bool)(struct serializer* ser, bool* value, const char* name);
 	bool (*ser_string)(struct serializer* ser, char* value, const char* name);
+	bool (*ser_net_string)(struct serializer* ser, net_string_t* value, const char* name);
 	bool (*ser_color)(struct serializer* ser, Color* value, const char* name);
 } serializer_t;
 
@@ -68,6 +71,10 @@ typedef struct serializer {
 	}
 
 bool read_string_network(serializer_t* ser, char* value, const char* name);
+
+//bool read_net_string_network(serializer_t* ser, net_string_t* value, const char* name);
+//bool write_net_string_network(serializer_t* ser, net_string_t* value, const char* name);
+
 bool read_string_lua(serializer_t* ser, char* value, const char* name);
 
 DECL_SER_T(Vector2, vector2)
@@ -77,6 +84,7 @@ DECL_SER_T(float, float)
 DECL_SER_T(double, double)
 DECL_SER_T(bool, bool)
 DECL_SER_T(Color, color)
+DECL_SER_T(net_string_t, net_string)
 
 serializer_t new_reader_lua(ser_lua_t ser_lua);
 serializer_t new_writer_lua(ser_lua_t ser_lua);
