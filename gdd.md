@@ -28,6 +28,9 @@ into the cave. Return out with new things and further progression.
 Use your new things and knowledge to get further into the mysteries that 
 the new world has to offer.
 
+Dying drops your inventory and you'll have to get back to it to get your
+stuff back. Make it feel like a world that is there even if you aren't.
+
 ## Story
 
 TODO
