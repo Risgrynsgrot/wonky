@@ -1,5 +1,4 @@
 #include "server.h"
-#include "components.h"
 #include "net_data.h"
 #include "network_common.h"
 #include <stdio.h>

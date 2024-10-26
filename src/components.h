@@ -25,6 +25,7 @@
 	_F(draw_box, DRAW_BOX, 7, NULL, NULL, __VA_ARGS__)                         \
 	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)                   \
 	_F(mover, MOVER, 9, NULL, NULL, __VA_ARGS__)                               \
+	_F(lua_type, LUA_TYPE, 10, NULL, NULL, __VA_ARGS__)
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 #define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,
@@ -156,12 +157,15 @@ typedef struct comp_mover {
 	float movement_speed; //movespeed in squares per second
 	float _move_cooldown;
 	Vector2 from_tile;
-}
-
-comp_mover_t;
+} comp_mover_t;
 
 void ser_mover(serializer_t* ser, void* data);
 
+typedef struct comp_lua_type {
+	char* type;
+} comp_lua_type_t;
+
+void ser_lua_type(serializer_t* ser, void* data);
 
 //void ecs_component_register_string(ecs_component_string_t value);
 //void* ecs_add_component_string(ecs_t* ecs, ecs_id_t entity, const char* value);

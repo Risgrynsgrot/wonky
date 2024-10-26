@@ -19,7 +19,7 @@ void ser_net_move(serializer_t* ser, void* data) {
 void ser_spawn_entity(serializer_t* ser, void* data) {
 	net_spawn_entity_t* net_spawn_entity = data;
 
-	ser->ser_string(ser, &net_spawn_entity->entity_type, "entity_type");
+	ser->ser_net_string(ser, &net_spawn_entity->entity_type, "entity_type");
 	ser->ser_int(ser, &net_spawn_entity->controller, "controller");
 	ser->ser_vec2(ser, &net_spawn_entity->position, "position");
 }

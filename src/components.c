@@ -99,6 +99,11 @@ void ser_mover(serializer_t* ser, void* data) {
 	ser->ser_float(ser, &mover->movement_speed, "movement_speed");
 }
 
+void ser_lua_type(serializer_t* ser, void* data) {
+	comp_lua_type_t* lua_type = data;
+	ser->ser_string(ser, lua_type->type, "type");
+}
+
 
 //void ecs_component_register_string(ecs_component_string_t value) {
 //	int i						 = ecs_component_string_count;

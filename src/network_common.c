@@ -53,7 +53,7 @@ void net_peer_receive(ENetPacket* packet) {
 	memcpy(ser.ser.net.net_buf.data, packet->data, packet->dataLength);
 	//net_buffer_print(&ser.ser.net.net_buf);
 
-	char type;
+	int8_t type;
 	net_read_byte(&ser.ser.net, &type, "type");
 	component_types_e comp_type = type;
 	switch(comp_type) {
