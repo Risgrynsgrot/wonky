@@ -18,7 +18,7 @@ void call_lua_event(lua_State* L,
 					const char* signature,
 					...) {
 
-	const char* type = world->entities.lua_type_a[entity->id].type;
+	const char* type = entity_get_type(&world->entities, *entity);
 	lua_getglobal(L, "Entity");
 	lua_getfield(L, -1, "call_event");
 	lua_pushstring(L, type);
@@ -89,4 +89,8 @@ endwhile: {
 	}
 	va_end(args);
 }
+}
+
+void event_call_on_create(lua_State* L, gameworld_t* world, entity_t* entity) {
+	call_lua_event(L, world, "on_create", entity, "u", entity);
 }

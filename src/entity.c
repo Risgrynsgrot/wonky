@@ -31,3 +31,10 @@ void entity_delete(entities_t* entities, entity_t entity) {
 	entities->unused[unused_count - 1] = entity.id;
 }
 
+void entity_set_type(entities_t* entities, entity_t entity, const char* type) {
+	strcpy(entities->lua_type_a[entity.id].type, type);
+}
+
+const char* entity_get_type(entities_t* entities, entity_t entity) {
+	return entities->lua_type_a[entity.id].type;
+}

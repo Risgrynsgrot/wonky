@@ -23,8 +23,9 @@ typedef struct entities {
 
 void entities_init(entities_t* entities);
 entity_t entity_new(entities_t* entities);
+void entity_set_type(entities_t* entities, entity_t entity, const char* type);
+const char* entity_get_type(entities_t* entities, entity_t entity);
 void entity_delete(entities_t* entities, entity_t entity);
-
 
 /*
  * Do sparse set based on conditions instead of component sets

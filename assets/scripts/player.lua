@@ -4,7 +4,7 @@ Asset = Asset or {}
 
 Player = {}
 
-function Player.onCreate(e)
+function Player.on_create(e)
 	Asset.add_sprite(e, "assets/test.png") --this might want an optional offset
 	Comp.set(e, {
 		type = Comp.position,

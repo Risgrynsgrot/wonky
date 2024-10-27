@@ -162,7 +162,7 @@ typedef struct comp_mover {
 void ser_mover(serializer_t* ser, void* data);
 
 typedef struct comp_lua_type {
-	char* type;
+	char type[128];
 } comp_lua_type_t;
 
 void ser_lua_type(serializer_t* ser, void* data);
