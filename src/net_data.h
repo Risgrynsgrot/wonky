@@ -38,3 +38,4 @@ typedef struct net_spawn_entity {
 } net_spawn_entity_t;
 
 void ser_spawn_entity(serializer_t* ser, void* data);
+void handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data);

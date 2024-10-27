@@ -47,7 +47,7 @@ void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
 	enet_peer_send(peer, 0, packet);
 }
 
-void net_peer_receive(ENetPacket* packet) {
+void net_peer_receive(gameworld_t* world, ENetPacket* packet) {
 	serializer_t ser = new_reader_network((ser_net_t){0});
 	printf("data size: %lu", packet->dataLength);
 	memcpy(ser.ser.net.net_buf.data, packet->data, packet->dataLength);
@@ -82,6 +82,7 @@ void net_peer_receive(ENetPacket* packet) {
 	case NET_SPAWN_ENTITY: {
 		net_spawn_entity_t net_spawn_entity;
 		ser_spawn_entity(&ser, &net_spawn_entity);
+		handle_spawn_entity(world, &net_spawn_entity);
 		break;
 	}
 	default:
@@ -254,7 +255,7 @@ void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
 	assert(value->length <= MAX_NET_STRING_LENGTH);
 	net_read_uint(ser, &value->length, "length");
 	for(uint32_t i = 0; i < value->length; i++) {
-		net_read_ubyte(ser, &value->str[i], "");
+		net_read_byte(ser, &value->str[i], "");
 	}
 }
 
@@ -263,6 +264,6 @@ void net_write_string(ser_net_t* ser, net_string_t* value, const char* name) {
 	assert(value->length <= MAX_NET_STRING_LENGTH);
 	net_write_uint(ser, value->length, "length");
 	for(uint32_t i = 0; i < value->length; i++) {
-		net_write_ubyte(ser, value->str[i], "");
+		net_write_byte(ser, value->str[i], "");
 	}
 }

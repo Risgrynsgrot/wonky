@@ -52,7 +52,7 @@ void client_update(client_t* client) {
 		while(enet_host_service(client->host, &event, 0) > 0) {
 			switch(event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
-				net_peer_receive(event.packet);
+				net_peer_receive(&client->gameworld, event.packet);
 				enet_packet_destroy(event.packet);
 				break;
 			default:

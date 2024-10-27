@@ -60,36 +60,36 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	lua_setglobal(L, "world");
 	ecs_lua_register_module(L);
 
-	script_load(L, "assets/scripts/luatest.lua");
+	//script_load(L, "assets/scripts/luatest.lua");
 
-	lua_getglobal(L, "Luatest");
-	if(lua_istable(L, -1)) {
-		lua_getfield(L, -1, "onCreate");
-		lua_pushlightuserdata(L, &entity);
-		printf("entityID: %d\n", entity.id);
-		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
-			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
-		}
-		//lua_pop(L, 2);
+	//lua_getglobal(L, "Luatest");
+	//if(lua_istable(L, -1)) {
+	//	lua_getfield(L, -1, "onCreate");
+	//	lua_pushlightuserdata(L, &entity);
+	//	printf("entityID: %d\n", entity.id);
+	//	if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
+	//		luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+	//	}
+	//	//lua_pop(L, 2);
 
-		lua_getfield(L, -1, "testfunc");
-		lua_pushlightuserdata(L, &entity);
-		printf("entityID: %d\n", entity.id);
-		if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
-			luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
-		}
-		lua_pop(L, 2);
-	} else {
-		printf("uuuh\n");
-	}
+	//	lua_getfield(L, -1, "testfunc");
+	//	lua_pushlightuserdata(L, &entity);
+	//	printf("entityID: %d\n", entity.id);
+	//	if(lua_pcall(L, 1, 0, 0) != LUA_OK) {
+	//		luaL_error(L, "Error: %s\n", lua_tostring(L, -1));
+	//	}
+	//	lua_pop(L, 2);
+	//} else {
+	//	printf("uuuh\n");
+	//}
 
-	script_lua_close(L);
+	//script_lua_close(L);
 
-	comp_position_t* position = &world->entities.position_a[entity.id];
-	//ecs_get(world->ecs, entity, id_comp_position);
-	printf(
-		"placing entity at %f, %f\n", position->grid_pos.x, position->grid_pos.y);
-	map_add_entity(&world->map, 0, position->grid_pos, entity);
+	//comp_position_t* position = &world->entities.position_a[entity.id];
+	////ecs_get(world->ecs, entity, id_comp_position);
+	//printf(
+	//	"placing entity at %f, %f\n", position->grid_pos.x, position->grid_pos.y);
+	//map_add_entity(&world->map, 0, position->grid_pos, entity);
 
 	return 0;
 }

@@ -49,21 +49,17 @@ void server_update(server_t* server) {
 				event.peer->data = &server->players.players[player_id];
 
 				//server_send_broadcast(server, "nya");
-				net_test_t test = {
-					.a = 30, .extra = true, .b = 25, .c = 12, .d = 30};
 				serializer_t ser = new_writer_network((ser_net_t){0});
-				net_write_byte(&ser.ser.net, NET_TEST, "type");
-				ser_net_test(&ser, &test);
+				net_write_byte(&ser.ser.net, NET_SPAWN_ENTITY, "type");
+				net_spawn_entity_t spawn_player = {
+					.controller	 = player_id,
+					.entity_type = { "player", strlen("player")},
+					.position	 = {player_id,				   0}
+				 };
+				ser_spawn_entity(&ser, &spawn_player);
 				net_buffer_flush(&ser.ser.net.net_buf);
 				net_buffer_print(&ser.ser.net.net_buf);
 				net_peer_send(event.peer, &ser.ser.net);
-
-				net_spawn_entity_t spawn_player = {
-					.controller	 = player_id,
-					.entity_type = {"player", strlen("player")},
-					.position	 = {		0,				   0}
-				 };
-
 
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
