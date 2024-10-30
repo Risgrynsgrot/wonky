@@ -51,7 +51,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 
 	//ecs_register_move_systems(world->ecs, &world->map, &world->net_writer);
 
-	entity_t entity = entity_new(&world->entities);
+	//entity_t entity = entity_new(&world->entities);
 
 	lua_State* L = script_lua_init();
 	lua_register_component_enum(L);

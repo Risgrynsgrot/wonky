@@ -63,7 +63,7 @@ void server_update(server_t* server) {
 
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
-				net_peer_receive(event.packet);
+				net_peer_receive(&server->world, event.packet);
 				enet_packet_destroy(event.packet);
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT: {
