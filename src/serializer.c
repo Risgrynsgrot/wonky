@@ -84,14 +84,15 @@ serializer_t new_reader_network(ser_net_t ser_network) {
 
 serializer_t new_writer_network(ser_net_t ser_network) {
 	serializer_t result = {
-		.ser.net	= ser_network,
-		.ser_vec2	= write_vector2_network,
-		.ser_int	= write_int_network,
-		.ser_uint	= write_uint_network,
-		.ser_float	= write_float_network,
-		.ser_double = write_double_network,
-		.ser_bool	= write_bool_network,
-		.ser_color	= write_color_network,
+		.ser.net		= ser_network,
+		.ser_vec2		= write_vector2_network,
+		.ser_int		= write_int_network,
+		.ser_uint		= write_uint_network,
+		.ser_float		= write_float_network,
+		.ser_double		= write_double_network,
+		.ser_bool		= write_bool_network,
+		.ser_color		= write_color_network,
+		.ser_net_string = write_net_string_network,
 	};
 	return result;
 }

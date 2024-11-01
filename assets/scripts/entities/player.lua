@@ -5,6 +5,7 @@ Asset = Asset or {}
 Player = {}
 
 function Player.on_create(e)
+	print("player on create")
 	Asset.add_sprite(e, "assets/test.png") --this might want an optional offset
 	Comp.set(e, {
 		type = Comp.position,

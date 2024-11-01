@@ -20,6 +20,6 @@ void server_update(server_t* server);
 void server_deinit(server_t* server);
 void server_int_handler(int value);
 
-void server_send_broadcast(server_t* server, const char* data);
+void server_send_broadcast(server_t* server, ser_net_t* ser);
 
 void server_spawn_player(server_t* server, ENetEvent* event);

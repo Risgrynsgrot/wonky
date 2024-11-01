@@ -9,7 +9,7 @@ bool client_init(client_t* client) {
 	sigaction(SIGINT, &client->act, NULL);
 	sigaction(SIGQUIT, &client->act, NULL);
 
-	gameworld_init(&client->gameworld, false);
+	gameworld_init(&client->world, false);
 
 	client->host = enet_host_create(NULL, 1, 2, 0, 0);
 
@@ -52,7 +52,7 @@ void client_update(client_t* client) {
 		while(enet_host_service(client->host, &event, 0) > 0) {
 			switch(event.type) {
 			case ENET_EVENT_TYPE_RECEIVE:
-				net_peer_receive(&client->gameworld, event.packet);
+				net_peer_receive(&client->world, event.packet);
 				enet_packet_destroy(event.packet);
 				break;
 			default:
@@ -61,15 +61,15 @@ void client_update(client_t* client) {
 		}
 
 		//poll for events
-		gameworld_main_loop(&client->gameworld);
-		net_peer_send(client->server, &client->gameworld.net_writer.ser.net);
+		gameworld_main_loop(&client->world);
+		net_peer_send(client->server, &client->world.net_writer.ser.net);
 		//full buffer reset because it's sent
-		client->gameworld.net_writer.ser.net.net_buf = (net_buf_t){0};
+		client->world.net_writer.ser.net.net_buf = (net_buf_t){0};
 	}
 }
 
 void client_deinit(client_t* client) {
-	gameworld_deinit(&client->gameworld);
+	gameworld_deinit(&client->world);
 	enet_host_destroy(client->host);
 }
 

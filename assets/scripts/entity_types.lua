@@ -1,8 +1,11 @@
 Entity = {
-	types = {}
+	types = {
+	}
 }
 
 function Entity.register(name, data)
+	print('registering ' .. name)
+	print(data)
 	Entity.types[name] = data
 end
 
@@ -11,9 +14,9 @@ function Entity.get_type(type)
 end
 
 function Entity.get_event(type, event)
-	return Entity.types[type].events[event]
+	return Entity.types[type][event]
 end
 
 function Entity.call_event(type, event, ...)
-	Entity.types[type].events[event](...)
+	Entity.types[type][event](...)
 end

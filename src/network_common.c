@@ -19,12 +19,12 @@ int32_t net_player_add(net_players_t* players) {
 			player->active = true;
 			players->count++;
 			result = i;
-			break;
+			return result;
 		}
-		assert(false && "somehow no players were inactive even though there "
-						"should be space");
 	}
-	return result;
+	assert(false && "somehow no players were inactive even though there "
+					"should be space");
+	return -1;
 }
 
 void net_player_remove(net_players_t* players, int32_t id) {
@@ -40,7 +40,7 @@ void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
 	if(ser->net_buf.word_index <= 0) {
 		return;
 	}
-	printf("packet size to send: %d\n", ser->net_buf.word_index);
+	//printf("packet size to send: %d\n", ser->net_buf.word_index);
 	ENetPacket* packet = enet_packet_create(ser->net_buf.data,
 											ser->net_buf.word_index * 4,
 											ENET_PACKET_FLAG_RELIABLE);

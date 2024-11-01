@@ -21,6 +21,8 @@ typedef struct gameworld {
 	bool headless;
 	float delta_time;
 	serializer_t net_writer;
+
+	lua_State* L;
 } gameworld_t;
 
 int gameworld_init(gameworld_t* world, bool headless);

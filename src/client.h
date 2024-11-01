@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 typedef struct client {
-	gameworld_t gameworld;
+	gameworld_t world;
 
 	ENetHost* host;
 	ENetPeer* server;

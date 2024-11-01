@@ -15,6 +15,8 @@ bool server_init(server_t* server) {
 	sigaction(SIGINT, &server->act, NULL);
 	sigaction(SIGQUIT, &server->act, NULL);
 
+	gameworld_init(&server->world, true);
+
 	//TODO(risgrynsgrot)
 	//load config from lua file
 	//setup enet server
@@ -56,6 +58,7 @@ void server_update(server_t* server) {
 					.entity_type = { "player", strlen("player")},
 					.position	 = {player_id,				   0}
 				 };
+				handle_spawn_entity(&server->world, &spawn_player);
 				ser_spawn_entity(&ser, &spawn_player);
 				net_buffer_flush(&ser.ser.net.net_buf);
 				net_buffer_print(&ser.ser.net.net_buf);
@@ -77,7 +80,11 @@ void server_update(server_t* server) {
 				break;
 			}
 		}
-		//send results
+
+		gameworld_main_loop(&server->world);
+		server_send_broadcast(server, &server->world.net_writer.ser.net);
+		//full buffer reset because it's sent
+		server->world.net_writer.ser.net.net_buf = (net_buf_t){0};
 	}
 }
 
@@ -90,8 +97,12 @@ void server_int_handler(int value) {
 	quit = true;
 }
 
-void server_send_broadcast(server_t* server, const char* data) {
-	ENetPacket* packet =
-		enet_packet_create(data, strlen(data) + 1, ENET_PACKET_FLAG_RELIABLE);
+void server_send_broadcast(server_t* server, ser_net_t* ser) {
+	if(ser->net_buf.word_index <= 0) {
+		return;
+	}
+	ENetPacket* packet = enet_packet_create(ser->net_buf.data,
+											ser->net_buf.word_index * 4,
+											ENET_PACKET_FLAG_RELIABLE);
 	enet_host_broadcast(server->host, 0, packet);
 }

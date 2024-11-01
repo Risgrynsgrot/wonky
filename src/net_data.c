@@ -1,5 +1,7 @@
 #include "net_data.h"
 #include "gameworld.h"
+#include "scripting.h"
+#include <stdio.h>
 
 void ser_net_test(serializer_t* ser, void* data) {
 	net_test_t* net_test = data;
@@ -21,6 +23,8 @@ void ser_spawn_entity(serializer_t* ser, void* data) {
 	net_spawn_entity_t* net_spawn_entity = data;
 
 	ser->ser_net_string(ser, &net_spawn_entity->entity_type, "entity_type");
+	printf("entity type in packet: %s\n",
+		   (char*)net_spawn_entity->entity_type.str);
 	ser->ser_int(ser, &net_spawn_entity->controller, "controller");
 	ser->ser_vec2(ser, &net_spawn_entity->position, "position");
 }
@@ -28,7 +32,8 @@ void ser_spawn_entity(serializer_t* ser, void* data) {
 void handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
 	entity_t entity = entity_new(&world->entities);
 	entity_set_type(&world->entities, entity, (char*)data->entity_type.str);
+	event_call_on_create(world->L, world, &entity);
 	comp_position_t* pos = &world->entities.position_a[entity.id];
-	pos->grid_pos = data->position;
+	pos->grid_pos		 = data->position;
 	map_add_entity(&world->map, 0, pos->grid_pos, entity);
 }

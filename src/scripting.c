@@ -26,7 +26,7 @@ void call_lua_event(lua_State* L,
 
 	va_list args;
 	va_start(args, signature);
-	int arg_count = 0;
+	int arg_count = 2; //type and event name are always there
 
 	while(*signature) {
 		switch(*signature) {
@@ -59,7 +59,10 @@ endwhile: {
 
 	int return_count = strlen(signature);
 	if(lua_pcall(L, arg_count, return_count, 0) != 0) {
-		printf("error running event %s", event_name);
+		printf("error running event %s\n", event_name);
+		lua_gettop(L);
+		const char* error = lua_tostring(L, -1);
+		printf("event error: %s\n", error);
 	}
 
 	int return_stack_pos = -return_count;

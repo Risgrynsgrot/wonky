@@ -53,14 +53,14 @@ int gameworld_init(gameworld_t* world, bool headless) {
 
 	//entity_t entity = entity_new(&world->entities);
 
-	lua_State* L = script_lua_init();
-	lua_register_component_enum(L);
-	lua_register_traits_enum(L);
-	lua_pushlightuserdata(L, world);
-	lua_setglobal(L, "world");
-	ecs_lua_register_module(L);
+	world->L = script_lua_init();
+	lua_register_component_enum(world->L);
+	lua_register_traits_enum(world->L);
+	lua_pushlightuserdata(world->L, world);
+	lua_setglobal(world->L, "world");
+	ecs_lua_register_module(world->L);
 
-	//script_load(L, "assets/scripts/luatest.lua");
+	script_load(world->L, "assets/scripts/main.lua");
 
 	//lua_getglobal(L, "Luatest");
 	//if(lua_istable(L, -1)) {
@@ -141,7 +141,9 @@ void gameworld_main_loop(gameworld_t* world) {
 		gameworld_update(world, world->tickrate);
 		//input_reset(&world->input);
 	}
-	gameworld_render(world);
+	if(!world->headless) {
+		gameworld_render(world);
+	}
 
 	gettimeofday(&t2, NULL);
 	elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;
@@ -179,6 +181,7 @@ void gameworld_render(gameworld_t* world) {
 
 int gameworld_deinit(gameworld_t* world) {
 	(void)world;
+	script_lua_close(world->L);
 	//SDL_DestroyWindow(gameworld->window);
 	//SDL_Quit();
 	//ecs_free(world->ecs);

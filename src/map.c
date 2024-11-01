@@ -216,7 +216,9 @@ bool level_spawn_entities(ldtk_layer_t* layer, gameworld_t* world) {
 		//ecs_add(ecs, entity, id_comp_draw_sprite, NULL);
 		//TODO(risgrynsgrot) this should be using entity data to determine
 		//sprite
-		render_load_sprite(world, "assets/lildude.png", entity);
+		if(!world->headless) {
+			render_load_sprite(world, "assets/lildude.png", entity);
+		}
 	}
 
 	return true;
