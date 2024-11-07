@@ -1,4 +1,5 @@
 #pragma once
+#include "entity.h"
 #include "serializer.h"
 #include <enet/enet.h>
 
@@ -11,6 +12,7 @@ typedef enum net_controller {
 } net_controller_e;
 
 #define MAX_NET_STRING_LENGTH 512
+
 typedef struct net_string {
 	int8_t str[MAX_NET_STRING_LENGTH];
 	uint32_t length;
@@ -20,7 +22,7 @@ typedef struct net_player {
 	ENetPeer* peer;
 	uint32_t id;
 	//entity id of controlled character, so we can map between server and client
-	uint32_t entity_id;
+	entity_t entity;
 	bool active;
 } net_player_t;
 
@@ -34,7 +36,7 @@ void net_player_remove(net_players_t* players, int32_t id);
 
 void net_peer_send(ENetPeer* peer, ser_net_t* ser);
 
-void net_peer_receive(gameworld_t* world, ENetPacket* packet);
+void net_peer_receive(gameworld_t* world, ENetPacket* packet, ENetPeer* peer);
 
 void net_buffer_flush(net_buf_t* buf);
 void net_buffer_print(net_buf_t* buf);

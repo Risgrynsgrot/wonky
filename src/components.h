@@ -1,5 +1,4 @@
 #pragma once
-#include "pico_ecs.h"
 #include "serializer.h"
 #include <lua.h>
 #include <raylib.h>
@@ -38,7 +37,7 @@
 //	ecs_component_string_count++;
 
 #define DECL_COMPONENT_FIELD(T, NAME) T NAME;
-#define DECL_COMPONENT_IDS(lc, uc, i, ...) ecs_id_t id_comp_##lc;
+//#define DECL_COMPONENT_IDS(lc, uc, i, ...) ecs_id_t id_comp_##lc;
 
 #define DECL_COMPONENT_STRUCT(T, ITER)                                         \
 	typedef struct comp_##T {                                                  \
@@ -97,7 +96,7 @@ typedef struct comp_area_box {
 	float height;
 	float offset_x;
 	float offset_y;
-	ecs_id_t overlaps[MAX_OVERLAP_COUNT];
+	//entity_t overlaps[MAX_OVERLAP_COUNT];
 	int overlapCount;
 }
 

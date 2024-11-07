@@ -5,11 +5,11 @@
 #include "network_common.h"
 #include "raymath.h"
 
-void trait_move_units(gameworld_t* gameworld, float dt) {
-	trait_haver_t* trait	 = &gameworld->traits.has_trait[TRAIT_MOVABLE];
-	entities_t* entities	 = &gameworld->entities;
-	map_t* map				 = &gameworld->map;
-	serializer_t* net_writer = &gameworld->net_writer;
+void trait_move_units(gameworld_t* world, float dt) {
+	trait_haver_t* trait	 = &world->traits.has_trait[TRAIT_MOVABLE];
+	entities_t* entities	 = &world->entities;
+	map_t* map				 = &world->map;
+	serializer_t* net_writer = &world->net_writer;
 
 	for(int i = 0; i < trait->count; i++) {
 		entity_t entity			  = trait->entity[i];
@@ -24,22 +24,14 @@ void trait_move_units(gameworld_t* gameworld, float dt) {
 			bool is_moving = fabs(input->direction.x) > 0.f ||
 							 fabs(input->direction.y) > 0.f;
 			if(is_moving) {
-				if(map_try_move(map,
-								position->layer,
-								entity,
-								position->grid_pos,
-								input->direction)) {
-					mover->from_tile = position->grid_pos;
-					position->grid_pos =
-						Vector2Add(position->grid_pos, input->direction);
-					mover->_move_cooldown	 = 0;
+				if(move_unit(
+					   world, entity, position, mover, input->direction)) {
 					net_move_t net_move = {
 						.from_tile = mover->from_tile,
 						.to_tile   = position->grid_pos,
 						.entity_id = entity.id,
 					};
-					net_write_byte(
-						&net_writer->ser.net, NET_MOVE, "type");
+					net_write_byte(&net_writer->ser.net, NET_MOVE, "type");
 					ser_net_move(net_writer, &net_move);
 				}
 			}
@@ -57,4 +49,20 @@ void trait_move_units(gameworld_t* gameworld, float dt) {
 		position->value.y =
 			Lerp(current_world_pos.y, target_world_pos.y, percentage);
 	}
+}
+
+bool move_unit(gameworld_t* world,
+			   entity_t entity,
+			   comp_position_t* position,
+			   comp_mover_t* mover,
+			   Vector2 direction) {
+	map_t* map = &world->map;
+	if(!map_try_move(
+		   map, position->layer, entity, position->grid_pos, direction)) {
+		return false;
+	}
+	mover->from_tile	  = position->grid_pos;
+	position->grid_pos	  = Vector2Add(position->grid_pos, direction);
+	mover->_move_cooldown = 0;
+	return true;
 }

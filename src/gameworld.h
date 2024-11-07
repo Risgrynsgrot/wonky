@@ -1,9 +1,9 @@
 #pragma once
 #include "inputsystem.h"
-//#include "pico_ecs.h"
 #include "map.h"
 #include "traits.h"
 #include "entity.h"
+#include "network_common.h"
 
 typedef struct gameworld {
 	float tickrate;
@@ -23,6 +23,7 @@ typedef struct gameworld {
 	serializer_t net_writer;
 
 	lua_State* L;
+	net_players_t players;
 } gameworld_t;
 
 int gameworld_init(gameworld_t* world, bool headless);

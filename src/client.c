@@ -51,8 +51,13 @@ void client_update(client_t* client) {
 		ENetEvent event;
 		while(enet_host_service(client->host, &event, 0) > 0) {
 			switch(event.type) {
+			case ENET_EVENT_TYPE_CONNECT:
+				printf("client connected: %x:%u\n",
+					   event.peer->address.host,
+					   event.peer->address.port);
+				break;
 			case ENET_EVENT_TYPE_RECEIVE:
-				net_peer_receive(&client->world, event.packet);
+				net_peer_receive(&client->world, event.packet, event.peer);
 				enet_packet_destroy(event.packet);
 				break;
 			default:

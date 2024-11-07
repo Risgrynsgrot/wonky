@@ -110,3 +110,9 @@ do sets of components as the thing
 for all entities anyway, which is probably fine.
 If we want, we could have trait specific data as well, separated from
 components
+
+## NETWORKING
+I should probably set things up so code takes the same path locally as
+it does when sending it through internet.
+So even if I press left locally it should run it through a network event locally,
+then send it, and we discard it when it returns again (or use it to check validity)

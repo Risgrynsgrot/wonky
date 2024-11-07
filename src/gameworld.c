@@ -11,11 +11,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#define PICO_ECS_MAX_SYSTEMS 16
-#define PICO_ECS_MAX_COMPONENTS 64
-#define PICO_ECS_IMPLEMENTATION
-#include "pico_ecs.h"
-
 #if defined(PLATFORM_WEB)
 #	include <emscripten/emscripten.h>
 #endif

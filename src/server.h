@@ -9,7 +9,6 @@ typedef struct server {
 	ENetHost* host;
 	ENetAddress address;
 
-	net_players_t players;
 	gameworld_t world;
 
 	struct sigaction act;

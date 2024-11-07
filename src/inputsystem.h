@@ -1,5 +1,4 @@
 #pragma once
-#include "pico_ecs.h"
 #include "raylib.h"
 
 typedef struct gameworld gameworld_t;

@@ -46,9 +46,9 @@ void server_update(server_t* server) {
 					   event.peer->address.host,
 					   event.peer->address.port);
 
-				int32_t player_id = net_player_add(&server->players);
+				int32_t player_id = net_player_add(&server->world.players);
 
-				event.peer->data = &server->players.players[player_id];
+				event.peer->data = &server->world.players.players[player_id];
 
 				//server_send_broadcast(server, "nya");
 				serializer_t ser = new_writer_network((ser_net_t){0});
@@ -58,7 +58,7 @@ void server_update(server_t* server) {
 					.entity_type = { "player", strlen("player")},
 					.position	 = {player_id,				   0}
 				 };
-				handle_spawn_entity(&server->world, &spawn_player);
+				net_handle_spawn_entity(&server->world, &spawn_player);
 				ser_spawn_entity(&ser, &spawn_player);
 				net_buffer_flush(&ser.ser.net.net_buf);
 				net_buffer_print(&ser.ser.net.net_buf);
@@ -66,12 +66,12 @@ void server_update(server_t* server) {
 
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:
-				net_peer_receive(&server->world, event.packet);
+				net_peer_receive(&server->world, event.packet, event.peer);
 				enet_packet_destroy(event.packet);
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT: {
 				net_player_t* player = event.peer->data;
-				net_player_remove(&server->players, player->id);
+				net_player_remove(&server->world.players, player->id);
 				printf("%s disconnected\n", (char*)event.peer->data);
 				event.peer->data = NULL;
 				break;

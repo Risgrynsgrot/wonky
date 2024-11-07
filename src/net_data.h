@@ -30,6 +30,7 @@ typedef struct net_move { //move this to separate net structs
 } net_move_t;
 
 void ser_net_move(serializer_t* ser, void* data);
+void net_handle_move(gameworld_t* world, net_move_t* data, net_player_t* player);
 
 typedef struct net_spawn_entity {
 	net_string_t entity_type;
@@ -38,4 +39,4 @@ typedef struct net_spawn_entity {
 } net_spawn_entity_t;
 
 void ser_spawn_entity(serializer_t* ser, void* data);
-void handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data);
+void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data);

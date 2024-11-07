@@ -18,8 +18,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/json-c)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/Unity)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/notcurses)
-target_include_directories(notcurses PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/notcurses/include/)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/notcurses)
+#target_include_directories(notcurses PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/deps/notcurses/include/)
 
 file(GLOB enet_sources ${CMAKE_CURRENT_SOURCE_DIR}/deps/enet/*.c)
 add_library(enet STATIC ${enet_sources})
@@ -48,7 +48,7 @@ target_link_libraries(${PROJECT_NAME} json-c)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} luajit)
 target_link_libraries(${PROJECT_NAME} enet)
-target_link_libraries(${PROJECT_NAME} notcurses)
+#target_link_libraries(${PROJECT_NAME} notcurses)
 target_link_libraries(${PROJECT_NAME} unity)
 
 # --- copy assets so exe can find the /assets folder ----
@@ -80,5 +80,5 @@ target_link_libraries(${PROJECT_NAME}_tests json-c)
 target_link_libraries(${PROJECT_NAME}_tests raylib)
 target_link_libraries(${PROJECT_NAME}_tests luajit)
 target_link_libraries(${PROJECT_NAME}_tests enet)
-target_link_libraries(${PROJECT_NAME}_tests notcurses)
+#target_link_libraries(${PROJECT_NAME}_tests notcurses)
 target_link_libraries(${PROJECT_NAME}_tests unity)

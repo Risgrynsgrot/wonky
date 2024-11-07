@@ -1,7 +1,6 @@
 #include "map.h"
 #include "entity.h"
 #include "gameworld.h"
-#include "pico_ecs.h"
 #include "rendersystem.h"
 #include <assert.h>
 #include <json-c/json.h>

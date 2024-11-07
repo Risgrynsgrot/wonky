@@ -1,5 +1,6 @@
 #include "net_data.h"
 #include "gameworld.h"
+#include "movesystem.h"
 #include "scripting.h"
 #include <stdio.h>
 
@@ -19,6 +20,16 @@ void ser_net_move(serializer_t* ser, void* data) {
 	ser->ser_vec2(ser, &net_move->to_tile, "to_tile");
 }
 
+void net_handle_move(gameworld_t* world,
+					 net_move_t* data,
+					 net_player_t* player) {
+	entity_t entity = player->entity;
+	comp_mover_t* mover = &world->entities.mover_a[entity.id];
+	comp_position_t* position = &world->entities.position_a[entity.id];
+	Vector2 direction = Vector2Subtract(data->to_tile, data->from_tile);
+	move_unit(world, entity, position, mover, direction);
+}
+
 void ser_spawn_entity(serializer_t* ser, void* data) {
 	net_spawn_entity_t* net_spawn_entity = data;
 
@@ -29,7 +40,7 @@ void ser_spawn_entity(serializer_t* ser, void* data) {
 	ser->ser_vec2(ser, &net_spawn_entity->position, "position");
 }
 
-void handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
+void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
 	entity_t entity = entity_new(&world->entities);
 	entity_set_type(&world->entities, entity, (char*)data->entity_type.str);
 	event_call_on_create(world->L, world, &entity);
