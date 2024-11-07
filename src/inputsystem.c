@@ -13,8 +13,6 @@ input_map_t input_init(void) {
 	return result;
 }
 
-ecs_id_t sys_input_handle;
-
 void trait_input_handle(gameworld_t* gameworld) {
 
 	trait_haver_t* trait =
