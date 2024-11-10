@@ -3,6 +3,7 @@
 #include "components.h"
 #include <stdint.h>
 #define MAX_ENTITY_COUNT 1024 //this can be increased when needed
+#define NET_RESERVED_ENTITIES 512
 
 typedef struct entity {
 	int32_t id;
@@ -12,7 +13,6 @@ typedef struct entity {
 #define DECL_COMPONENT_SOA(lc, uc, i, ...)                                     \
 	comp_##lc##_t lc##_a[MAX_ENTITY_COUNT];
 
-//This is if I decide to do megastruct instead of ecs
 typedef struct entities {
 	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_SOA, void)
 	uint64_t components;

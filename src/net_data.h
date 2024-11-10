@@ -5,9 +5,10 @@
 #include <stdint.h>
 
 #define NET_DATA_ITER(_F, ...)                                                 \
-	_F(test, TEST, 0, NULL, NULL, __VA_ARGS__)                                 \
-	_F(move, MOVE, 1, NULL, NULL, __VA_ARGS__)                                 \
-	_F(spawn_entity, SPAWN_ENTITY, 2, NULL, NULL, __VA_ARGS__)
+	_F(test, TEST, 0, __VA_ARGS__)                                             \
+	_F(move, MOVE, 1, __VA_ARGS__)                                             \
+	_F(spawn_entity, SPAWN_ENTITY, 2, __VA_ARGS__)                             \
+	_F(entity_state, ENTITY_STATE, 3, __VA_ARGS__)
 
 #define DECL_ENUM_NET_DATA(lc, uc, i, ...) NET_##uc = i,
 
@@ -30,7 +31,9 @@ typedef struct net_move { //move this to separate net structs
 } net_move_t;
 
 void ser_net_move(serializer_t* ser, void* data);
-void net_handle_move(gameworld_t* world, net_move_t* data, net_player_t* player);
+void net_handle_move(gameworld_t* world,
+					 net_move_t* data,
+					 net_player_t* player);
 
 typedef struct net_spawn_entity {
 	net_string_t entity_type;
@@ -40,3 +43,12 @@ typedef struct net_spawn_entity {
 
 void ser_spawn_entity(serializer_t* ser, void* data);
 void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data);
+
+typedef struct net_entity_state {
+	entity_t entity;
+	component_types_e components;
+	uint8_t* data;
+} net_entity_state_t;
+
+void ser_entity_state(serializer_t* ser, void* data);
+void net_handle_entity_state(gameworld_t* world, net_entity_state_t* data);

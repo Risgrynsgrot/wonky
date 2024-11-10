@@ -1,0 +1,1 @@
+cmake -S . -B ./build -G "Unix Makefiles" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DUSE_MULTIMEDIA=none

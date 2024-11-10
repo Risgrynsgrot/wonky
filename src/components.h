@@ -14,17 +14,17 @@
 //extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define ECS_COMPONENTS_TYPE_ITER(_F, ...)                                      \
-	_F(position, POSITION, 0, NULL, NULL, __VA_ARGS__)                         \
-	_F(rotation, ROTATION, 1, NULL, NULL, __VA_ARGS__)                         \
-	_F(velocity, VELOCITY, 2, NULL, NULL, __VA_ARGS__)                         \
-	_F(input, INPUT, 3, NULL, NULL, __VA_ARGS__)                               \
-	_F(area_box, AREA_BOX, 4, NULL, NULL, __VA_ARGS__)                         \
-	_F(col_box, COL_BOX, 5, NULL, NULL, __VA_ARGS__)                           \
-	_F(draw_sprite, DRAW_SPRITE, 6, NULL, NULL, __VA_ARGS__)                   \
-	_F(draw_box, DRAW_BOX, 7, NULL, NULL, __VA_ARGS__)                         \
-	_F(draw_circle, DRAW_CIRCLE, 8, NULL, NULL, __VA_ARGS__)                   \
-	_F(mover, MOVER, 9, NULL, NULL, __VA_ARGS__)                               \
-	_F(lua_type, LUA_TYPE, 10, NULL, NULL, __VA_ARGS__)
+	_F(position, POSITION, 0, __VA_ARGS__)                                     \
+	_F(rotation, ROTATION, 1, __VA_ARGS__)                                     \
+	_F(velocity, VELOCITY, 2, __VA_ARGS__)                                     \
+	_F(input, INPUT, 3, __VA_ARGS__)                                           \
+	_F(area_box, AREA_BOX, 4, __VA_ARGS__)                                     \
+	_F(col_box, COL_BOX, 5, __VA_ARGS__)                                       \
+	_F(draw_sprite, DRAW_SPRITE, 6, __VA_ARGS__)                               \
+	_F(draw_box, DRAW_BOX, 7, __VA_ARGS__)                                     \
+	_F(draw_circle, DRAW_CIRCLE, 8, __VA_ARGS__)                               \
+	_F(mover, MOVER, 9, __VA_ARGS__)                                           \
+	_F(lua_type, LUA_TYPE, 10, __VA_ARGS__)                                    \
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 #define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,

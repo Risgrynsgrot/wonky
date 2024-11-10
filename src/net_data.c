@@ -48,3 +48,8 @@ void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
 	pos->grid_pos		 = data->position;
 	map_add_entity(&world->map, 0, pos->grid_pos, entity);
 }
+
+void ser_entity_state(serializer_t* ser, void* data) {
+
+}
+void net_handle_entity_state(gameworld_t* world, net_entity_state_t* data);
