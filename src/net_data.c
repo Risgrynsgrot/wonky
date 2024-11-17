@@ -31,13 +31,13 @@ void net_handle_move(gameworld_t* world,
 }
 
 void ser_spawn_entity(serializer_t* ser, void* data) {
-	net_spawn_entity_t* net_spawn_entity = data;
+	net_spawn_entity_t* spawn_entity = data;
 
-	ser->ser_net_string(ser, &net_spawn_entity->entity_type, "entity_type");
+	ser->ser_net_string(ser, &spawn_entity->entity_type, "entity_type");
 	printf("entity type in packet: %s\n",
-		   (char*)net_spawn_entity->entity_type.str);
-	ser->ser_int(ser, &net_spawn_entity->controller, "controller");
-	ser->ser_vec2(ser, &net_spawn_entity->position, "position");
+		   (char*)spawn_entity->entity_type.str);
+	ser->ser_int(ser, &spawn_entity->controller, "controller");
+	ser->ser_vec2(ser, &spawn_entity->position, "position");
 }
 
 void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
@@ -50,6 +50,9 @@ void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
 }
 
 void ser_entity_state(serializer_t* ser, void* data) {
-
+	net_entity_state_t* state = data;
+	int components;
+	ser->ser_int(ser, &components, "components");
+	state->components = components;
 }
 void net_handle_entity_state(gameworld_t* world, net_entity_state_t* data);

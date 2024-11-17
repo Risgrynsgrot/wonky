@@ -54,8 +54,8 @@ void server_update(server_t* server) {
 				serializer_t ser = new_writer_network((ser_net_t){0});
 				net_write_byte(&ser.ser.net, NET_SPAWN_ENTITY, "type");
 				net_spawn_entity_t spawn_player = {
-					.controller	 = player_id,
 					.entity_type = { "player", strlen("player")},
+					.controller	 = player_id,
 					.position	 = {player_id,				   0}
 				 };
 				net_handle_spawn_entity(&server->world, &spawn_player);

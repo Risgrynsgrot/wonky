@@ -1,33 +1,33 @@
 #include "scriptloader.h"
+#include "entity.h"
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
 #include <raylib.h>
 
-void script_dumpstack (lua_State *L) {
-  int top=lua_gettop(L);
-  for (int i=1; i <= top; i++) {
-    printf("%d\t%s\t", i, luaL_typename(L,i));
-    switch (lua_type(L, i)) {
-      case LUA_TNUMBER:
-        printf("%g\n",lua_tonumber(L,i));
-        break;
-      case LUA_TSTRING:
-        printf("%s\n",lua_tostring(L,i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
-        break;
-      case LUA_TNIL:
-        printf("%s\n", "nil");
-        break;
-      default:
-        printf("%p\n",lua_topointer(L,i));
-        break;
-    }
-  }
+void script_dumpstack(lua_State* L) {
+	int top = lua_gettop(L);
+	for(int i = 1; i <= top; i++) {
+		printf("%d\t%s\t", i, luaL_typename(L, i));
+		switch(lua_type(L, i)) {
+		case LUA_TNUMBER:
+			printf("%g\n", lua_tonumber(L, i));
+			break;
+		case LUA_TSTRING:
+			printf("%s\n", lua_tostring(L, i));
+			break;
+		case LUA_TBOOLEAN:
+			printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
+			break;
+		case LUA_TNIL:
+			printf("%s\n", "nil");
+			break;
+		default:
+			printf("%p\n", lua_topointer(L, i));
+			break;
+		}
+	}
 }
-
 
 lua_State* script_lua_init(void) {
 	lua_State* L = luaL_newstate();
@@ -189,7 +189,7 @@ Vector2 table_get_vector2(lua_State* L, const char* value) {
 	lua_getfield(L, -1, value);
 	if(!lua_istable(L, -1)) {
 		printf(
-			"LUA TRIED TO GET Vector2 %s BUT FAILED, RETURNING EMPTY VECTOR\n",
+			"LUA TRIED TO GET Vector2 %s BUT FAILED, RETURNING EMPTY\n",
 			value);
 		lua_pop(L, 1);
 		return result;
@@ -215,6 +215,22 @@ Color table_get_color(lua_State* L, const char* value) {
 	result.g = table_get_number(L, "g");
 	result.b = table_get_number(L, "b");
 	result.a = table_get_number(L, "a");
+	lua_pop(L, 1);
+	return result;
+}
+
+entity_t table_get_entity(lua_State* L, const char* value) {
+	entity_t result = {0};
+
+	lua_getfield(L, -1, value);
+	if(!lua_istable(L, -1)) {
+		printf("LUA TRIED TO GET entity %s BUT FAILED, RETURNING EMPTY\n",
+			   value);
+		lua_pop(L, 1);
+		return result;
+	}
+	result.id = table_get_number(L, "id");
+	result.generation = table_get_number(L, "generation");
 	lua_pop(L, 1);
 	return result;
 }
@@ -254,7 +270,9 @@ void table_set_bool(lua_State* L, const char* value, bool data) {
 	lua_setfield(L, -2, value);
 }
 
-void table_set_userdata(lua_State* L, const char* value, void* data) { //might be wrong using light user data
+void table_set_userdata(lua_State* L,
+						const char* value,
+						void* data) { //might be wrong using light user data
 	lua_pushlightuserdata(L, data);
 	lua_setfield(L, -2, value);
 }
@@ -266,8 +284,8 @@ void table_set_vector2(lua_State* L, const char* value, Vector2 data) {
 	table_set_number(L, "x", data.x);
 	table_set_number(L, "y", data.y);
 	lua_pop(L, 1);
-	printf("stack during ser: \n");
-	script_dumpstack(L);
+	//printf("stack during ser: \n");
+	//script_dumpstack(L);
 }
 
 void table_set_color(lua_State* L, const char* value, Color data) {
@@ -279,6 +297,15 @@ void table_set_color(lua_State* L, const char* value, Color data) {
 	table_set_number(L, "b", data.b);
 	table_set_number(L, "a", data.a);
 	lua_pop(L, 1);
-	printf("stack during ser: \n");
-	script_dumpstack(L);
+	//printf("stack during ser: \n");
+	//script_dumpstack(L);
+}
+
+void table_set_entity(lua_State* L, const char* value, entity_t data) {
+	lua_newtable(L);
+	lua_setfield(L, -2, value);
+	lua_getfield(L, -1, value);
+	table_set_number(L, "id", data.id);
+	table_set_number(L, "generation", data.generation);
+	lua_pop(L, 1);
 }

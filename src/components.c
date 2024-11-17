@@ -104,7 +104,6 @@ void ser_lua_type(serializer_t* ser, void* data) {
 	ser->ser_string(ser, lua_type->type, "type");
 }
 
-
 //void ecs_component_register_string(ecs_component_string_t value) {
 //	int i						 = ecs_component_string_count;
 //	ecs_component_string_t* dest = &ecs_component_strings[i];
@@ -194,7 +193,6 @@ int ecs_lua_set_component(lua_State* L) {
 	return 0;
 }
 
-//TODO(risgrynsgrot) Change type getting to use ints, to reduce strcmp
 int ecs_lua_get_component(lua_State* L) {
 	entity_t* entity = (entity_t*)lua_touserdata(L, -2);
 	if(lua_isnumber(L, -1)) {
@@ -211,7 +209,7 @@ int ecs_lua_get_component(lua_State* L) {
 		component_serializers[type](&ser, component);
 
 	} else {
-		printf("not a string\n");
+		printf("not a component number\n");
 	}
 
 	return 1;

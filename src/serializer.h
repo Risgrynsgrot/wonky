@@ -5,8 +5,10 @@
 
 typedef struct Vector2 Vector2;
 typedef struct Color Color;
+typedef struct entity entity_t;
 
 #define NET_MAX_PACKET_SIZE 1024
+
 typedef struct net_buf {
 	uint32_t data[NET_MAX_PACKET_SIZE];
 	uint64_t scratch;
@@ -41,8 +43,13 @@ typedef struct serializer {
 	bool (*ser_vec2)(struct serializer* ser, Vector2* value, const char* name);
 	bool (*ser_bool)(struct serializer* ser, bool* value, const char* name);
 	bool (*ser_string)(struct serializer* ser, char* value, const char* name);
-	bool (*ser_net_string)(struct serializer* ser, net_string_t* value, const char* name);
+	bool (*ser_net_string)(struct serializer* ser,
+						   net_string_t* value,
+						   const char* name);
 	bool (*ser_color)(struct serializer* ser, Color* value, const char* name);
+	bool (*ser_entity)(struct serializer* ser,
+					   entity_t* value,
+					   const char* name);
 } serializer_t;
 
 #define DECL_SER_T(T, NAME)                                                    \
@@ -85,6 +92,7 @@ DECL_SER_T(double, double)
 DECL_SER_T(bool, bool)
 DECL_SER_T(Color, color)
 DECL_SER_T(net_string_t, net_string)
+DECL_SER_T(entity_t, entity)
 
 serializer_t new_reader_lua(ser_lua_t ser_lua);
 serializer_t new_writer_lua(ser_lua_t ser_lua);

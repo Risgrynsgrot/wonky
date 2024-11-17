@@ -1,8 +1,8 @@
 #include "network_common.h"
 #include "components.h"
+#include "gameworld.h"
 #include "net_data.h"
 #include "raylib.h"
-#include "gameworld.h"
 #include <arpa/inet.h>
 #include <assert.h>
 #include <stdio.h>
@@ -52,12 +52,12 @@ void net_peer_receive(gameworld_t* world, ENetPacket* packet, ENetPeer* peer) {
 	serializer_t ser = new_reader_network((ser_net_t){0});
 	printf("data size: %lu", packet->dataLength);
 	memcpy(ser.ser.net.net_buf.data, packet->data, packet->dataLength);
-	//net_buffer_print(&ser.ser.net.net_buf);
+	net_buffer_print(&ser.ser.net.net_buf);
 
 	int8_t type;
 	net_read_byte(&ser.ser.net, &type, "type");
-	component_types_e comp_type = type;
-	switch(comp_type) {
+	net_types_e net_type = type;
+	switch(net_type) {
 	case NET_TEST:
 		printf("received net test, serializing\n");
 		net_test_t result;
@@ -83,13 +83,14 @@ void net_peer_receive(gameworld_t* world, ENetPacket* packet, ENetPeer* peer) {
 		break;
 	}
 	case NET_SPAWN_ENTITY: {
+		printf("received net spawn, serializing\n");
 		net_spawn_entity_t net_spawn_entity;
 		ser_spawn_entity(&ser, &net_spawn_entity);
 		net_handle_spawn_entity(world, &net_spawn_entity);
 		break;
 	}
 	default:
-		printf("reading netdata that doesn't exist: %d\n", comp_type);
+		printf("reading netdata that doesn't exist: %d\n", net_type);
 		break;
 	}
 }
@@ -258,6 +259,7 @@ void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
 	assert(value->length <= MAX_NET_STRING_LENGTH);
 	net_read_uint(ser, &value->length, "length");
 	for(uint32_t i = 0; i < value->length; i++) {
+		printf("current char: %c\n", value->str[i]);
 		net_read_byte(ser, &value->str[i], "");
 	}
 }
@@ -265,8 +267,22 @@ void net_read_string(ser_net_t* ser, net_string_t* value, const char* name) {
 void net_write_string(ser_net_t* ser, net_string_t* value, const char* name) {
 	(void)name;
 	assert(value->length <= MAX_NET_STRING_LENGTH);
+	printf("length: %i", value->length);
 	net_write_uint(ser, value->length, "length");
 	for(uint32_t i = 0; i < value->length; i++) {
+		printf("current char: %c\n", value->str[i]);
 		net_write_byte(ser, value->str[i], "");
 	}
+}
+
+void net_read_entity(ser_net_t* ser, entity_t* value, const char* name) {
+	(void)name;
+	net_read_int(ser, &value->id, "id");
+	net_read_uint(ser, &value->generation, "generation");
+}
+
+void net_write_entity(ser_net_t* ser, entity_t value, const char* name) {
+	(void)name;
+	net_write_int(ser, value.id, "id");
+	net_write_uint(ser, value.generation, "generation");
 }

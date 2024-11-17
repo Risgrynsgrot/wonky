@@ -71,3 +71,6 @@ void net_write_color(ser_net_t* ser, Color value, const char* name);
 
 void net_read_string(ser_net_t* ser, net_string_t* value, const char* name);
 void net_write_string(ser_net_t* ser, net_string_t* value, const char* name);
+
+void net_read_entity(ser_net_t* ser, entity_t* value, const char* name);
+void net_write_entity(ser_net_t* ser, entity_t value, const char* name);
