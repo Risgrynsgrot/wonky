@@ -12,7 +12,7 @@
 
 //ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_IDS, void)
 //ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
-void (*component_serializers[])(serializer_t* serializer, void* data) = {
+void (*component_serializer_funcs[])(serializer_t* serializer, void* data) = {
 	ECS_COMPONENTS_TYPE_ITER(DECL_COMPONENT_SERIALIZERS, void)};
 
 //int ecs_component_string_count;
@@ -183,7 +183,7 @@ int ecs_lua_set_component(lua_State* L) {
 			gameworld_t* world = script_get_userdata(L, "world");
 			void* component =
 				entity_get_component(&world->entities, *entity, type);
-			component_serializers[type](&ser, component);
+			component_serializer_funcs[type](&ser, component);
 		} else {
 			printf("not a component number\n");
 		}
@@ -206,7 +206,7 @@ int ecs_lua_get_component(lua_State* L) {
 		lua_pushnumber(L, type);
 		lua_setfield(L, -2, "type");
 
-		component_serializers[type](&ser, component);
+		component_serializer_funcs[type](&ser, component);
 
 	} else {
 		printf("not a component number\n");

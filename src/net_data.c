@@ -54,5 +54,21 @@ void ser_entity_state(serializer_t* ser, void* data) {
 	int components;
 	ser->ser_int(ser, &components, "components");
 	state->components = components;
+	ser->ser_entity(ser, &state->entity, "entity");
+
+
+	//this somehow. Need to convert from net entity to local
+	void* component =
+		entity_get_component(&world->entities, *entity, type);
+		component_serializer_funcs[type](&ser, component);
+
+	for(int i = 0; i < COMPONENT_COUNT; i++) {
+		bool has_comp = ((components >> i) & 1) == 1;
+		if(has_comp) {
+			component_serializer_funcs[i](ser, state);
+		}
+	}
+
+	//state->data
 }
 void net_handle_entity_state(gameworld_t* world, net_entity_state_t* data);

@@ -10,7 +10,6 @@
 //	int32_t id;
 //} ecs_component_string_t;
 
-#define COMPONENT_COUNT 64
 //extern ecs_component_string_t ecs_component_strings[COMPONENT_COUNT];
 
 #define ECS_COMPONENTS_TYPE_ITER(_F, ...)                                      \
@@ -25,6 +24,7 @@
 	_F(draw_circle, DRAW_CIRCLE, 8, __VA_ARGS__)                               \
 	_F(mover, MOVER, 9, __VA_ARGS__)                                           \
 	_F(lua_type, LUA_TYPE, 10, __VA_ARGS__)                                    \
+	_F(count, COUNT, 11, __VA_ARGS__)                                    //DON't forget to put this last!!!
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 #define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,
@@ -180,7 +180,7 @@ void* entity_get_component(entities_t* entities,
 
 #define DECL_COMPONENT_SERIALIZERS(lc, uc, i, ...) &ser_##lc,
 
-extern void (*component_serializers[])(serializer_t* serializer, void* data);
+extern void (*component_serializer_funcs[])(serializer_t* serializer, void* data);
 
 void lua_register_component_enum(lua_State* L);
 #define DECL_LUA_ENUM(lc, uc, i, ...)                                          \
