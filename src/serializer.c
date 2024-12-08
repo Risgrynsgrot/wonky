@@ -1,4 +1,5 @@
 #include "serializer.h"
+#include "gameworld.h"
 #include "network_common.h"
 #include "scriptloader.h"
 #include <raylib.h>
@@ -38,7 +39,7 @@ bool write_string_lua(serializer_t* ser, char* value, const char* name) {
 	return true;
 }
 
-serializer_t new_reader_lua(ser_lua_t ser_lua) {
+serializer_t new_reader_lua(ser_lua_t ser_lua, gameworld_t* world) {
 	serializer_t result = {
 		.ser.lua	= ser_lua,
 		.ser_vec2	= read_vector2_lua,
@@ -50,11 +51,12 @@ serializer_t new_reader_lua(ser_lua_t ser_lua) {
 		.ser_string = read_string_lua,
 		.ser_color	= read_color_lua,
 		.ser_entity = read_entity_lua,
+		.world		= world,
 	};
 	return result;
 }
 
-serializer_t new_writer_lua(ser_lua_t ser_lua) {
+serializer_t new_writer_lua(ser_lua_t ser_lua, gameworld_t* world) {
 	serializer_t result = {
 		.ser.lua	= ser_lua,
 		.ser_vec2	= write_vector2_lua,
@@ -66,11 +68,12 @@ serializer_t new_writer_lua(ser_lua_t ser_lua) {
 		.ser_string = write_string_lua,
 		.ser_color	= write_color_lua,
 		.ser_entity = write_entity_lua,
+		.world		= world,
 	};
 	return result;
 }
 
-serializer_t new_reader_network(ser_net_t ser_network) {
+serializer_t new_reader_network(ser_net_t ser_network, gameworld_t* world) {
 	serializer_t result = {
 		.ser.net		= ser_network,
 		.ser_vec2		= read_vector2_network,
@@ -81,12 +84,13 @@ serializer_t new_reader_network(ser_net_t ser_network) {
 		.ser_bool		= read_bool_network,
 		.ser_color		= read_color_network,
 		.ser_net_string = read_net_string_network,
-		.ser_entity 	= read_entity_network,
+		.ser_entity		= read_entity_network,
+		.world			= world,
 	};
 	return result;
 }
 
-serializer_t new_writer_network(ser_net_t ser_network) {
+serializer_t new_writer_network(ser_net_t ser_network, gameworld_t* world) {
 	serializer_t result = {
 		.ser.net		= ser_network,
 		.ser_vec2		= write_vector2_network,
@@ -97,7 +101,8 @@ serializer_t new_writer_network(ser_net_t ser_network) {
 		.ser_bool		= write_bool_network,
 		.ser_color		= write_color_network,
 		.ser_net_string = write_net_string_network,
-		.ser_entity 	= write_entity_network,
+		.ser_entity		= write_entity_network,
+		.world			= world,
 	};
 	return result;
 }

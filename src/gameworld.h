@@ -1,8 +1,9 @@
 #pragma once
+#include "serializer.h"
 #include "inputsystem.h"
 #include "map.h"
-#include "traits.h"
 #include "entity.h"
+#include "traits.h"
 #include "network_common.h"
 
 typedef struct gameworld {

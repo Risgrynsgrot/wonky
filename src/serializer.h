@@ -29,8 +29,11 @@ typedef struct ser_lua {
 } ser_lua_t;
 
 typedef struct net_string net_string_t;
+typedef struct gameworld gameworld_t;
 
 typedef struct serializer {
+	gameworld_t* world;
+
 	union ser_u {
 		ser_lua_t lua;
 		ser_net_t net;
@@ -94,8 +97,8 @@ DECL_SER_T(Color, color)
 DECL_SER_T(net_string_t, net_string)
 DECL_SER_T(entity_t, entity)
 
-serializer_t new_reader_lua(ser_lua_t ser_lua);
-serializer_t new_writer_lua(ser_lua_t ser_lua);
+serializer_t new_reader_lua(ser_lua_t ser_lua, gameworld_t* world);
+serializer_t new_writer_lua(ser_lua_t ser_lua, gameworld_t* world);
 
-serializer_t new_reader_network(ser_net_t ser_network);
-serializer_t new_writer_network(ser_net_t ser_network);
+serializer_t new_reader_network(ser_net_t ser_network, gameworld_t* world);
+serializer_t new_writer_network(ser_net_t ser_network, gameworld_t* world);

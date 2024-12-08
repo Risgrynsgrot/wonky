@@ -1,9 +1,10 @@
 #pragma once
-#include "serializer.h"
 #include <lua.h>
 #include <raylib.h>
 #include <raymath.h>
 #include <stdbool.h>
+
+typedef struct serializer serializer_t;
 
 //typedef struct ecs_component_string {
 //	char name[64];
@@ -24,7 +25,6 @@
 	_F(draw_circle, DRAW_CIRCLE, 8, __VA_ARGS__)                               \
 	_F(mover, MOVER, 9, __VA_ARGS__)                                           \
 	_F(lua_type, LUA_TYPE, 10, __VA_ARGS__)                                    \
-	_F(count, COUNT, 11, __VA_ARGS__)                                    //DON't forget to put this last!!!
 
 #define DECL_ENUM_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc = i,
 #define DECL_BITSET_COMPONENTS(lc, uc, i, ...) COMPONENT_##uc##_BIT = 1 << i,
@@ -46,6 +46,7 @@
 
 typedef enum component_types {
 	ECS_COMPONENTS_TYPE_ITER(DECL_ENUM_COMPONENTS, void)
+		COMPONENT_COUNT
 } component_types_e;
 
 typedef enum component_bitset {

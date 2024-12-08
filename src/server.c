@@ -51,7 +51,8 @@ void server_update(server_t* server) {
 				event.peer->data = &server->world.players.players[player_id];
 
 				//server_send_broadcast(server, "nya");
-				serializer_t ser = new_writer_network((ser_net_t){0});
+				serializer_t ser =
+					new_writer_network((ser_net_t){0}, &server->world);
 				net_write_byte(&ser.ser.net, NET_SPAWN_ENTITY, "type");
 				net_spawn_entity_t spawn_player = {
 					.entity_type = { "player", strlen("player")},

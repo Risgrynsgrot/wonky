@@ -50,25 +50,30 @@ void net_handle_spawn_entity(gameworld_t* world, net_spawn_entity_t* data) {
 }
 
 void ser_entity_state(serializer_t* ser, void* data) {
+
 	net_entity_state_t* state = data;
+	entity_t* entity = &state->entity;
 	int components;
 	ser->ser_int(ser, &components, "components");
 	state->components = components;
-	ser->ser_entity(ser, &state->entity, "entity");
+	ser->ser_entity(ser, entity, "entity");
 
 
 	//this somehow. Need to convert from net entity to local
-	void* component =
-		entity_get_component(&world->entities, *entity, type);
-		component_serializer_funcs[type](&ser, component);
+	//put it in a ring buffer for the past
+	//handle at the end or beginning of frame I think, do the interpolation
+	//there
 
 	for(int i = 0; i < COMPONENT_COUNT; i++) {
 		bool has_comp = ((components >> i) & 1) == 1;
 		if(has_comp) {
-			component_serializer_funcs[i](ser, state);
+		void* component =
+			entity_get_component(&ser->world->entities, *entity, i);
+			component_serializer_funcs[i](ser, component);
 		}
 	}
 
 	//state->data
 }
-void net_handle_entity_state(gameworld_t* world, net_entity_state_t* data);
+void net_handle_entity_state(gameworld_t* world, net_entity_state_t* data) {
+}

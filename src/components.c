@@ -179,8 +179,8 @@ int ecs_lua_set_component(lua_State* L) {
 			component_types_e type = lua_tonumber(L, -1);
 			lua_pop(L, 1);
 			printf("component_type: %d\n", type);
-			serializer_t ser   = new_reader_lua((ser_lua_t){.L = L});
 			gameworld_t* world = script_get_userdata(L, "world");
+			serializer_t ser   = new_reader_lua((ser_lua_t){.L = L}, world);
 			void* component =
 				entity_get_component(&world->entities, *entity, type);
 			component_serializer_funcs[type](&ser, component);
@@ -197,9 +197,9 @@ int ecs_lua_get_component(lua_State* L) {
 	entity_t* entity = (entity_t*)lua_touserdata(L, -2);
 	if(lua_isnumber(L, -1)) {
 		component_types_e type = lua_tonumber(L, -1);
-		serializer_t ser	   = new_writer_lua((ser_lua_t){.L = L});
-
 		gameworld_t* world = script_get_userdata(L, "world");
+		serializer_t ser	   = new_writer_lua((ser_lua_t){.L = L}, world);
+
 		void* component = entity_get_component(&world->entities, *entity, type);
 
 		lua_newtable(L);

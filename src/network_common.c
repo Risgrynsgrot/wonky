@@ -1,8 +1,10 @@
 #include "network_common.h"
 #include "components.h"
+#include "entity.h"
 #include "gameworld.h"
 #include "net_data.h"
 #include "raylib.h"
+#include "serializer.h"
 #include <arpa/inet.h>
 #include <assert.h>
 #include <stdio.h>
@@ -49,7 +51,7 @@ void net_peer_send(ENetPeer* peer, ser_net_t* ser) {
 }
 
 void net_peer_receive(gameworld_t* world, ENetPacket* packet, ENetPeer* peer) {
-	serializer_t ser = new_reader_network((ser_net_t){0});
+	serializer_t ser = new_reader_network((ser_net_t){0}, world);
 	printf("data size: %lu", packet->dataLength);
 	memcpy(ser.ser.net.net_buf.data, packet->data, packet->dataLength);
 	net_buffer_print(&ser.ser.net.net_buf);
@@ -87,6 +89,13 @@ void net_peer_receive(gameworld_t* world, ENetPacket* packet, ENetPeer* peer) {
 		net_spawn_entity_t net_spawn_entity;
 		ser_spawn_entity(&ser, &net_spawn_entity);
 		net_handle_spawn_entity(world, &net_spawn_entity);
+		break;
+	}
+	case NET_ENTITY_STATE: {
+		printf("received entity state, serializing\n");
+		net_entity_state_t net_entity_state;
+		ser_entity_state(&ser, &net_entity_state);
+		net_handle_entity_state(world, &net_entity_state);
 		break;
 	}
 	default:

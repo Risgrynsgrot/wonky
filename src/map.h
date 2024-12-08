@@ -1,25 +1,26 @@
 #pragma once
-#include "components.h"
-#include "entity.h"
+#include <raylib.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-#define JSON_GET(TYPE, ROOT, JSON_NAME, RESULT)                                \
-	do {                                                                       \
+typedef struct entity entity_t;
+
+#define JSON_GET(TYPE, ROOT, JSON_NAME, RESULT)                                  \
+	do {                                                                         \
 		/*printf("l: %d, f: %s, loading:%s\n", __LINE__, __FILE__,             \
-		 * #JSON_NAME);*/                                                      \
-		json_object* JSON_NAME##_json;                                         \
-		bool result =                                                          \
-			json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);    \
-		/*printf("got value: %i\n", result);*/                                 \
-		if(result) {                                                           \
-			if(json_object_get_type(JSON_NAME##_json) == json_type_null) {     \
-				printf("%s is null, skipping\n", #JSON_NAME);                  \
-			} else {                                                           \
-				RESULT = json_object_get_##TYPE(JSON_NAME##_json);             \
-				/*printf("loaded %s.\n", #JSON_NAME);*/                        \
-			}                                                                  \
-		}                                                                      \
+		 * #JSON_NAME);*/ \
+		json_object* JSON_NAME##_json;                                           \
+		bool result =                                                            \
+			json_object_object_get_ex(ROOT, #JSON_NAME, &JSON_NAME##_json);      \
+		/*printf("got value: %i\n", result);*/                                   \
+		if(result) {                                                             \
+			if(json_object_get_type(JSON_NAME##_json) == json_type_null) {       \
+				printf("%s is null, skipping\n", #JSON_NAME);                    \
+			} else {                                                             \
+				RESULT = json_object_get_##TYPE(JSON_NAME##_json);               \
+				/*printf("loaded %s.\n", #JSON_NAME);*/                          \
+			}                                                                    \
+		}                                                                        \
 	} while(0)
 
 #define JSON_GET_STR(ROOT, JSON_NAME, RESULT)                                  \

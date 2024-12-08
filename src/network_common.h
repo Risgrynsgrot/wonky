@@ -1,10 +1,11 @@
 #pragma once
 #include "entity.h"
-#include "serializer.h"
 #include <enet/enet.h>
 
 #define MAX_PLAYERS 32
 
+typedef struct net_buf net_buf_t;
+typedef struct ser_net ser_net_t;
 typedef struct gameworld gameworld_t;
 
 typedef enum net_controller {

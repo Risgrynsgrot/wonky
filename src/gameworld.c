@@ -20,7 +20,7 @@ int gameworld_init(gameworld_t* world, bool headless) {
 	world->tickrate	  = 1.f / 64.f;
 	world->lag		  = 0.f;
 	world->headless	  = headless;
-	world->net_writer = new_writer_network((ser_net_t){0});
+	world->net_writer = new_writer_network((ser_net_t){0}, world);
 
 	if(!world->headless) {
 		gameworld_raylib_init();
